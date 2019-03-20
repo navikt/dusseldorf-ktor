@@ -68,6 +68,3 @@ nb-configuration.xml
 
 # Misc
 *.swp
-
-##  ikke sjekke inn ev. versjonsendringer ved bruk av ./travis/set-maven-version.sh
-#pom.xml
