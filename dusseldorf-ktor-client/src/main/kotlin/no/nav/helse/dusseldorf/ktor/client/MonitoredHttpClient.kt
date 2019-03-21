@@ -5,8 +5,7 @@ import io.ktor.client.call.call
 import io.ktor.client.call.receive
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.response.HttpResponse
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.URLBuilder
+import io.ktor.http.*
 import io.prometheus.client.Counter
 import io.prometheus.client.Histogram
 
@@ -44,13 +43,26 @@ class MonitoredHttpClient (
             httpClient.call(httpRequestBuilder).response
         } catch (cause: Throwable) {
             counter.labels(source, destination, verb, path, "network_error").inc()
-            throw IllegalStateException("network_error", cause)
+            throw SentHttpRequestException(
+                    status =  "network_error",
+                    httpMethod = httpRequestBuilder.method,
+                    url = httpRequestBuilder.url.clone().build(),
+                    destination = destination,
+                    path = path,
+                    throwable = cause
+            )
         } finally {
             timer.observeDuration()
         }
         if (!expectedHttpResponseCodes.contains(response.status)) {
             counter.labels(source, destination, verb, path, "unexpected_http_response_code").inc()
-            throw IllegalStateException("unexpected_http_response_code")
+            throw SentHttpRequestException(
+                    status =  "unexpected_http_response_code",
+                    httpMethod = httpRequestBuilder.method,
+                    url = httpRequestBuilder.url.clone().build(),
+                    destination = destination,
+                    path = path
+            )
         }
         return response
     }
@@ -61,6 +73,7 @@ class MonitoredHttpClient (
     ) : T {
         val path = getPath(httpRequestBuilder.url, overridePaths)
         val verb = httpRequestBuilder.method.value
+
 
         val response = request(
                 httpRequestBuilder = httpRequestBuilder,
@@ -73,8 +86,14 @@ class MonitoredHttpClient (
                 counter.labels(source, destination, verb, path, "success").inc()
                 result
             } catch (cause: Throwable) {
-                counter.labels(source, destination, verb, path, "response_mapping_error").inc()
-                throw IllegalStateException("response_mapping_error")
+                counter.labels(source, destination, verb, path, "response_receiving_error").inc()
+                throw SentHttpRequestException(
+                        status =  "response_receiving_error",
+                        httpMethod = httpRequestBuilder.method,
+                        url = httpRequestBuilder.url.clone().build(),
+                        destination = destination,
+                        path = path
+                )
             }
         }
     }
@@ -92,3 +111,14 @@ fun getPath(
     }
     return path
 }
+
+class SentHttpRequestException(
+        status: String,
+        httpMethod : HttpMethod,
+        url : Url,
+        destination: String,
+        path : String,
+        throwable: Throwable? = null
+) : RuntimeException (
+        "status='$status', httpMethod='$httpMethod', url='$url', destination='$destination', path='$path'", throwable
+)
