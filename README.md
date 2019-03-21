@@ -6,6 +6,7 @@ buildscript dependency som tilgjengeliggjør versjoner
 
 ## dusseldorf-ktor-core
 Minste samling av dependencyer for en ktor app
+- Legge til CallId & CallLogging
 
 ## dusseldorf-ktor-client
 For applikasjoner som trenger å gjøre HTTP requester. + Legge til Proxy logging

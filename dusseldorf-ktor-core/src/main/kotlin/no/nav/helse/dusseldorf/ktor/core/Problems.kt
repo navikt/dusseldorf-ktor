@@ -91,7 +91,7 @@ enum class ParameterType {
     ENTITY
 }
 
-data class Violation(val parameterName : String, val parameterType: ParameterType, val reason: String, val invalidValue : String? = null)
+data class Violation(val parameterName : String, val parameterType: ParameterType, val reason: String, val invalidValue : Any? = null)
 
 data class ValidationProblemDetails(
         private val violations : Set<Violation>
@@ -102,15 +102,17 @@ data class ValidationProblemDetails(
         details = "Requesten inneholder ugyldige paramtere."
 ) {
     override fun asMap() : Map<String, Any> {
-        val violationMap = mutableMapOf<String, String?>()
+        val invalidParametersList : MutableList<Map<String, Any?>> = mutableListOf()
         violations.forEach{ it ->
-            violationMap["type"] = it.parameterType.name.toLowerCase()
-            violationMap["name"] = it.parameterName
-            violationMap["reason"] = it.reason
-            violationMap["invalid_value"] = it.invalidValue
+            invalidParametersList.add(mapOf(
+                    Pair("type", it.parameterType.name.toLowerCase()),
+                    Pair("name", it.parameterName),
+                    Pair("reason", it.reason),
+                    Pair("invalid_value", it.invalidValue)
+            ))
         }
         return super.asMap().toMutableMap().apply {
-            put("invalid_parameters", violationMap)
+            put("invalid_parameters", invalidParametersList)
         }.toMap()
     }
 }
