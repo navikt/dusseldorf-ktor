@@ -9,27 +9,25 @@ import io.ktor.http.*
 import io.prometheus.client.Counter
 import io.prometheus.client.Histogram
 
+val histogram = Histogram
+        .build("sent_http_requests_histogram",
+                "Histogram for alle HTTP-requester sendt.")
+        .labelNames("source", "destination", "verb", "path")
+        .register()
+
+val counter = Counter
+        .build(
+                "sent_http_requests_counter",
+                "Teller for alle HTTP-requester som sendes.")
+        .labelNames("source", "destination", "verb", "path", "status")
+        .register()
+
 class MonitoredHttpClient (
         val source: String,
         val destination: String,
         val httpClient: HttpClient,
         val overridePaths : Map<Regex, String> = mapOf()
 ) {
-
-    val histogram = Histogram
-            .build("sent_http_requests_histogram",
-                    "Histogram for alle HTTP-requester sendt fra $source")
-            .labelNames("source", "destination", "verb", "path")
-            .register()
-
-    val counter = Counter
-            .build(
-                    "sent_http_requests_counter",
-                    "Teller for alle HTTP-requester som sendes fra $source")
-            .labelNames("source", "destination", "verb", "path", "status")
-            .register()
-
-
     suspend inline fun request(
             httpRequestBuilder: HttpRequestBuilder,
             expectedHttpResponseCodes : Set<HttpStatusCode> = setOf(HttpStatusCode.OK)
@@ -54,7 +52,7 @@ class MonitoredHttpClient (
         } finally {
             timer.observeDuration()
         }
-        if (!expectedHttpResponseCodes.contains(response.status)) {
+        if (expectedHttpResponseCodes.isNotEmpty() && !expectedHttpResponseCodes.contains(response.status)) {
             counter.labels(source, destination, verb, path, "unexpected_http_response_code").inc()
             throw SentHttpRequestException(
                     status =  "unexpected_http_response_code",
@@ -73,7 +71,6 @@ class MonitoredHttpClient (
     ) : T {
         val path = getPath(httpRequestBuilder.url, overridePaths)
         val verb = httpRequestBuilder.method.value
-
 
         val response = request(
                 httpRequestBuilder = httpRequestBuilder,
