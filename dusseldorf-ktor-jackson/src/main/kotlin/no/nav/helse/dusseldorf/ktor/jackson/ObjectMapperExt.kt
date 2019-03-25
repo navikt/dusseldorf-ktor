@@ -5,14 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
-fun ObjectMapper.dusseldorfConfigured(objectMapper: ObjectMapper = jacksonObjectMapper()
-) : ObjectMapper {
-    objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
-    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
-    objectMapper.registerModule(JavaTimeModule())
-    return objectMapper
+fun ObjectMapper.dusseldorfConfigured() : ObjectMapper {
+    configure(SerializationFeature.INDENT_OUTPUT, true)
+    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+    registerModule(JavaTimeModule())
+    return this
 }
