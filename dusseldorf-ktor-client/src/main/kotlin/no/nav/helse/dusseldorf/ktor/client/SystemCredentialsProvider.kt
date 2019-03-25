@@ -63,7 +63,7 @@ class Oauth2ClientCredentialsProvider(
 
         setCachedData(
                 accessToken = response["access_token"] as String,
-                expiresIn = response["expires_in"] as Long
+                expiresIn = (response["expires_in"] as Number).toLong()
         )
 
         return cachedToken!!
