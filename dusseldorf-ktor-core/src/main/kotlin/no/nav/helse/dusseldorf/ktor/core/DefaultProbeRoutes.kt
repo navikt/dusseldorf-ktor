@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.DefaultProbeRouts")
 
-fun Route.DefaultProbeRouts(
+fun Route.DefaultProbeRoutes(
         readyPath : String = "/isready",
         alivePath : String = "/isalive"
 ) {
