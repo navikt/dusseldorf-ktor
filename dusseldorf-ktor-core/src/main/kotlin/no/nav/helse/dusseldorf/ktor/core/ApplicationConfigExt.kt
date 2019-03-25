@@ -43,5 +43,7 @@ fun <T>ApplicationConfig.getOptionalList(key : String, secret: Boolean, builder:
     val csv = ext.getOptionalString(key, secret) ?: return emptyList()
     return ext.getListFromCsv(csv = csv, builder = builder)
 }
+@KtorExperimentalAPI
+fun ApplicationConfig.id() : String = ApplicationConfigExt(this).getRequiredString("ktor.application.id", secret = false)
 
 
