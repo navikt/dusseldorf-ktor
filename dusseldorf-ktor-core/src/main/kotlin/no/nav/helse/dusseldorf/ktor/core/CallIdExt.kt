@@ -4,9 +4,12 @@ import io.ktor.features.CallId
 import io.ktor.http.HttpHeaders
 import java.util.*
 
+private const val NOT_SET = "NOT_SET"
+
 // Henter fra CorrelationID (backend tjenester)
 fun CallId.Configuration.fromXCorrelationIdHeader() {
-    header(HttpHeaders.XCorrelationId)
+    retrieveFromHeader(HttpHeaders.XCorrelationId)
+    generate { NOT_SET }
 }
 
 // Genererer CorrelationID (frontend tjeneste)
@@ -16,7 +19,7 @@ fun CallId.Configuration.generated() {
 
 fun CallId.Configuration.ensureSet() {
     verify { callId: String ->
-        if (callId.isEmpty()) {
+        if (callId.isEmpty() || callId == NOT_SET) {
             throw Throwblem(ValidationProblemDetails(
                     setOf(Violation(
                             parameterName = HttpHeaders.XCorrelationId,
