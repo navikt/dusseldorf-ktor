@@ -22,7 +22,7 @@ fun StatusPages.Configuration.DefaultStatusPages() {
         logger.trace("Håndtert feil forekom. ${cause.getProblemDetails().asMap()}")
         call.respond(
                 status = HttpStatusCode.fromValue(cause.getProblemDetails().status),
-                message = cause.getProblemDetails()
+                message = cause.getProblemDetails().asMap()
         )
     }
 
@@ -31,13 +31,13 @@ fun StatusPages.Configuration.DefaultStatusPages() {
             logger.trace("Håndtert feil forekom. ${cause.getProblemDetails().asMap()}")
             call.respond(
                     status = HttpStatusCode.fromValue(cause.getProblemDetails().status),
-                    message = cause.getProblemDetails()
+                    message = cause.getProblemDetails().asMap()
             )
         } else {
             logger.error("Uhåndtert feil", cause)
             call.respond(
                     status = UNHANDLED_HTTP_STATUS_CODE,
-                    message = UNHANDLED_PROBLEM_DETAILS
+                    message = UNHANDLED_PROBLEM_DETAILS.asMap()
             )
         }
     }
