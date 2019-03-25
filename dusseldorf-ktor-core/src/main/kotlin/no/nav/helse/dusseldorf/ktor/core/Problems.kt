@@ -94,7 +94,7 @@ enum class ParameterType {
 data class Violation(val parameterName : String, val parameterType: ParameterType, val reason: String, val invalidValue : Any? = null)
 
 data class ValidationProblemDetails(
-        private val violations : Set<Violation>
+        val violations : Set<Violation>
 
 ) : DefaultProblemDetails(
         title = "invalid-request-parameters",
