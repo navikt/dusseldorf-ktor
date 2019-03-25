@@ -45,7 +45,7 @@ class CallMonitoring (
 
     class Configuration {
         var app : String? = null
-        var skipPaths : List<String> = listOf("/isready", "/isalive", "/metrics", "/health")
+        var excludePaths : Set<String> = setOf("/isready", "/isalive", "/metrics", "/health")
         var overridePaths : Map<Regex, String> = mapOf()
     }
 
@@ -105,7 +105,7 @@ class CallMonitoring (
             logger.trace("Monitorerer ikke httpMethod='${httpMethod.value}'")
             return true
         }
-        val isSkippedPath = configure.skipPaths.contains(path)
+        val isSkippedPath = configure.excludePaths.contains(path)
         if (isSkippedPath) {
             logger.trace("Monitorerer ikke path='$path'")
             return true

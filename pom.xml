@@ -13,6 +13,7 @@
         <module>dusseldorf-ktor-build</module>
         <module>dusseldorf-ktor-metrics</module>
         <module>dusseldorf-ktor-client</module>
+        <module>dusseldorf-ktor-jackson</module>
     </modules>
 
     <properties>
@@ -24,6 +25,7 @@
         <logback.version>1.2.3</logback.version>
         <logstash.logback.version>5.3</logstash.logback.version>
         <prometheus.version>0.6.0</prometheus.version>
+        <jackson.version>2.9.8</jackson.version>
     </properties>
 
     <repositories>
