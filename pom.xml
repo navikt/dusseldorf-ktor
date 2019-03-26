@@ -14,6 +14,7 @@
         <module>dusseldorf-ktor-metrics</module>
         <module>dusseldorf-ktor-client</module>
         <module>dusseldorf-ktor-jackson</module>
+        <module>dusseldorf-ktor-health</module>
     </modules>
 
     <properties>
