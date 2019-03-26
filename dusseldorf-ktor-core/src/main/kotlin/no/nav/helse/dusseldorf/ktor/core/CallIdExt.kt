@@ -11,7 +11,7 @@ private const val EXCLUDED_PATH = "EXCLUDED_PATH"
 
 // Henter fra CorrelationID (backend tjenester)
 fun CallId.Configuration.fromXCorrelationIdHeader(
-        excludePaths : Set<String> = setOf("/metrics", "/isready", "/isalive", "/health")
+        excludePaths : Set<String> = setOf("/metrics", "/isready", "/isalive", "/health", "/favicon.ico")
 ) {
     retrieve { call ->
         val headerValue = call.request.header(HttpHeaders.XCorrelationId)

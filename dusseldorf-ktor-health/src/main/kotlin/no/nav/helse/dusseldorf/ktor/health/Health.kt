@@ -45,7 +45,7 @@ interface HealthCheck {
 
 private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.health.HttpRequestHealthCheck")
 class HttpRequestHealthCheck(
-        private val app: String,
+        app: String,
         private val urlExpectedHttpStatusCodeMap : Map<URL, HttpStatusCode>
 ) : HealthCheck {
 
@@ -99,7 +99,7 @@ class HttpRequestHealthCheck(
 
 
         val result = mutableMapOf<String, Any?>()
-        val containsUnhealthy = responses.none { it.isUnhealthy() }
+        val isHealthy = responses.none { it.isUnhealthy() }
 
         responses.forEach { response ->
             result[response.url.toString()] = mapOf(
@@ -109,7 +109,7 @@ class HttpRequestHealthCheck(
             )
         }
 
-        return if (containsUnhealthy) UnHealthy(result) else Healthy(result)
+        return if (isHealthy) Healthy(result) else UnHealthy(result)
     }
 
 }
