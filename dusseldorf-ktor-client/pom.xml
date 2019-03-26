@@ -10,6 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dusseldorf-ktor-client</artifactId>
+    <name>dusseldorf-ktor-client</name>
+
 
     <dependencies>
         <dependency>

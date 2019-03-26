@@ -10,6 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dusseldorf-ktor-health</artifactId>
+    <name>dusseldorf-ktor-health</name>
+
 
     <dependencies>
         <dependency>

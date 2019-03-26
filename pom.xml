@@ -7,10 +7,10 @@
     <groupId>no.nav.helse</groupId>
     <artifactId>dusseldorf-ktor</artifactId>
     <packaging>pom</packaging>
+    <name>dusseldorf-ktor</name>
     <version>PLACEHOLDER</version>
     <description>Boilerplate for Düsseldorf ktor apps</description>
     <url>https://github.com/navikt/dusseldorf-ktor</url>
-
 
     <modules>
         <module>dusseldorf-ktor-core</module>
