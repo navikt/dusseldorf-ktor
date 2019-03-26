@@ -13,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import no.nav.helse.dusseldorf.ktor.client.MonitoredHttpClient
+import no.nav.helse.dusseldorf.ktor.client.SystemCredentialsProvider
 import no.nav.helse.dusseldorf.ktor.client.setProxyRoutePlanner
 import no.nav.helse.dusseldorf.ktor.client.sl4jLogger
 import org.slf4j.LoggerFactory
@@ -43,11 +44,27 @@ interface HealthCheck {
 }
 
 
-private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.health.HttpRequestHealthCheck")
+class SystemCredentialsProviderHealthCheck(
+        private val systemCredentialsProvider: SystemCredentialsProvider
+) : HealthCheck {
+    private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.health.SystemCredentialsProviderHealthCheck")
+
+    override suspend fun check(): Result {
+        return try {
+            systemCredentialsProvider.getAuthorizationHeader()
+            Healthy("Henting av System Credentials OK.")
+        } catch (cause: Throwable) {
+            logger.error("Feil ved henting av System Credentials.", cause)
+            UnHealthy(message = cause.message ?: "Feil ved henting av System Credentials.")
+        }
+    }
+}
+
 class HttpRequestHealthCheck(
         app: String,
         private val urlExpectedHttpStatusCodeMap : Map<URL, HttpStatusCode>
 ) : HealthCheck {
+    private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.health.HttpRequestHealthCheck")
 
     private val monitoredHttpClient = MonitoredHttpClient(
             source = app,
@@ -84,6 +101,7 @@ class HttpRequestHealthCheck(
                             )
                         }
                     } catch (cause: Throwable) {
+                        logger.error("Ingen response mot $url", cause)
                         Response(
                                 url = url,
                                 expectedHttpStatusCode = expectedHttpStatusCode,
