@@ -14,4 +14,7 @@ For applikasjoner som trenger å gjøre HTTP requester.
 Metrics for alle requeter til applikasjonen og tilgjengeliggjør Prometheus metrics end point
 
 ## dusseldorf-ktor-jackson
-dependencies og status pages.
+Status pages og dependencies for jackson
+
+## dusseldorf-ktor-health
+Helsesjekker og tilgjengeliggjøre helsjesjekk end point
