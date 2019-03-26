@@ -7,6 +7,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
+import no.nav.helse.dusseldorf.ktor.core.Paths
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -15,7 +16,7 @@ private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.kt
 
 fun Route.MetricsRoute(
         collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry,
-        path: String = "/metrics"
+        path: String = Paths.DEFAULT_METRICS_PATH
 ) {
     get(path) {
         logger.debug("Metrics hentes")

@@ -14,6 +14,7 @@ import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.Counter
 import io.prometheus.client.Histogram
+import no.nav.helse.dusseldorf.ktor.core.Paths
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -45,7 +46,7 @@ class CallMonitoring (
 
     class Configuration {
         var app : String? = null
-        var excludePaths : Set<String> = setOf("/isready", "/isalive", "/metrics", "/health")
+        var excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS
         var overridePaths : Map<Regex, String> = mapOf()
     }
 

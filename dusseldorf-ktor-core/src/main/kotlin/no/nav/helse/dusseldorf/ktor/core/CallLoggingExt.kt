@@ -25,7 +25,7 @@ fun CallLogging.Configuration.correlationIdAndRequestIdInMdc() {
 }
 
 fun CallLogging.Configuration.logRequests(
-        excludePaths : Set<String> = setOf("/metrics", "/isready", "/isalive", "/health")
+        excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS
 ) {
     logger = LOG
     level = Level.INFO

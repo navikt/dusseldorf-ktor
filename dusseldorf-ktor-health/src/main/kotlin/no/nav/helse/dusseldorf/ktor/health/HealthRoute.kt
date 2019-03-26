@@ -9,12 +9,13 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import no.nav.helse.dusseldorf.ktor.core.Paths
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.health.HealthRoute")
 
 fun Route.HealthRoute(
-        path: String = "/health",
+        path: String = Paths.DEFAULT_HEALTH_PATH,
         healthChecks : Set<HealthCheck>
 ) {
 
@@ -27,7 +28,7 @@ fun Route.HealthRoute(
                         healthCheck.check()
                     } catch (cause: Throwable) {
                         logger.error("Feil ved eksekvering av helsesjekk.", cause)
-                        UnHealthy(message = cause.message ?: "Feil ved eksekvering av helsesjekk.")
+                        UnHealthy(name = healthCheck.javaClass.simpleName, result = cause.message ?: "Feil ved eksekvering av helsesjekk.")
                     }
                 })
 
