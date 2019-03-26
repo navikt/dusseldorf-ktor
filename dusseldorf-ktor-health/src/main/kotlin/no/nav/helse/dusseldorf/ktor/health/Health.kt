@@ -24,7 +24,7 @@ interface Result {
 }
 
 class Healthy(private val result : Map<String, Any?> ) : Result {
-    constructor(message : String) : this(mapOf(Pair("message", message)))
+    constructor(name: String, result : Any) : this(mapOf("result" to result, "name" to name))
 
     override fun result(): Map<String, Any?> {
         return result
@@ -32,7 +32,7 @@ class Healthy(private val result : Map<String, Any?> ) : Result {
 }
 
 class UnHealthy(private val result : Map<String, Any?> ) : Result {
-    constructor(message : String) : this(mapOf(Pair("message", message)))
+    constructor(name: String, result : Any) : this(mapOf("result" to result, "name" to name))
 
     override fun result(): Map<String, Any?> {
         return result
@@ -52,10 +52,10 @@ class SystemCredentialsProviderHealthCheck(
     override suspend fun check(): Result {
         return try {
             systemCredentialsProvider.getAuthorizationHeader()
-            Healthy("Henting av System Credentials OK.")
+            Healthy(result = "Henting av System Credentials OK.", name = "SystemCredentialsProviderHealthCheck")
         } catch (cause: Throwable) {
             logger.error("Feil ved henting av System Credentials.", cause)
-            UnHealthy(message = cause.message ?: "Feil ved henting av System Credentials.")
+            UnHealthy(result = cause.message ?: "Feil ved henting av System Credentials.", name = "SystemCredentialsProviderHealthCheck")
         }
     }
 }
@@ -127,9 +127,8 @@ class HttpRequestHealthCheck(
             )
         }
 
-        return if (isHealthy) Healthy(result) else UnHealthy(result)
+        return if (isHealthy) Healthy(name = "HttpRequestHealthCheck", result = result) else UnHealthy(name = "HttpRequestHealthCheck", result = result)
     }
-
 }
 
 private data class Response(
