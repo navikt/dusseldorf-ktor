@@ -1,9 +1,16 @@
 package no.nav.helse.dusseldorf.ktor.core
 
+import io.ktor.application.ApplicationCall
+import io.ktor.application.ApplicationCallPipeline
+import io.ktor.application.ApplicationFeature
 import io.ktor.features.CallId
+import io.ktor.features.callId
 import io.ktor.http.HttpHeaders
 import io.ktor.request.header
 import io.ktor.request.path
+import io.ktor.response.ApplicationSendPipeline
+import io.ktor.util.AttributeKey
+import io.ktor.util.pipeline.PipelineContext
 import java.util.*
 
 private const val NOT_SET = "NOT_SET"
@@ -44,5 +51,40 @@ fun CallId.Configuration.ensureSet() {
             ))
         }
         true
+    }
+}
+
+class Configuration
+class RequireCallId(
+        configure: Configuration
+) {
+
+    private suspend fun require(context: PipelineContext<Unit, ApplicationCall>) {
+        context.context.callId ?: throw Throwblem(ValidationProblemDetails(
+                setOf(Violation(
+                        parameterName = HttpHeaders.XCorrelationId,
+                        parameterType = ParameterType.HEADER,
+                        reason = "Correlation ID må settes.",
+                        invalidValue = null
+                ))
+        ))
+    }
+
+    companion object Feature :
+            ApplicationFeature<ApplicationCallPipeline, Configuration, RequireCallId> {
+
+        override fun install(pipeline: ApplicationCallPipeline, configure: Configuration.() -> Unit): RequireCallId {
+            val result = RequireCallId(
+                    Configuration().apply(configure)
+            )
+
+            pipeline.intercept(ApplicationCallPipeline.Call) {
+                result.require(this)
+            }
+
+            return result
+        }
+
+        override val key = AttributeKey<RequireCallId>("RequireCallId")
     }
 }
