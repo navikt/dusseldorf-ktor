@@ -14,7 +14,7 @@ private val UNHANDLED_HTTP_STATUS_CODE = HttpStatusCode.InternalServerError
 private val UNHANDLED_PROBLEM_DETAILS = DefaultProblemDetails(
         title = "unhandled-error",
         status = UNHANDLED_HTTP_STATUS_CODE.value,
-        details = "En uhåndtert feil har oppstått."
+        detail = "En uhåndtert feil har oppstått."
 )
 fun StatusPages.Configuration.DefaultStatusPages() {
 

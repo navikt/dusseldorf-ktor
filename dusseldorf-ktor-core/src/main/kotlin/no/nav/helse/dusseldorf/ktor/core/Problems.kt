@@ -54,7 +54,7 @@ interface ProblemDetails {
     val title : String
     val type : URI
     val status : Int
-    val details : String
+    val detail : String
     val instance : URI
     fun asMap() : Map<String, Any>
 }
@@ -63,7 +63,7 @@ open class DefaultProblemDetails(
         override val title : String,
         override val type : URI = URI("/problem-details/$title"),
         override val status : Int,
-        override val details : String,
+        override val detail : String,
         override val instance : URI = URI("about:blank")
 ) : ProblemDetails {
     override fun asMap() : Map<String, Any> {
@@ -78,7 +78,7 @@ open class DefaultProblemDetails(
                 Pair("type", type.toString()),
                 Pair("title", title),
                 Pair("status", status),
-                Pair("details", details),
+                Pair("detail", detail),
                 Pair("instance", instance.toString())
         )
     }
@@ -99,7 +99,7 @@ data class ValidationProblemDetails(
 ) : DefaultProblemDetails(
         title = "invalid-request-parameters",
         status = 400,
-        details = "Requesten inneholder ugyldige paramtere."
+        detail = "Requesten inneholder ugyldige paramtere."
 ) {
     override fun asMap() : Map<String, Any> {
         val invalidParametersList : MutableList<Map<String, Any?>> = mutableListOf()

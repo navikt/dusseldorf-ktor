@@ -40,7 +40,7 @@ fun StatusPages.Configuration.JacksonStatusPages() {
         val problemDetails = DefaultProblemDetails(
                 title = "invalid-json-entity",
                 status = 422,
-                details = "Request entityen inneholder ugyldig JSON."
+                detail = "Request entityen inneholder ugyldig JSON."
         )
 
         call.respond(
