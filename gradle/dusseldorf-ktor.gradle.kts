@@ -1,4 +1,3 @@
-val dusseldorfKtorVersion by extra("1.1.3.a361885")
 val ktorVersion by extra("1.1.3")
 val kotlinVersion by extra("1.3.21")
 val logbackVersion by extra("1.2.3")
