@@ -1,0 +1,7 @@
+val dusseldorfKtorVersion by extra("1.1.3.a361885")
+val ktorVersion by extra("1.1.3")
+val kotlinVersion by extra("1.3.21")
+val logbackVersion by extra("1.2.3")
+val logstashLogbackVersion by extra("5.3")
+val prometheusVersion by extra("0.6.0")
+val jacksonVersion by extra("2.9.8")
