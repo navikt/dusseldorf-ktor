@@ -72,7 +72,9 @@ class CallMonitoring (
         val path = getPath(context.context.request)
 
         try {
-            context.proceed()
+            if (context.context.response.status() == null) {
+                context.proceed()
+            }
         } finally {
             if (!skipInterception(path = path, httpMethod = verb)) {
                 val httpStatusCode = (context.context.response.status() ?: HttpStatusCode.InternalServerError)

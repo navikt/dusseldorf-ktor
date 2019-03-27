@@ -7,7 +7,6 @@ import io.ktor.features.CallId
 import io.ktor.features.callId
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.path
 import io.ktor.response.respond
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
@@ -23,12 +22,8 @@ fun CallId.Configuration.generated() {
     generate { UUID.randomUUID().toString() }
 }
 
-class Configuration {
-    var excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS
-}
-class CallIdRequired(
-        private val configure: Configuration
-) {
+class Configuration
+class CallIdRequired(private val configure: Configuration) {
 
     private val problemDetails = ValidationProblemDetails(
             setOf(Violation(
@@ -40,13 +35,20 @@ class CallIdRequired(
     )
 
     private val status = HttpStatusCode.fromValue(problemDetails.status)
+    private val message = problemDetails.asMap()
+
+    fun interceptPipeline(pipeline: ApplicationCallPipeline) {
+        pipeline.intercept(ApplicationCallPipeline.Monitoring) {
+            require(this)
+        }
+    }
 
     private suspend fun require(context: PipelineContext<Unit, ApplicationCall>) {
         val callId = context.context.callId
-        if (callId == null && !configure.excludePaths.contains(context.context.request.path())) {
+        if (callId == null) {
             context.context.respond(
                 status = status,
-                message = problemDetails
+                message = message
             )
             context.finish()
         } else {
@@ -58,15 +60,7 @@ class CallIdRequired(
             ApplicationFeature<ApplicationCallPipeline, Configuration, CallIdRequired> {
 
         override fun install(pipeline: ApplicationCallPipeline, configure: Configuration.() -> Unit): CallIdRequired {
-            val result = CallIdRequired(
-                    Configuration().apply(configure)
-            )
-
-            pipeline.intercept(ApplicationCallPipeline.Call) {
-                result.require(this)
-            }
-
-            return result
+            return CallIdRequired(Configuration().apply(configure))
         }
 
         override val key = AttributeKey<CallIdRequired>("CallIdRequired")
