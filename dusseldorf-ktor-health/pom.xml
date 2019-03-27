@@ -20,11 +20,6 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>no.nav.helse</groupId>
-            <artifactId>dusseldorf-ktor-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

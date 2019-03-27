@@ -21,6 +21,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-health</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-client-apache</artifactId>
             <version>${ktor.version}</version>

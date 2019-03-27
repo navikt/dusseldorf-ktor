@@ -6,6 +6,10 @@ import io.ktor.client.request.url
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.Url
+import no.nav.helse.dusseldorf.ktor.health.HealthCheck
+import no.nav.helse.dusseldorf.ktor.health.Healthy
+import no.nav.helse.dusseldorf.ktor.health.UnHealthy
+import no.nav.helse.dusseldorf.ktor.health.Result
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
@@ -16,7 +20,22 @@ interface SystemCredentialsProvider {
     suspend fun getAuthorizationHeader() : String
 }
 
-private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.client.Oauth2ClientCredentialsProvider")
+class SystemCredentialsProviderHealthCheck(
+        private val systemCredentialsProvider: SystemCredentialsProvider
+) : HealthCheck {
+    private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.client.SystemCredentialsProviderHealthCheck")
+
+    override suspend fun check(): Result {
+        return try {
+            systemCredentialsProvider.getAuthorizationHeader()
+            Healthy(result = "Henting av System Credentials OK.", name = "SystemCredentialsProviderHealthCheck")
+        } catch (cause: Throwable) {
+            logger.error("Feil ved henting av System Credentials.", cause)
+            UnHealthy(result = cause.message ?: "Feil ved henting av System Credentials.", name = "SystemCredentialsProviderHealthCheck")
+        }
+    }
+}
+
 class Oauth2ClientCredentialsProvider(
         tokenUrl : URL,
         clientId : String,
@@ -24,6 +43,8 @@ class Oauth2ClientCredentialsProvider(
         scopes : List<String>,
         private val monitoredHttpClient: MonitoredHttpClient
 ) : SystemCredentialsProvider {
+    private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.client.Oauth2ClientCredentialsProvider")
+
     private val httpRequestBuilder : HttpRequestBuilder
     private val completeUrl : URL
 
