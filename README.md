@@ -2,8 +2,6 @@
 Boilerplate for ktor-applikasjoner
 
 ## Moduler
-### dusseldorf-ktor-build
-buildscript dependency som tilgjengeliggjør versjoner.
 
 ### dusseldorf-ktor-core
 Minste samling av dependencyer for en ktor app for Düsseldorf.
