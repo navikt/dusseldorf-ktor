@@ -6,31 +6,16 @@ import io.ktor.application.ApplicationFeature
 import io.ktor.features.CallId
 import io.ktor.features.callId
 import io.ktor.http.HttpHeaders
-import io.ktor.request.header
+import io.ktor.http.HttpStatusCode
 import io.ktor.request.path
-import io.ktor.response.ApplicationSendPipeline
+import io.ktor.response.respond
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
 import java.util.*
 
-private const val NOT_SET = "NOT_SET"
-private const val EXCLUDED_PATH = "EXCLUDED_PATH"
-
 // Henter fra CorrelationID (backend tjenester)
-fun CallId.Configuration.fromXCorrelationIdHeader(
-        excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS
-) {
-    retrieve { call ->
-        val headerValue = call.request.header(HttpHeaders.XCorrelationId)
-        when (headerValue) {
-            null -> {
-                if (excludePaths.contains(call.request.path())) EXCLUDED_PATH // En path som ikke må ha Correlation ID
-                else NOT_SET // Om headeren ikke er satt
-            }
-            EXCLUDED_PATH -> NOT_SET // Om noen har satt header til "EXCLUDE_PATH"
-            else -> headerValue // Verdien fra headeren
-        }
-    }
+fun CallId.Configuration.fromXCorrelationIdHeader() {
+    retrieveFromHeader(HttpHeaders.XCorrelationId)
 }
 
 // Genererer CorrelationID (frontend tjeneste)
@@ -38,43 +23,42 @@ fun CallId.Configuration.generated() {
     generate { UUID.randomUUID().toString() }
 }
 
-fun CallId.Configuration.ensureSet() {
-    verify { callId: String ->
-        if (callId == NOT_SET) {
-            throw Throwblem(ValidationProblemDetails(
-                    setOf(Violation(
-                            parameterName = HttpHeaders.XCorrelationId,
-                            parameterType = ParameterType.HEADER,
-                            reason = "Correlation ID må settes.",
-                            invalidValue = null
-                    ))
-            ))
-        }
-        true
-    }
+class Configuration {
+    var excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS
 }
-
-class Configuration
-class RequireCallId(
-        configure: Configuration
+class CallIdRequired(
+        private val configure: Configuration
 ) {
 
+    private val problemDetails = ValidationProblemDetails(
+            setOf(Violation(
+                    parameterName = HttpHeaders.XCorrelationId,
+                    parameterType = ParameterType.HEADER,
+                    reason = "Correlation ID må settes.",
+                    invalidValue = null
+            ))
+    )
+
+    private val status = HttpStatusCode.fromValue(problemDetails.status)
+
     private suspend fun require(context: PipelineContext<Unit, ApplicationCall>) {
-        context.context.callId ?: throw Throwblem(ValidationProblemDetails(
-                setOf(Violation(
-                        parameterName = HttpHeaders.XCorrelationId,
-                        parameterType = ParameterType.HEADER,
-                        reason = "Correlation ID må settes.",
-                        invalidValue = null
-                ))
-        ))
+        val callId = context.context.callId
+        if (callId == null && !configure.excludePaths.contains(context.context.request.path())) {
+            context.context.respond(
+                status = status,
+                message = problemDetails
+            )
+            context.finish()
+        } else {
+            context.proceed()
+        }
     }
 
     companion object Feature :
-            ApplicationFeature<ApplicationCallPipeline, Configuration, RequireCallId> {
+            ApplicationFeature<ApplicationCallPipeline, Configuration, CallIdRequired> {
 
-        override fun install(pipeline: ApplicationCallPipeline, configure: Configuration.() -> Unit): RequireCallId {
-            val result = RequireCallId(
+        override fun install(pipeline: ApplicationCallPipeline, configure: Configuration.() -> Unit): CallIdRequired {
+            val result = CallIdRequired(
                     Configuration().apply(configure)
             )
 
@@ -85,6 +69,6 @@ class RequireCallId(
             return result
         }
 
-        override val key = AttributeKey<RequireCallId>("RequireCallId")
+        override val key = AttributeKey<CallIdRequired>("CallIdRequired")
     }
 }
