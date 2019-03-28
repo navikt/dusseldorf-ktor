@@ -29,6 +29,7 @@ class ProblemsTest {
         assertEquals(problemDetails.title, "invalid-request-parameters")
         assertEquals(problemDetails.type, URI.create("/problem-details/invalid-request-parameters"))
         assertEquals(problemDetails.instance, URI.create("about:blank"))
+        assertEquals(problemDetails.detail, "Requesten inneholder ugyldige paramtere.")
 
         val invalidParameters : List<Map<String, Any?>> = problemDetails.asMap()["invalid_parameters"] as List<Map<String, Any?>>
 

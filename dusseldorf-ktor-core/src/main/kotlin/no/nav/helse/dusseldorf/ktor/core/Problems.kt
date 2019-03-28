@@ -67,13 +67,6 @@ open class DefaultProblemDetails(
         override val instance : URI = URI("about:blank")
 ) : ProblemDetails {
     override fun asMap() : Map<String, Any> {
-        try {
-
-        } catch (cause: Throwable) {
-            if (cause is Problem){
-                cause.getProblemDetails()
-            }
-        }
         return mapOf(
                 Pair("type", type.toString()),
                 Pair("title", title),
@@ -88,7 +81,8 @@ enum class ParameterType {
     QUERY,
     PATH,
     HEADER,
-    ENTITY
+    ENTITY,
+    FORM
 }
 
 data class Violation(val parameterName : String, val parameterType: ParameterType, val reason: String, val invalidValue : Any? = null)

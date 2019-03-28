@@ -54,10 +54,6 @@ class CallMonitoring (
         val verb = context.context.request.httpMethod
         val path = getPath(context.context.request)
 
-        configure.overridePaths.forEach {
-            path.matches(it.key)
-        }
-
         if (!skipInterception(path = path, httpMethod = verb)) {
             histogram.labels(configure.app, verb.value, path).startTimer().use {
                 context.proceed()

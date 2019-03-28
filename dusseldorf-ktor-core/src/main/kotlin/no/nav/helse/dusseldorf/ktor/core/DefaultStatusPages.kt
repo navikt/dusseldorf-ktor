@@ -11,11 +11,12 @@ private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.kt
 
 
 private val UNHANDLED_HTTP_STATUS_CODE = HttpStatusCode.InternalServerError
-private val UNHANDLED_PROBLEM_DETAILS = DefaultProblemDetails(
+private val UNHANDLED_PROBLEM_MESSAGE = DefaultProblemDetails(
         title = "unhandled-error",
         status = UNHANDLED_HTTP_STATUS_CODE.value,
         detail = "En uhåndtert feil har oppstått."
-)
+).asMap()
+
 fun StatusPages.Configuration.DefaultStatusPages() {
 
     exception<Throwblem> { cause ->
@@ -37,7 +38,7 @@ fun StatusPages.Configuration.DefaultStatusPages() {
             logger.error("Uhåndtert feil", cause)
             call.respond(
                     status = UNHANDLED_HTTP_STATUS_CODE,
-                    message = UNHANDLED_PROBLEM_DETAILS.asMap()
+                    message = UNHANDLED_PROBLEM_MESSAGE
             )
         }
     }
