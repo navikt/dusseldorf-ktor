@@ -49,7 +49,7 @@
             <url>https://dl.bintray.com/kotlin/ktor</url>
         </repository>
     </repositories>
-M
+
     <dependencyManagement>
         <dependencies>
             <dependency>
