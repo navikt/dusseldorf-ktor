@@ -10,6 +10,10 @@ import no.nav.helse.dusseldorf.ktor.core.DefaultProblemDetails
 import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.ValidationProblemDetails
 import no.nav.helse.dusseldorf.ktor.core.Violation
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages")
 
 fun StatusPages.Configuration.JacksonStatusPages() {
 
@@ -28,10 +32,13 @@ fun StatusPages.Configuration.JacksonStatusPages() {
         }
 
         val problemDetails = ValidationProblemDetails(violations)
+        val message = problemDetails.asMap()
+
+        logger.debug("$message", cause)
 
         call.respond(
                 status = HttpStatusCode.fromValue(problemDetails.status),
-                message = problemDetails
+                message = message
         )
     }
 
@@ -42,10 +49,13 @@ fun StatusPages.Configuration.JacksonStatusPages() {
                 status = 400,
                 detail = "Request entityen inneholder ugyldig JSON."
         )
+        val message = problemDetails.asMap()
+
+        logger.debug("$message", cause)
 
         call.respond(
                 status = HttpStatusCode.fromValue(problemDetails.status),
-                message = problemDetails
+                message = message
         )
     }
 }
