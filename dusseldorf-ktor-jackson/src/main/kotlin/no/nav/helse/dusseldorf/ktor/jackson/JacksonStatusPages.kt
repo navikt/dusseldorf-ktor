@@ -4,12 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonMappingException
 import io.ktor.application.call
 import io.ktor.features.StatusPages
-import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
-import no.nav.helse.dusseldorf.ktor.core.DefaultProblemDetails
-import no.nav.helse.dusseldorf.ktor.core.ParameterType
-import no.nav.helse.dusseldorf.ktor.core.ValidationProblemDetails
-import no.nav.helse.dusseldorf.ktor.core.Violation
+import no.nav.helse.dusseldorf.ktor.core.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -36,10 +31,7 @@ fun StatusPages.Configuration.JacksonStatusPages() {
 
         logger.debug("$message", cause)
 
-        call.respond(
-                status = HttpStatusCode.fromValue(problemDetails.status),
-                message = message
-        )
+        call.respondProblemDetails(problemDetails)
     }
 
     exception<JsonProcessingException> { cause ->
@@ -53,9 +45,6 @@ fun StatusPages.Configuration.JacksonStatusPages() {
 
         logger.debug("$message", cause)
 
-        call.respond(
-                status = HttpStatusCode.fromValue(problemDetails.status),
-                message = message
-        )
+        call.respondProblemDetails(problemDetails)
     }
 }

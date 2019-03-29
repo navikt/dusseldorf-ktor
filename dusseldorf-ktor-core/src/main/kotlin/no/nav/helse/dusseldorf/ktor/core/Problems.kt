@@ -1,5 +1,9 @@
 package no.nav.helse.dusseldorf.ktor.core
 
+import io.ktor.application.ApplicationCall
+import io.ktor.http.HttpStatusCode
+import io.ktor.request.ApplicationRequest
+import io.ktor.response.respond
 import java.net.URI
 
 /*
@@ -59,6 +63,13 @@ interface ProblemDetails {
     fun asMap() : Map<String, Any>
 }
 
+suspend fun ApplicationCall.respondProblemDetails(problemDetails: ProblemDetails) {
+    respond(
+            status = HttpStatusCode.fromValue(problemDetails.status),
+            message = problemDetails.asMap()
+    )
+}
+
 open class DefaultProblemDetails(
         override val title : String,
         override val type : URI = URI("/problem-details/$title"),
@@ -110,3 +121,4 @@ data class ValidationProblemDetails(
         }.toMap()
     }
 }
+
