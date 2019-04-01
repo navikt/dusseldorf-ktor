@@ -2,7 +2,6 @@ package no.nav.helse.dusseldorf.ktor.core
 
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.ApplicationRequest
 import io.ktor.response.respond
 import java.net.URI
 

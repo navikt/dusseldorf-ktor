@@ -6,8 +6,6 @@ import io.ktor.application.ApplicationFeature
 import io.ktor.features.CallId
 import io.ktor.features.callId
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
 import java.util.*
@@ -34,9 +32,6 @@ class CallIdRequired(private val configure: Configuration) {
             ))
     )
 
-    private val status = HttpStatusCode.fromValue(problemDetails.status)
-    private val message = problemDetails.asMap()
-
     fun interceptPipeline(pipeline: ApplicationCallPipeline) {
         pipeline.intercept(ApplicationCallPipeline.Monitoring) {
             require(this)
@@ -46,10 +41,7 @@ class CallIdRequired(private val configure: Configuration) {
     private suspend fun require(context: PipelineContext<Unit, ApplicationCall>) {
         val callId = context.context.callId
         if (callId == null) {
-            context.context.respond(
-                status = status,
-                message = message
-            )
+            context.context.respondProblemDetails(problemDetails)
             context.finish()
         } else {
             context.proceed()
