@@ -14,7 +14,10 @@ fun String.fromResources() : URL = Thread.currentThread().contextClassLoader.get
 fun String.erKunSiffer() = matches(KUN_SIFFER)
 
 private fun String.starterMedFodselsdato() : Boolean {
-    // Sjekker ikke hvilket århundre vi skal tolket yy som
+    // Sjekker ikke hvilket århundre vi skal tolket yy som, kun at det er en gyldig dato.
+    // F.eks blir 290990 parset til 2090-09-29, selv om 1990-09-29 var ønskelig.
+    // Kunne sett på individsifre (Tre første av personnummer) for å tolke århundre,
+    // men virker unødvendig komplekst og sårbart for ev. endringer i fødselsnummeret.
     return try {
         fnrDateFormat.parse(substring(0,6))
         true
