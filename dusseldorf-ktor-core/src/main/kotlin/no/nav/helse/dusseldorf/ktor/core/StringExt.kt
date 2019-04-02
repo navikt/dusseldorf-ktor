@@ -5,8 +5,8 @@ import java.time.format.DateTimeFormatter
 
 private val KUN_SIFFER = Regex("\\d+")
 
-private val vekttallProviderFnr1 : (Int) -> Int = { arrayOf(3, 7, 6, 1, 8, 9, 4, 5, 2).reversedArray()[it] }
-private val vekttallProviderFnr2 : (Int) -> Int = { arrayOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2).reversedArray()[it] }
+internal val vekttallProviderFnr1 : (Int) -> Int = { arrayOf(3, 7, 6, 1, 8, 9, 4, 5, 2).reversedArray()[it] }
+internal val vekttallProviderFnr2 : (Int) -> Int = { arrayOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2).reversedArray()[it] }
 private val fnrDateFormat = DateTimeFormatter.ofPattern("ddMMyy")
 
 fun String.fromResources() : URL = Thread.currentThread().contextClassLoader.getResource(this)
@@ -58,7 +58,7 @@ fun String.erGyldigOrganisasjonsnummer() : Boolean {
  * https://github.com/navikt/helse-sparkel/blob/2e79217ae00632efdd0d4e68655ada3d7938c4b6/src/main/kotlin/no/nav/helse/ws/organisasjon/Mod11.kt
  * https://www.miles.no/blogg/tema/teknisk/validering-av-norske-data
  */
-private object Mod11 {
+internal object Mod11 {
     private val defaultVekttallProvider: (Int) -> Int = { 2 + it % 6 }
 
     internal fun kontrollsiffer(
