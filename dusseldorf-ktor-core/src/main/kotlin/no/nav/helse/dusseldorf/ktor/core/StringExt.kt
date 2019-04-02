@@ -1,46 +1,54 @@
 package no.nav.helse.dusseldorf.ktor.core
 
 import java.net.URL
+import java.time.format.DateTimeFormatter
 
 private val KUN_SIFFER = Regex("\\d+")
 
-private val vekttallProviderFnr1 : (Int) -> Int = { arrayOf(3, 7, 6, 1, 8, 9, 4, 5, 2)[it] }
-private val vekttallProviderFnr2 : (Int) -> Int = { arrayOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2)[it] }
+private val vekttallProviderFnr1 : (Int) -> Int = { arrayOf(3, 7, 6, 1, 8, 9, 4, 5, 2).reversedArray()[it] }
+private val vekttallProviderFnr2 : (Int) -> Int = { arrayOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2).reversedArray()[it] }
+private val fnrDateFormat = DateTimeFormatter.ofPattern("ddMMyy")
 
 fun String.fromResources() : URL = Thread.currentThread().contextClassLoader.getResource(this)
 
 fun String.erKunSiffer() = matches(KUN_SIFFER)
 
+private fun String.starterMedFodselsdato() : Boolean {
+    // Sjekker ikke hvilket århundre vi skal tolket yy som
+    return try {
+        fnrDateFormat.parse(substring(0,6))
+        true
+    } catch (cause: Throwable) { false }
+}
+
 fun String.erGyldigFodselsnummer() : Boolean {
-    if (length != 11 || !erKunSiffer()) return false
+    if (length != 11 || !erKunSiffer() || !starterMedFodselsdato()) return false
 
     val forventetKontrollsifferEn = get(9)
 
-    val kalkuleterKontrollSifferEn = Mod11.kontrollsiffer(
+    val kalkulertKontrollsifferEn = Mod11.kontrollsiffer(
             number = substring(0, 9),
-            vekttallProvider = vekttallProviderFnr1,
-            reverse = false
+            vekttallProvider = vekttallProviderFnr1
     )
 
-    if (kalkuleterKontrollSifferEn != forventetKontrollsifferEn) return false
+    if (kalkulertKontrollsifferEn != forventetKontrollsifferEn) return false
 
     val forventetKontrollsifferTo = get(10)
 
-    val kalkuleterKontrollSifferTo = Mod11.kontrollsiffer(
+    val kalkulertKontrollsifferTo = Mod11.kontrollsiffer(
             number = substring(0, 10),
-            vekttallProvider = vekttallProviderFnr2,
-            reverse = false
+            vekttallProvider = vekttallProviderFnr2
     )
 
-    return kalkuleterKontrollSifferTo == forventetKontrollsifferTo
+    return kalkulertKontrollsifferTo == forventetKontrollsifferTo
 }
 
 fun String.erGyldigOrganisasjonsnummer() : Boolean {
     if (length != 9 || !erKunSiffer()) return false
 
-    val kontrollSiffer = get(8)
+    val kontrollsiffer = get(8)
 
-    return Mod11.kontrollsiffer(substring(0,8)) == kontrollSiffer
+    return Mod11.kontrollsiffer(substring(0,8)) == kontrollsiffer
 }
 
 /**
@@ -52,11 +60,9 @@ private object Mod11 {
 
     internal fun kontrollsiffer(
             number: String,
-            vekttallProvider : (Int) -> Int = defaultVekttallProvider,
-            reverse : Boolean = true
+            vekttallProvider : (Int) -> Int = defaultVekttallProvider
     ) : Char {
-        val usedNumber = if (reverse) number.reversed() else number
-        return usedNumber.mapIndexed { i, char ->
+        return number.reversed().mapIndexed { i, char ->
             Character.getNumericValue(char) * vekttallProvider(i)
         }.sum().let(::kontrollsifferFraSum)
     }
