@@ -54,12 +54,14 @@ class MonitoredHttpClient (
         }
         if (expectedHttpResponseCodes.isNotEmpty() && !expectedHttpResponseCodes.contains(response.status)) {
             counter.labels(source, destination, verb, path, "unexpected_http_response_code").inc()
+            response.use { }
             throw SentHttpRequestException(
                     status =  "unexpected_http_response_code",
                     httpMethod = httpRequestBuilder.method,
                     url = httpRequestBuilder.url.clone().build(),
                     destination = destination,
-                    path = path
+                    path = path,
+                    httpStatusCode = response.status
             )
         }
         return response
@@ -115,7 +117,8 @@ class SentHttpRequestException(
         url : Url,
         destination: String,
         path : String,
+        httpStatusCode: HttpStatusCode? = null,
         throwable: Throwable? = null
 ) : RuntimeException (
-        "status='$status', httpMethod='$httpMethod', url='$url', destination='$destination', path='$path'", throwable
+        "status='$status', httpMethod='$httpMethod', url='$url', destination='$destination', path='$path', httpStatusCode='$httpStatusCode'", throwable
 )
