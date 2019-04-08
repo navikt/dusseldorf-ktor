@@ -33,6 +33,7 @@ class Retry {
                 delay(currentDelayInMillis)
                 currentDelayInMillis = (currentDelayInMillis * factor).toLong().coerceAtMost(maxDelay.toMillis())
             }
+            // Eventuelt siste forsøk
             logger.startForsok(operation = operation, currentTry = tries, tries = tries)
             val result=  block()
             logger.gikkOk(operation = operation, currentTry = tries, tries = tries)
