@@ -7,9 +7,9 @@ interface AccessTokenClient {
 
 // https://tools.ietf.org/html/rfc6749#section-4.4.3 - A refresh token SHOULD NOT be included
 data class AccessTokenResponse(
-        val accessToken : String,
+        private val accessToken : String,
         val expiresIn: Long,
-        val tokenType: String
+        private val tokenType: String
 ) {
     fun getAuthorizationHeader() = "$tokenType $accessToken"
 }
