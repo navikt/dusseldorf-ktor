@@ -11,33 +11,31 @@ import org.apache.commons.codec.binary.Hex
 import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
 import java.net.URL
+import java.security.KeyFactory
 import java.time.*
 import java.util.*
+import java.security.cert.CertificateFactory
+import java.security.MessageDigest
+import java.security.interfaces.RSAPrivateKey
+import java.security.spec.PKCS8EncodedKeySpec
 
 private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.oauth2.client.ClientAuthenticationPrivateKeyJwt")
 private val onBehalfOfParameters = mapOf("requested_token_use" to listOf("on_behalf_of"))
 
 class SignedJwtAccessTokenClient(
         private val clientId: String,
-        clientPrivateKeyJwk: String,
-        certificateKid: String,
-        certificateKidTransformer: (String) -> String = {
-            Base64.getUrlEncoder().encodeToString(Hex.decodeHex(it.toCharArray()))
-        },
+        privateKeyProvider: PrivateKeyProvider,
+        keyIdProvider: KeyIdProvider,
         private val tokenUrl: URL
 ) : AccessTokenClient {
     private val jwsSigner: JWSSigner
     private val algorithm : JWSAlgorithm = JWSAlgorithm.RS256
-    private val privateKey : RSAKey = RSAKey.parse(clientPrivateKeyJwk)
-    private val transformedKid : String
     private val jwsHeader : JWSHeader
 
     init {
-        if (!privateKey.isPrivate) throw IllegalArgumentException("JWK er ikke en private key.")
-        jwsSigner = RSASSASigner(privateKey)
-        transformedKid = certificateKidTransformer(certificateKid)
+        jwsSigner = RSASSASigner(privateKeyProvider.getPrivateKey())
         jwsHeader = JWSHeader.Builder(algorithm)
-                .keyID(transformedKid)
+                .keyID(keyIdProvider.getKeyId())
                 .type(JOSEObjectType.JWT)
                 .build()
     }
@@ -122,5 +120,51 @@ class SignedJwtAccessTokenClient(
     private fun getExpirationTime() : Date {
         val exp = LocalDateTime.now(Clock.systemUTC()).plusSeconds(10)
         return Date.from(exp.toInstant(ZoneOffset.UTC))
+    }
+}
+
+interface KeyIdProvider{
+    fun getKeyId() : String
+}
+class DirectKeyId(private val keyId: String) : KeyIdProvider {
+    override fun getKeyId(): String = keyId
+}
+class FromCertificateHexThumbprint(private val hexThumbprint: String) : KeyIdProvider {
+    override fun getKeyId(): String  = Base64.getUrlEncoder().encodeToString(Hex.decodeHex(hexThumbprint.toCharArray()))
+}
+class FromCertificatePem(private val pem: String) : KeyIdProvider {
+    override fun getKeyId(): String {
+        val certificateFactory = CertificateFactory.getInstance("X.509")
+        val certificate = pem.byteInputStream().use {
+            certificateFactory.generateCertificate(it)
+        }
+        val messageDigest = MessageDigest.getInstance("SHA-1")
+        messageDigest.update(certificate.encoded)
+        return Base64.getUrlEncoder().encodeToString(messageDigest.digest())
+    }
+
+}
+
+interface PrivateKeyProvider {
+    fun getPrivateKey() : RSAPrivateKey
+}
+class DirectPrivateKey(private val privateKey: RSAPrivateKey) : PrivateKeyProvider {
+    override fun getPrivateKey(): RSAPrivateKey = privateKey
+}
+class FromJwk(private val jwk: String) : PrivateKeyProvider {
+    override fun getPrivateKey(): RSAPrivateKey {
+        return RSAKey.parse(jwk).toRSAPrivateKey()
+    }
+}
+class FromPrivateKeyPem(private val pem: String) : PrivateKeyProvider {
+    override fun getPrivateKey(): RSAPrivateKey {
+        val trimmedPem = pem
+                .replace("\n", "")
+                .replace("-----BEGIN RSA PRIVATE KEY-----", "")
+                .replace("-----END RSA PRIVATE KEY-----", "")
+        val encoded = Base64.getDecoder().decode(trimmedPem)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val keySpec = PKCS8EncodedKeySpec(encoded)
+        return keyFactory.generatePrivate(keySpec) as RSAPrivateKey
     }
 }
