@@ -18,6 +18,7 @@
         <module>dusseldorf-ktor-client</module>
         <module>dusseldorf-ktor-jackson</module>
         <module>dusseldorf-ktor-health</module>
+        <module>dusseldorf-ktor-oauth2-client</module>
     </modules>
 
     <properties>
