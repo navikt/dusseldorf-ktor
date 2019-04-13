@@ -21,12 +21,12 @@ class CachedAccessTokenClientTest {
 
         val cachedClient = CachedAccessTokenClient(client)
 
-        val authorizationHeader1 = cachedClient.getAuthorizationHeader(scopes)
-        val authorizationHeader2 = cachedClient.getAuthorizationHeader(scopes)
+        val accessToken1 = cachedClient.getAccessToken(scopes)
+        val accessToken2 = cachedClient.getAccessToken(scopes)
 
-        assertEquals(authorizationHeader1, authorizationHeader2)
+        assertEquals(accessToken1, accessToken2)
 
-        val jwt = SignedJWT.parse(authorizationHeader1.split( " ")[1])
+        val jwt = SignedJWT.parse(accessToken1.token)
         println(jwt.parsedString)
         println(jwt.header.toJSONObject())
         println(jwt.jwtClaimsSet.toJSONObject())

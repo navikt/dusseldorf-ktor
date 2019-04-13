@@ -20,7 +20,7 @@ class SignedJwtAccessTokenClientTest {
                 scopes = setOf("5a5878bf-7654-490d-bbdd-6eb66caac4a3/.default")
         )
 
-        println(resp.getAuthorizationHeader())
+        println(resp)
     }
 
 }

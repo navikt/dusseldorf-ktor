@@ -5,7 +5,6 @@ import com.github.benmanes.caffeine.cache.Expiry
 import com.github.benmanes.caffeine.cache.Caffeine
 import java.time.Duration
 
-
 class CachedAccessTokenClient(
         private val accessTokenClient: AccessTokenClient,
         expiryLeeway : Duration = Duration.ofSeconds(10),
@@ -23,19 +22,27 @@ class CachedAccessTokenClient(
             .maximumSize(maxCachedOnBehalfOfAccessTokens)
             .build()
 
-    fun getAuthorizationHeader(
+    fun getAccessToken(
             scopes: Set<String>,
-            onBehalfOf: String): String {
-        return onBehalfOfTokens.get(Key(scopes, onBehalfOf)) {
+            onBehalfOf: String): AccessToken {
+        val response = onBehalfOfTokens.get(Key(scopes, onBehalfOf)) {
             accessTokenClient.getAccessToken(scopes, onBehalfOf)
-        }!!.getAuthorizationHeader()
+        }
+        return AccessToken(token = response!!.accessToken, type = response.tokenType)
     }
-    fun getAuthorizationHeader(
-            scopes: Set<String>): String {
-        return clientAccessTokens.get(Key(scopes)) {
+    fun getAccessToken(
+            scopes: Set<String>): AccessToken {
+        val response = clientAccessTokens.get(Key(scopes)) {
             accessTokenClient.getAccessToken(scopes)
-        }!!.getAuthorizationHeader()
+        }
+        return AccessToken(token = response!!.accessToken, type = response.tokenType)
     }
+}
+data class AccessToken(
+        val token : String,
+        private val type: String
+) {
+    fun asAuthoriationHeader() : String = "$type $token"
 }
 
 private data class Key(
