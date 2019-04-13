@@ -2,6 +2,9 @@ package no.nav.dusseldorf.ktor.oauth2.client
 
 class TestData {
     companion object {
+        const val CERTIFICATE_THUMBPRINT_SHA1_HEX = "C49D374041458D12109E1ED9A4879C23D28EC7FD"
+        const val CERTIFICATE_THUMBPRINT_SHA1_HEX_BASE64 = "xJ03QEFFjRIQnh7ZpIecI9KOx_0="
+
         val CERTIFICATE_PEM = """
         -----BEGIN CERTIFICATE-----
         MIICnjCCAYYCCQCNjhI4E/LY7DANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZu
