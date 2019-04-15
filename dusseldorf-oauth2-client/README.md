@@ -6,7 +6,7 @@
 
 ```bash
 cd scripts
-./genereate_client_certificate ${client_name}
+./genereate-client-certificate ${client_name}
 ```
 
 Opprettes to filer som brukes til å registrere og bruke clienten.
