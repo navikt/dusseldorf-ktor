@@ -23,3 +23,15 @@ class UnHealthy(private val result : Map<String, Any?> ) : Result {
 interface HealthCheck {
     suspend fun check() : Result
 }
+
+class TryCatchHealthCheck(private val name: String,
+                          private val block: () -> Any) : HealthCheck {
+    override suspend fun check(): Result {
+        return try {
+            block.invoke()
+            Healthy(name = name, result = "Healthy!")
+        } catch (cause: Throwable) {
+            UnHealthy(name = name, result = if (cause.message == null) "Unhealthy!" else cause.message!!)
+        }
+    }
+}

@@ -151,7 +151,6 @@ class FromCertificatePem(private val pem: String) : KeyIdProvider {
         messageDigest.update(certificate.encoded)
         return Base64.getUrlEncoder().encodeToString(messageDigest.digest())
     }
-
 }
 
 interface PrivateKeyProvider {
