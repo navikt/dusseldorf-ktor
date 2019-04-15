@@ -5,7 +5,6 @@ import kotlin.test.Test
 import java.security.Security
 import kotlin.test.assertEquals
 
-
 class PrivateKeyProviderTest {
 
     @Test

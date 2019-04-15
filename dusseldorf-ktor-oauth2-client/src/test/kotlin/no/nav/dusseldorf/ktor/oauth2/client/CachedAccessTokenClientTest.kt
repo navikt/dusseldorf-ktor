@@ -1,34 +1,43 @@
 package no.nav.dusseldorf.ktor.oauth2.client
 
-import com.nimbusds.jwt.SignedJWT
-import java.net.URL
-import kotlin.test.Ignore
+import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CachedAccessTokenClientTest {
+
     @Test
-    @Ignore
-    fun `Får samme authorization header om det hentes ut rett etter hverandre med samme scopes`() {
-        val client = SignedJwtAccessTokenClient(
-                clientId = "4bd971d8-2469-434f-9322-8cfe7a7a3379",
-                keyIdProvider = FromCertificateHexThumbprint(TestData.CERTIFICATE_THUMBPRINT_SHA1_HEX),
-                tokenUrl = URL("https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token"),
-                privateKeyProvider = FromJwk(TestData.PRIVATE_KEY_JWK)
+    fun `Test at cache fungerer som forventet`() {
+        val mock = Oauth2ServerWireMock()
+        val tokenUrl = mock.getTokenUrl()
+        val clientId = "test-client"
+        val clientSecret = "test-secret"
+        val scopes = setOf("test-scope")
+        val leewayInSeconds: Long = 10
+
+        val client = ClientSecretAccessTokenClient(
+                clientId = clientId,
+                clientSecret = clientSecret,
+                tokenUrl = tokenUrl
         )
 
-        val scopes = setOf("5a5878bf-7654-490d-bbdd-6eb66caac4a3/.default")
+        // Lager en client som forkaster token 10 sekunder før de utløper
+        val cachedClient = CachedAccessTokenClient(accessTokenClient = client, expiryLeeway = Duration.ofSeconds(leewayInSeconds))
 
-        val cachedClient = CachedAccessTokenClient(client)
+        // Mocker en response med token som varer i 11 sekunder
+        mock.stubGetTokenClientSecretClientCredentials(clientId, clientSecret, expiresIn = leewayInSeconds + 1, accessToken = "Token1")
 
-        val accessToken1 = cachedClient.getAccessToken(scopes)
-        val accessToken2 = cachedClient.getAccessToken(scopes)
+        // Henter første token
+        assertEquals("Token1", cachedClient.getAccessToken(scopes).token)
 
-        assertEquals(accessToken1, accessToken2)
+        // Venter slikat tokene fortsatt bør være cached
+        Thread.sleep(500)
+        assertEquals(cachedClient.getAccessToken(scopes).token, "Token1")
 
-        val jwt = SignedJWT.parse(accessToken1.token)
-        println(jwt.parsedString)
-        println(jwt.header.toJSONObject())
-        println(jwt.jwtClaimsSet.toJSONObject())
+        // Venter slik at tokenet bør være bort fra cache
+        Thread.sleep(700)
+        // Mocker ny response med nytt token
+        mock.stubGetTokenClientSecretClientCredentials(clientId, clientSecret, expiresIn = leewayInSeconds + 1, accessToken = "Token2")
+        assertEquals("Token2",cachedClient.getAccessToken(scopes).token)
     }
 }

@@ -8,7 +8,6 @@ import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.oauth2.sdk.*
 import com.nimbusds.oauth2.sdk.auth.PrivateKeyJWT
 import org.slf4j.LoggerFactory
-import java.lang.IllegalStateException
 import java.net.URL
 import java.security.KeyFactory
 import java.time.*
@@ -19,14 +18,13 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.spec.PKCS8EncodedKeySpec
 
 private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.oauth2.client.ClientAuthenticationPrivateKeyJwt")
-private val onBehalfOfParameters = mapOf("requested_token_use" to listOf("on_behalf_of"))
 
 class SignedJwtAccessTokenClient(
         private val clientId: String,
         privateKeyProvider: PrivateKeyProvider,
         keyIdProvider: KeyIdProvider,
         private val tokenUrl: URL
-) : AccessTokenClient {
+) : AccessTokenClient, NimbusAccessTokenClient() {
     private val jwsSigner: JWSSigner
     private val algorithm : JWSAlgorithm = JWSAlgorithm.RS256
     private val jwsHeader : JWSHeader
@@ -39,59 +37,34 @@ class SignedJwtAccessTokenClient(
                 .build()
     }
 
+
     override fun getAccessToken(scopes: Set<String>) : AccessTokenResponse {
-        return getAccessToken(getClientCredentialsTokenRequest(getScope(scopes)))
+        return getAccessToken(getClientCredentialsTokenRequest(scopes))
     }
 
     override fun getAccessToken(scopes: Set<String>, onBehalfOf: String) : AccessTokenResponse {
-        return getAccessToken(getOnBehalfOfTokenRequest(onBehalfOf, getScope(scopes)))
-    }
-
-    private fun getScope(scopes: Set<String>) = if (scopes.isEmpty()) null else Scope.parse(scopes)
-
-    private fun getAccessToken(
-            tokenRequest: TokenRequest
-    ) : AccessTokenResponse {
-        val httpRequest = tokenRequest.toHTTPRequest()
-
-        logger.trace("Requester URL='${httpRequest.url}?${httpRequest.query}'")
-
-        val response = TokenResponse.parse(httpRequest.send())
-
-        if (response.indicatesSuccess()) {
-            val successResponse = response.toSuccessResponse()
-            logger.trace("Mottok nytt access token = '$successResponse'")
-            return AccessTokenResponse(
-                    accessToken = successResponse.tokens.accessToken.value,
-                    expiresIn = successResponse.tokens.accessToken.lifetime,
-                    tokenType = successResponse.tokens.accessToken.type.value
-            )
-        }
-        else {
-            val errorResponse = response.toErrorResponse().toJSONObject()
-            throw IllegalStateException("Feil ved henting av access token = '$errorResponse'")
-        }
+        return getAccessToken(getOnBehalfOfTokenRequest(onBehalfOf, scopes))
     }
 
     // https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow#second-case-access-token-request-with-a-certificate
     private fun getClientCredentialsTokenRequest(
-            scope: Scope?
+            scopes: Set<String>
     ) : TokenRequest = TokenRequest(
             tokenUrl.toURI(),
             PrivateKeyJWT(getSignedJwt()),
             ClientCredentialsGrant(),
-            scope
+            getScope(scopes)
     )
 
     // https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#second-case-access-token-request-with-a-certificate
     private fun getOnBehalfOfTokenRequest(
             onBehalfOf: String,
-            scope: Scope?
+            scopes: Set<String>
     ) : TokenRequest = TokenRequest(
             tokenUrl.toURI(),
             PrivateKeyJWT(getSignedJwt()),
             JWTBearerGrant(SignedJWT.parse(onBehalfOf)),
-            scope,
+            getScope(scopes),
             null,
             onBehalfOfParameters
     )
