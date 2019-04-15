@@ -54,7 +54,11 @@ private class AccessTokenExpiry(
         private val expiryLeeway: Duration
 ) : Expiry<Key, AccessTokenResponse> {
 
-    private fun getExpiryInNanos(response: AccessTokenResponse) : Long = Duration.ofSeconds(response.expiresIn).minusSeconds(expiryLeeway.toSeconds()).toNanos()
+    private fun getExpiryInNanos(response: AccessTokenResponse) : Long {
+        return if (response.expiresIn <= expiryLeeway.toSeconds()) response.expiresIn else {
+            Duration.ofSeconds(response.expiresIn).minusSeconds(expiryLeeway.toSeconds()).toNanos()
+        }
+    }
     override fun expireAfterUpdate(key: Key, response: AccessTokenResponse, currentTime: Long, currentDuration: Long): Long = getExpiryInNanos(response)
     override fun expireAfterCreate(key: Key, response: AccessTokenResponse, currentTime: Long): Long = getExpiryInNanos(response)
     override fun expireAfterRead(key: Key, response: AccessTokenResponse, currentTime: Long, currentDuration: Long): Long = currentDuration
