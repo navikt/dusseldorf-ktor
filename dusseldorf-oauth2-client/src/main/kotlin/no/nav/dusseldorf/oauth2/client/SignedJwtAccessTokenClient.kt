@@ -1,4 +1,4 @@
-package no.nav.dusseldorf.ktor.oauth2.client
+package no.nav.dusseldorf.oauth2.client
 
 import com.nimbusds.jose.*
 import com.nimbusds.jose.crypto.RSASSASigner
@@ -17,7 +17,7 @@ import java.security.MessageDigest
 import java.security.interfaces.RSAPrivateKey
 import java.security.spec.PKCS8EncodedKeySpec
 
-private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.oauth2.client.ClientAuthenticationPrivateKeyJwt")
+private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.oauth2.client.ClientAuthenticationPrivateKeyJwt")
 
 class SignedJwtAccessTokenClient(
         private val clientId: String,

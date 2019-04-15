@@ -1,4 +1,4 @@
-package no.nav.dusseldorf.ktor.oauth2.client
+package no.nav.dusseldorf.oauth2.client
 
 import com.nimbusds.oauth2.sdk.Scope
 import com.nimbusds.oauth2.sdk.TokenRequest
@@ -6,7 +6,7 @@ import com.nimbusds.oauth2.sdk.TokenResponse
 import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
 
-private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.oauth2.client.NimbusAccessTokenClient")
+private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.oauth2.client.NimbusAccessTokenClient")
 internal val onBehalfOfParameters = mapOf("requested_token_use" to listOf("on_behalf_of"))
 
 

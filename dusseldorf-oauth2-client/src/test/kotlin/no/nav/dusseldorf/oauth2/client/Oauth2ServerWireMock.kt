@@ -1,4 +1,4 @@
-package no.nav.dusseldorf.ktor.oauth2.client
+package no.nav.dusseldorf.oauth2.client
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock

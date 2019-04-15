@@ -1,4 +1,4 @@
-package no.nav.dusseldorf.ktor.oauth2.client
+package no.nav.dusseldorf.oauth2.client
 
 interface AccessTokenClient {
     fun getAccessToken(scopes: Set<String>, onBehalfOf: String) : AccessTokenResponse

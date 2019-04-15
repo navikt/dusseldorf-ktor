@@ -18,7 +18,7 @@
         <module>dusseldorf-ktor-client</module>
         <module>dusseldorf-ktor-jackson</module>
         <module>dusseldorf-ktor-health</module>
-        <module>dusseldorf-ktor-oauth2-client</module>
+        <module>dusseldorf-oauth2-client</module>
     </modules>
 
     <properties>
@@ -31,6 +31,9 @@
         <logstash.logback.version>5.3</logstash.logback.version>
         <prometheus.version>0.6.0</prometheus.version>
         <jackson.version>2.9.8</jackson.version>
+
+        <!-- Internt -->
+        <slf4j.version>1.7.25</slf4j.version>
     </properties>
 
     <repositories>
@@ -53,6 +56,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>

@@ -18,6 +18,11 @@ Status pages og dependencies for jackson
 ### dusseldorf-ktor-health
 Helsesjekker og tilgjengeliggjøre helsjesjekk end point
 
+### dusseldorf-oauth2-client
+Client for å hente Oauth2 Access Tokens.
+Ikke KTOR-spesifikk.
+Se egen README.md i denne modulen.
+
 ## Fødselsnummer
 I Testklassen `StringExtTest` finnes funksjonen `genererFodselsnummer` for å generere matematisk korrekte fødselsnummer for bruk i enhetstester hvor det er nødvendig.
 For å minimere sjansen for å bruke aktive fødselsnummer genereres det fødselsnummer med individsifre som er reservert for perioden 1854–1899 (500-749)*, samt fødselsdato innenfor samme periode.
