@@ -18,6 +18,9 @@ Status pages og dependencies for jackson
 ### dusseldorf-ktor-health
 Helsesjekker og tilgjengeliggjøre helsjesjekk end point
 
+### dusselforf-ktor-auth
+Verifisere innhold av claims i token
+
 ### dusseldorf-oauth2-client
 Client for å hente Oauth2 Access Tokens.
 Ikke KTOR-spesifikk.
