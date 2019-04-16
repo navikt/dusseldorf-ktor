@@ -12,7 +12,9 @@ class SignedJwtAccessTokenClientTest {
     fun `Manuelt teste mot Azure Preprod`() {
         val clientId = "set-me"
         val certificateThumbprint = "set-me"
-        val privateKeyJwk = "set-me"
+        val privateKeyJwk = """
+            set-me
+        """.trimIndent()
         val scopes = setOf<String>()
 
         val client = SignedJwtAccessTokenClient(
