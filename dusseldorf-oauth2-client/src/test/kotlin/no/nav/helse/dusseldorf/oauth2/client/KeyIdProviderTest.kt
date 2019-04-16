@@ -1,4 +1,4 @@
-package no.nav.dusseldorf.oauth2.client
+package no.nav.helse.dusseldorf.oauth2.client
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

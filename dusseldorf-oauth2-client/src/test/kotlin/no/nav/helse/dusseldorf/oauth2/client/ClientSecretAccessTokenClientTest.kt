@@ -1,27 +1,23 @@
-package no.nav.dusseldorf.oauth2.client
+package no.nav.helse.dusseldorf.oauth2.client
 
 import com.nimbusds.jwt.SignedJWT
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
-class SignedJwtAccessTokenClientTest {
+class ClientSecretAccessTokenClientTest {
 
     @Test
     @Ignore
     fun `Manuelt teste mot Azure Preprod`() {
         val clientId = "set-me"
-        val certificateThumbprint = "set-me"
-        val privateKeyJwk = """
-            set-me
-        """.trimIndent()
+        val clientSecret = "set-me"
         val scopes = setOf<String>()
 
-        val client = SignedJwtAccessTokenClient(
+        val client = ClientSecretAccessTokenClient(
                 clientId = clientId,
-                keyIdProvider = FromCertificateHexThumbprint(certificateThumbprint),
-                tokenUrl = TestData.AZURE_PREPROD_TOKEN_URL,
-                privateKeyProvider = FromJwk(privateKeyJwk)
+                clientSecret = clientSecret,
+                tokenUrl = TestData.AZURE_PREPROD_TOKEN_URL
         )
 
         val accessToken = client.getAccessToken(scopes)
@@ -37,14 +33,14 @@ class SignedJwtAccessTokenClientTest {
         val mock = Oauth2ServerWireMock()
         val tokenUrl = mock.getTokenUrl()
         val clientId = "test-client-id"
+        val clientSecret = "client-secret"
 
-        mock.stubGetTokenSignedJwtClientCredentials()
+        mock.stubGetTokenClientSecretClientCredentials(clientId, clientSecret)
 
-        val client = SignedJwtAccessTokenClient(
+        val client = ClientSecretAccessTokenClient(
                 clientId = clientId,
-                keyIdProvider = FromCertificateHexThumbprint(TestData.CERTIFICATE_THUMBPRINT_SHA1_HEX),
-                tokenUrl = tokenUrl,
-                privateKeyProvider = FromJwk(TestData.PRIVATE_KEY_JWK)
+                clientSecret = clientSecret,
+                tokenUrl = tokenUrl
         )
 
         val resp = client.getAccessToken(

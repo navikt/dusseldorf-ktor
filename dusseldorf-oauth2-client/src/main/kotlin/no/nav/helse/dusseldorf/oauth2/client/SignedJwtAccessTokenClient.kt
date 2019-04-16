@@ -1,4 +1,4 @@
-package no.nav.dusseldorf.oauth2.client
+package no.nav.helse.dusseldorf.oauth2.client
 
 import com.nimbusds.jose.*
 import com.nimbusds.jose.crypto.RSASSASigner
