@@ -32,7 +32,7 @@ abstract class EnforceEqualsOrContains(
             } else Failure(resolvedClaimName, expected, stringValue)
             listValue != null -> if (listValue.contains(expected)) {
                 Successful(resolvedClaimName, expected)
-            } else Failure(resolvedClaimName, expected, listValue.joinToString())
+            } else Failure(resolvedClaimName, expected, "[${listValue.joinToString()}]")
             else -> Failure(resolvedClaimName, expected, null)
         }
     }
@@ -49,7 +49,7 @@ abstract class EnforceContainsAll(
         if (claimValue == null) return Failure(resolvedClaimName, allError, claimValue)
 
         return if (claimValue.containsAll(all)) {
-            Successful(resolvedClaimName, claimValue.joinToString())
+            Successful(resolvedClaimName, "[${claimValue.joinToString()}]")
         } else Failure(resolvedClaimName, allError, "[${claimValue.joinToString()}]")
     }
 }
