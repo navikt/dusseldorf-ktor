@@ -18,7 +18,7 @@ class CachedAccessTokenClientTest {
         val client = ClientSecretAccessTokenClient(
                 clientId = clientId,
                 clientSecret = clientSecret,
-                tokenUrl = tokenUrl
+                tokenEndpoint = tokenUrl
         )
 
         // Lager en client som forkaster token 10 sekunder før de utløper

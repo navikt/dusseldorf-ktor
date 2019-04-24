@@ -23,7 +23,7 @@ class SignedJwtAccessTokenClient(
         private val clientId: String,
         privateKeyProvider: PrivateKeyProvider,
         keyIdProvider: KeyIdProvider,
-        private val tokenUrl: URL
+        private val tokenEndpoint: URL
 ) : AccessTokenClient, NimbusAccessTokenClient() {
     private val jwsSigner: JWSSigner
     private val algorithm : JWSAlgorithm = JWSAlgorithm.RS256
@@ -50,7 +50,7 @@ class SignedJwtAccessTokenClient(
     private fun getClientCredentialsTokenRequest(
             scopes: Set<String>
     ) : TokenRequest = TokenRequest(
-            tokenUrl.toURI(),
+            tokenEndpoint.toURI(),
             PrivateKeyJWT(getSignedJwt()),
             ClientCredentialsGrant(),
             getScope(scopes)
@@ -61,7 +61,7 @@ class SignedJwtAccessTokenClient(
             onBehalfOf: String,
             scopes: Set<String>
     ) : TokenRequest = TokenRequest(
-            tokenUrl.toURI(),
+            tokenEndpoint.toURI(),
             PrivateKeyJWT(getSignedJwt()),
             JWTBearerGrant(SignedJWT.parse(onBehalfOf)),
             getScope(scopes),
@@ -71,7 +71,7 @@ class SignedJwtAccessTokenClient(
 
     private fun getSignedJwt() : SignedJWT {
         val jwtClaimSet = JWTClaimsSet.Builder()
-                .audience(tokenUrl.toString())
+                .audience(tokenEndpoint.toString())
                 .subject(clientId)
                 .issuer(clientId)
                 .jwtID(UUID.randomUUID().toString())

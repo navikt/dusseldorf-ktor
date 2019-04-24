@@ -7,4 +7,4 @@ abstract class Client(private val clientId : String, private val tokenEndpoint: 
     fun tokenEndpoint() : URL = tokenEndpoint
 }
 data class ClientSecretClient(private val clientId: String, private val tokenEndpoint: URL, val clientSecret: String) : Client(clientId, tokenEndpoint)
-data class PrivateKeyClient(private val clientId: String, private val tokenEndpoint: URL, val privateKeyJwk: String) : Client(clientId, tokenEndpoint)
+data class PrivateKeyClient(private val clientId: String, private val tokenEndpoint: URL, val privateKeyJwk: String, val certificateHexThumbprint : String) : Client(clientId, tokenEndpoint)

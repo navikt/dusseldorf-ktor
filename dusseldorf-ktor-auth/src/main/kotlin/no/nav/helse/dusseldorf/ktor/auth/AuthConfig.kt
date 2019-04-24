@@ -55,7 +55,8 @@ fun ApplicationConfig.oauth2Clients(path: String = "nav.auth.clients") : Map<Str
         val resolvedClient = if (clientSecret != null) {
             ClientSecretClient(clientId, tokenEndpoint, clientSecret)
         } else {
-            PrivateKeyClient(clientId, tokenEndpoint, privateKeyJwk!!)
+            val certificateHexThumbprint = clientConfig.getRequiredString("certificate_hex_thumbprint", false)
+            PrivateKeyClient(clientId, tokenEndpoint, privateKeyJwk!!, certificateHexThumbprint)
         }
         clients[alias] = resolvedClient
     }

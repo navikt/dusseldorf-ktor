@@ -20,7 +20,7 @@ class SignedJwtAccessTokenClientTest {
         val client = SignedJwtAccessTokenClient(
                 clientId = clientId,
                 keyIdProvider = FromCertificateHexThumbprint(certificateThumbprint),
-                tokenUrl = TestData.AZURE_PREPROD_TOKEN_URL,
+                tokenEndpoint = TestData.AZURE_PREPROD_TOKEN_URL,
                 privateKeyProvider = FromJwk(privateKeyJwk)
         )
 
@@ -43,7 +43,7 @@ class SignedJwtAccessTokenClientTest {
         val client = SignedJwtAccessTokenClient(
                 clientId = clientId,
                 keyIdProvider = FromCertificateHexThumbprint(TestData.CERTIFICATE_THUMBPRINT_SHA1_HEX),
-                tokenUrl = tokenUrl,
+                tokenEndpoint = tokenUrl,
                 privateKeyProvider = FromJwk(TestData.PRIVATE_KEY_JWK)
         )
 

@@ -17,7 +17,7 @@ class ClientSecretAccessTokenClientTest {
         val client = ClientSecretAccessTokenClient(
                 clientId = clientId,
                 clientSecret = clientSecret,
-                tokenUrl = TestData.AZURE_PREPROD_TOKEN_URL
+                tokenEndpoint = TestData.AZURE_PREPROD_TOKEN_URL
         )
 
         val accessToken = client.getAccessToken(scopes)
@@ -40,7 +40,7 @@ class ClientSecretAccessTokenClientTest {
         val client = ClientSecretAccessTokenClient(
                 clientId = clientId,
                 clientSecret = clientSecret,
-                tokenUrl = tokenUrl
+                tokenEndpoint = tokenUrl
         )
 
         val resp = client.getAccessToken(
