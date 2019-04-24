@@ -47,7 +47,7 @@ class AzureClaimRules {
             }
         }
 
-        class EnforceCertificateClientAuthenticaton : EnforceEqualsOrContains(
+        class EnforceCertificateClientAuthentication : EnforceEqualsOrContains(
                 expected = "2") {
             override fun resolveClaimName(claims: Map<String, Claim>): String {
                 return ClientAuthenticationModeClaim().getClaimName(claims )

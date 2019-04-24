@@ -14,7 +14,7 @@ abstract class ClaimRuleResolvableClaimName(private val defaultClaimName : Strin
      open fun resolveClaimName(claims: Map<String, Claim>) : String = defaultClaimName!!
 }
 
-abstract class EnforceEqualsOrContains(
+open class EnforceEqualsOrContains(
         defaultClaimName : String? = null,
         private val expected : String
 ) : ClaimRuleResolvableClaimName(defaultClaimName) {
@@ -38,7 +38,7 @@ abstract class EnforceEqualsOrContains(
     }
 }
 
-abstract class EnforceContainsAll(
+open class EnforceContainsAll(
         defaultClaimName : String? = null,
         private val all : Set<String>
 ) : ClaimRuleResolvableClaimName(defaultClaimName) {
@@ -54,7 +54,7 @@ abstract class EnforceContainsAll(
     }
 }
 
-abstract class EnforceContainsOneOf(
+open class EnforceContainsOneOf(
         defaultClaimName : String? = null,
         private val oneOf : Set<String>
 ) : ClaimRuleResolvableClaimName(defaultClaimName) {

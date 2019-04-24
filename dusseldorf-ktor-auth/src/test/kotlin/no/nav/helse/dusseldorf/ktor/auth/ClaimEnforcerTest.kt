@@ -14,9 +14,9 @@ class ClaimEnforcerTest {
 
     private val enforcer = ClaimEnforcer(oneOf = setOf(
             setOf(
-                    StandardClaimRules.Companion.EnforceAudience(requiredAudience),
+                    StandardClaimRules.Companion.EnforceAudienceEquals(requiredAudience),
                     AzureClaimRules.Companion.EnforceAuthorizedClient(authorizedClients),
-                    AzureClaimRules.Companion.EnforceCertificateClientAuthenticaton(),
+                    AzureClaimRules.Companion.EnforceCertificateClientAuthentication(),
                     AzureClaimRules.Companion.EnforceInAllGroups(requiredGroups),
                     AzureClaimRules.Companion.EnforceHasAllRoles(requiredRoles)
             )
