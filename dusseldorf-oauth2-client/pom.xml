@@ -21,13 +21,13 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>oauth2-oidc-sdk</artifactId>
-            <version>6.9</version>
+            <version>${oauth2-oidc-sdk.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
-            <version>2.7.0</version>
+            <version>${caffeine.version}</version>
         </dependency>
 
         <dependency>

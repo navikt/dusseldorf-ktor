@@ -37,6 +37,12 @@ jacksonVersion() {
     echo $version
 }
 
+caffeineVersion() {
+    line=$(grep '<caffeine\.version>' pom.xml)
+    version=$(echo $line | sed 's/<caffeine.version>\(.*\)<\/caffeine.version>/\1/g')
+    echo $version
+}
+
 
 filename="gradle/dusseldorf-ktor.gradle.kts"
 
@@ -50,5 +56,6 @@ echo "val logbackVersion by extra(\""$(logbackVersion)\"")" >> "${filename}"
 echo "val logstashLogbackVersion by extra(\""$(logstashLogbackVersion)\"")" >> "${filename}"
 echo "val prometheusVersion by extra(\""$(prometheusVersion)\"")" >> "${filename}"
 echo "val jacksonVersion by extra(\""$(jacksonVersion)\"")" >> "${filename}"
+echo "val caffeineVersion by extra(\""$(caffeineVersion)\"")" >> "${filename}"
 
 cat ${filename}
