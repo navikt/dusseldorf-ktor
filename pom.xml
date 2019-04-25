@@ -35,9 +35,9 @@
         <prometheus.version>0.6.0</prometheus.version>
         <jackson.version>2.9.8</jackson.version>
         <caffeine.version>2.7.0</caffeine.version>
+        <slf4j.version>1.7.25</slf4j.version>
 
         <!-- Interne versjoner -->
-        <slf4j.version>1.7.25</slf4j.version>
         <oauth2-oidc-sdk.version>6.9</oauth2-oidc-sdk.version>
     </properties>
 

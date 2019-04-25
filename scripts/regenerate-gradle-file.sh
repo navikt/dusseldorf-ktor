@@ -44,6 +44,12 @@ caffeineVersion() {
 }
 
 
+slf4jVersion() {
+    line=$(grep '<slf4j\.version>' pom.xml)
+    version=$(echo $line | sed 's/<slf4j.version>\(.*\)<\/slf4j.version>/\1/g')
+    echo $version
+}
+
 filename="gradle/dusseldorf-ktor.gradle.kts"
 
 rm -rf ${filename}
@@ -57,5 +63,6 @@ echo "val logstashLogbackVersion by extra(\""$(logstashLogbackVersion)\"")" >> "
 echo "val prometheusVersion by extra(\""$(prometheusVersion)\"")" >> "${filename}"
 echo "val jacksonVersion by extra(\""$(jacksonVersion)\"")" >> "${filename}"
 echo "val caffeineVersion by extra(\""$(caffeineVersion)\"")" >> "${filename}"
+echo "val slf4jVersion by extra(\""$(slf4jVersion)\"")" >> "${filename}"
 
 cat ${filename}
