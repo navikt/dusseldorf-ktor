@@ -91,7 +91,8 @@ class MonitoredHttpClient (
                         httpMethod = httpRequestBuilder.method,
                         url = httpRequestBuilder.url.clone().build(),
                         destination = destination,
-                        path = path
+                        path = path,
+                        throwable = cause
                 )
             }
         }
