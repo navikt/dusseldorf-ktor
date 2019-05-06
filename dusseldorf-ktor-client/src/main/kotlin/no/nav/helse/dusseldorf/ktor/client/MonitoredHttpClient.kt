@@ -8,19 +8,7 @@ import io.ktor.client.response.HttpResponse
 import io.ktor.http.*
 import io.prometheus.client.Counter
 import io.prometheus.client.Histogram
-
-val histogram = Histogram
-        .build("sent_http_requests_histogram",
-                "Histogram for alle HTTP-requester sendt.")
-        .labelNames("source", "destination", "verb", "path")
-        .register()
-
-val counter = Counter
-        .build(
-                "sent_http_requests_counter",
-                "Teller for alle HTTP-requester som sendes.")
-        .labelNames("source", "destination", "verb", "path", "status")
-        .register()
+import org.slf4j.LoggerFactory
 
 class MonitoredHttpClient (
         val source: String,
@@ -28,6 +16,23 @@ class MonitoredHttpClient (
         val httpClient: HttpClient,
         val overridePaths : Map<Regex, String> = mapOf()
 ) {
+    companion object {
+        val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.client.MonitoredHttpClient")
+        val histogram = Histogram
+                .build("sent_http_requests_histogram",
+                        "Histogram for alle HTTP-requester sendt.")
+                .labelNames("source", "destination", "verb", "path")
+                .register()
+
+        val counter = Counter
+                .build(
+                        "sent_http_requests_counter",
+                        "Teller for alle HTTP-requester som sendes.")
+                .labelNames("source", "destination", "verb", "path", "status")
+                .register()
+    }
+
+
     suspend inline fun request(
             httpRequestBuilder: HttpRequestBuilder,
             expectedHttpResponseCodes : Set<HttpStatusCode> = setOf(HttpStatusCode.OK)
@@ -41,13 +46,13 @@ class MonitoredHttpClient (
             httpClient.call(httpRequestBuilder).response
         } catch (cause: Throwable) {
             counter.labels(source, destination, verb, path, "network_error").inc()
+            logger.error("Feil ved sending av HTTP request", cause)
             throw SentHttpRequestException(
                     status =  "network_error",
                     httpMethod = httpRequestBuilder.method,
                     url = httpRequestBuilder.url.clone().build(),
                     destination = destination,
-                    path = path,
-                    throwable = cause
+                    path = path
             )
         } finally {
             timer.observeDuration()
@@ -86,13 +91,13 @@ class MonitoredHttpClient (
                 result
             } catch (cause: Throwable) {
                 counter.labels(source, destination, verb, path, "response_receiving_error").inc()
+                logger.error("Feil ved sending av HTTP request", cause)
                 throw SentHttpRequestException(
                         status =  "response_receiving_error",
                         httpMethod = httpRequestBuilder.method,
                         url = httpRequestBuilder.url.clone().build(),
                         destination = destination,
-                        path = path,
-                        throwable = cause
+                        path = path
                 )
             }
         }
@@ -118,8 +123,7 @@ class SentHttpRequestException(
         url : Url,
         destination: String,
         path : String,
-        httpStatusCode: HttpStatusCode? = null,
-        throwable: Throwable? = null
+        httpStatusCode: HttpStatusCode? = null
 ) : RuntimeException (
-        "status='$status', httpMethod='$httpMethod', url='$url', destination='$destination', path='$path', httpStatusCode='$httpStatusCode'", throwable
+        "status='$status', httpMethod='$httpMethod', url='$url', destination='$destination', path='$path', httpStatusCode='$httpStatusCode'"
 )
