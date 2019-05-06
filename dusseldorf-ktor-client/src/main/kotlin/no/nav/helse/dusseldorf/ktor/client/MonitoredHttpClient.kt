@@ -53,7 +53,7 @@ class MonitoredHttpClient (
                     destination = destination,
                     path = path
             )
-            logger.error(ex.message, cause)
+            logger.error("Nettverksfeil fra request; ${ex.message}", cause)
             throw ex
         } finally {
             timer.observeDuration()
@@ -99,7 +99,7 @@ class MonitoredHttpClient (
                         destination = destination,
                         path = path
                 )
-                logger.error(ex.message, cause)
+                logger.error("Feil ved lesing fra response fra request; ${ex.message}", cause)
                 throw ex
             }
         }
