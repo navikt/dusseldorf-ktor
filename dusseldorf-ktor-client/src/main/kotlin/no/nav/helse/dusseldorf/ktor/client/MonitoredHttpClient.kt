@@ -46,14 +46,15 @@ class MonitoredHttpClient (
             httpClient.call(httpRequestBuilder).response
         } catch (cause: Throwable) {
             counter.labels(source, destination, verb, path, "network_error").inc()
-            logger.error("Feil ved sending av HTTP request", cause)
-            throw SentHttpRequestException(
+            val ex = SentHttpRequestException(
                     status =  "network_error",
                     httpMethod = httpRequestBuilder.method,
                     url = httpRequestBuilder.url.clone().build(),
                     destination = destination,
                     path = path
             )
+            logger.error(ex.message, cause)
+            throw ex
         } finally {
             timer.observeDuration()
         }
@@ -91,14 +92,15 @@ class MonitoredHttpClient (
                 result
             } catch (cause: Throwable) {
                 counter.labels(source, destination, verb, path, "response_receiving_error").inc()
-                logger.error("Feil ved sending av HTTP request", cause)
-                throw SentHttpRequestException(
+                val ex = SentHttpRequestException(
                         status =  "response_receiving_error",
                         httpMethod = httpRequestBuilder.method,
                         url = httpRequestBuilder.url.clone().build(),
                         destination = destination,
                         path = path
                 )
+                logger.error(ex.message, cause)
+                throw ex
             }
         }
     }
