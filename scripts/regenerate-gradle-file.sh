@@ -50,6 +50,12 @@ slf4jVersion() {
     echo $version
 }
 
+kotlinxCoroutinesVersion() {
+    line=$(grep '<kotlinx\.coroutines\.version>' pom.xml)
+    version=$(echo $line | sed 's/<kotlinx.coroutines.version>\(.*\)<\/kotlinx.coroutines.version>/\1/g')
+    echo $version
+}
+
 filename="gradle/dusseldorf-ktor.gradle.kts"
 
 rm -rf ${filename}
@@ -64,5 +70,6 @@ echo "val prometheusVersion by extra(\""$(prometheusVersion)\"")" >> "${filename
 echo "val jacksonVersion by extra(\""$(jacksonVersion)\"")" >> "${filename}"
 echo "val caffeineVersion by extra(\""$(caffeineVersion)\"")" >> "${filename}"
 echo "val slf4jVersion by extra(\""$(slf4jVersion)\"")" >> "${filename}"
+echo "val kotlinxCoroutinesVersion by extra(\""$(kotlinxCoroutinesVersion)\"")" >> "${filename}"
 
 cat ${filename}
