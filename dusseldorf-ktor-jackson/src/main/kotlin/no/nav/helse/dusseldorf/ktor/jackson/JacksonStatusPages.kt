@@ -27,9 +27,8 @@ fun StatusPages.Configuration.JacksonStatusPages() {
         }
 
         val problemDetails = ValidationProblemDetails(violations)
-        val message = problemDetails.asMap()
 
-        logger.debug("$message", cause)
+        logger.debug("Feil ved mapping av JSON", cause)
 
         call.respondProblemDetails(problemDetails, logger)
     }
@@ -41,9 +40,7 @@ fun StatusPages.Configuration.JacksonStatusPages() {
                 status = 400,
                 detail = "Request entityen inneholder ugyldig JSON."
         )
-        val message = problemDetails.asMap()
-
-        logger.debug("$message", cause)
+        logger.debug("Feil ved prosessering av JSON", cause)
 
         call.respondProblemDetails(problemDetails, logger)
     }
