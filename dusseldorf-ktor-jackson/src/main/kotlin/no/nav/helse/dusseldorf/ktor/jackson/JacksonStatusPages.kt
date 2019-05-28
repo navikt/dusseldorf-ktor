@@ -31,7 +31,7 @@ fun StatusPages.Configuration.JacksonStatusPages() {
 
         logger.debug("$message", cause)
 
-        call.respondProblemDetails(problemDetails)
+        call.respondProblemDetails(problemDetails, logger)
     }
 
     exception<JsonProcessingException> { cause ->
@@ -45,6 +45,6 @@ fun StatusPages.Configuration.JacksonStatusPages() {
 
         logger.debug("$message", cause)
 
-        call.respondProblemDetails(problemDetails)
+        call.respondProblemDetails(problemDetails, logger)
     }
 }

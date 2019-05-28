@@ -17,16 +17,16 @@ fun StatusPages.Configuration.DefaultStatusPages() {
 
     exception<Throwblem> { cause ->
         logger.trace("Håndtert feil forekom. ${cause.getProblemDetails().asMap()}")
-        call.respondProblemDetails(cause.getProblemDetails())
+        call.respondProblemDetails(cause.getProblemDetails() , logger)
     }
 
     exception<Throwable> { cause ->
         if (cause is Problem) {
             logger.trace("Håndtert feil forekom. ${cause.getProblemDetails().asMap()}")
-            call.respondProblemDetails(cause.getProblemDetails())
+            call.respondProblemDetails(cause.getProblemDetails(), logger)
         } else {
             logger.error("Uhåndtert feil", cause)
-            call.respondProblemDetails(UNHANDLED_PROBLEM_MESSAGE)
+            call.respondProblemDetails(UNHANDLED_PROBLEM_MESSAGE, logger)
         }
     }
 }

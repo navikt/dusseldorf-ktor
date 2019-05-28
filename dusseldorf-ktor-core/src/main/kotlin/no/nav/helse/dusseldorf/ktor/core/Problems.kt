@@ -3,6 +3,7 @@ package no.nav.helse.dusseldorf.ktor.core
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
+import org.slf4j.Logger
 import java.net.URI
 
 /*
@@ -62,10 +63,15 @@ interface ProblemDetails {
     fun asMap() : Map<String, Any>
 }
 
-suspend fun ApplicationCall.respondProblemDetails(problemDetails: ProblemDetails) {
+suspend fun ApplicationCall.respondProblemDetails(
+        problemDetails: ProblemDetails,
+        logger: Logger? = null
+) {
+    val map = problemDetails.asMap()
+    logger?.info("ProblemDetails='$map'")
     respond(
             status = HttpStatusCode.fromValue(problemDetails.status),
-            message = problemDetails.asMap()
+            message = map
     )
 }
 

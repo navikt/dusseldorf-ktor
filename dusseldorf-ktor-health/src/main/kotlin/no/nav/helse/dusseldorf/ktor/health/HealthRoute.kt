@@ -52,6 +52,8 @@ fun Route.HealthRoute(
             }
         }, ChronoUnit.MILLIS)
 
+        if (unhealthy.isNotEmpty()) logger.error("$unhealthy")
+
         call.respond(
                 status = if (unhealthy.isEmpty()) HttpStatusCode.OK else HttpStatusCode.ServiceUnavailable,
                 message = mapOf(

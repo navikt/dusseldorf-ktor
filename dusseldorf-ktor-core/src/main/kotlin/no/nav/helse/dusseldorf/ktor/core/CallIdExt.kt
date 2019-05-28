@@ -8,6 +8,7 @@ import io.ktor.features.callId
 import io.ktor.http.HttpHeaders
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
+import org.slf4j.LoggerFactory
 import java.util.*
 
 // Henter fra CorrelationID (backend tjenester)
@@ -22,6 +23,8 @@ fun CallId.Configuration.generated() {
 
 class Configuration
 class CallIdRequired(private val configure: Configuration) {
+
+    private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.CallIdRequired")
 
     private val problemDetails = ValidationProblemDetails(
             setOf(Violation(
@@ -41,7 +44,7 @@ class CallIdRequired(private val configure: Configuration) {
     private suspend fun require(context: PipelineContext<Unit, ApplicationCall>) {
         val callId = context.context.callId
         if (callId == null) {
-            context.context.respondProblemDetails(problemDetails)
+            context.context.respondProblemDetails(problemDetails, logger)
             context.finish()
         } else {
             context.proceed()
