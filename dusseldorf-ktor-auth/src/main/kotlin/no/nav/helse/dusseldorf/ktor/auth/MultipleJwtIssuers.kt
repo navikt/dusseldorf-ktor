@@ -6,14 +6,15 @@ import io.ktor.application.ApplicationCall
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
-import io.ktor.http.HttpHeaders
-import io.ktor.request.header
+import io.ktor.auth.parseAuthorizationHeader
+import io.ktor.http.auth.HttpAuthHeader
+import io.ktor.request.ApplicationRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.auth.MultipleJwtIssuers")
-
+private const val AUTH_SCHEME = "Bearer "
 
 fun Authentication.Configuration.multipleJwtIssuers(
         issuers : Map<Issuer, Set<ClaimRule>>
@@ -32,27 +33,53 @@ fun Authentication.Configuration.multipleJwtIssuers(
 
         jwt (issuer.issuer()) {
             verifier (jwkProvider, issuer.issuer())
-            skipWhen { otherIssuers.isNotEmpty() && it.tokenIsSetAndIssuerIsOneOf(otherIssuers) }
-            validate { credentials ->
-                logger.trace("Utfører authorization sjekk av Authorization Header.")
-                val success = claimEnforcer.enforce(credentials.payload.claims)
-                logger.trace("${success.size} håndhevelser av claims ble sjekket og er OK.")
-                JWTPrincipal(credentials.payload)
+            authHeader { call ->
+                val httpAuthHeader = call.request.parseAuthorizationHeaderOrNull()
+                val jwt = httpAuthHeader?.decodeJwtOrNull()
+                if (httpAuthHeader != null && jwt != null) {
+                    logger.trace("Utfører authorization sjekk av Authorization Header.")
+                    val success = claimEnforcer.enforce(jwt.claims)
+                    logger.trace("${success.size} håndhevelser av claims ble sjekket og er OK.")
+                }
+                httpAuthHeader
             }
+            skipWhen { call -> otherIssuers.isNotEmpty() && call.tokenIsSetAndIssuerIsOneOf(otherIssuers) }
+            validate { credentials -> JWTPrincipal(credentials.payload) }
         }
     }
 }
 
-fun otherIssuers(
+private fun otherIssuers(
         currentIssuer : Issuer,
         allIssuers : Set<Issuer>
-) : List<String> {
-    val otherIssuers = mutableListOf<String>()
-    allIssuers.filter { it.issuer() != currentIssuer.issuer() }.forEach { otherIssuers.add(it.issuer()) }
-    return otherIssuers.toList()
+) = allIssuers.filter { it.issuer() != currentIssuer.issuer() }.map { it.issuer() }
+
+private fun ApplicationCall.tokenIsSetAndIssuerIsOneOf(otherIssuers: List<String>): Boolean {
+    val jwt = request.parseAuthorizationHeaderOrNull()?.decodeJwtOrNull() ?: return false
+    return otherIssuers.contains(jwt.issuer)
 }
 
-fun ApplicationCall.tokenIsSetAndIssuerIsOneOf(otherIssuers: List<String>): Boolean {
-    val token = request.header(HttpHeaders.Authorization)?.removePrefix("Bearer ") ?: return false
-    return try {otherIssuers.contains(JWT.decode(token).issuer)} catch (cause: Throwable) { false }
+private fun ApplicationRequest.parseAuthorizationHeaderOrNull() = try {
+    parseAuthorizationHeader()
+} catch (cause: Throwable) {
+    logger.error("Ugyldig Authorization Header", cause)
+    null
+}
+private fun HttpAuthHeader.decodeJwtOrNull() = try {
+    JWT.decode(render().removePrefix(AUTH_SCHEME))
+} catch (cause: Throwable) {
+    logger.error("Authorization Header ikke en JWT", cause)
+    null
+}
+
+fun Map<String, Issuer>.withoutAdditionalClaimRules() : Map<Issuer, Set<ClaimRule>> {
+    val noAdditionalClaimRules = mutableMapOf<Issuer, Set<ClaimRule>>()
+    forEach { _, issuer -> noAdditionalClaimRules[issuer] = setOf() }
+    return noAdditionalClaimRules.toMap()
+}
+
+fun Map<Issuer, Set<ClaimRule>>.allIssuers() : Array<String> {
+    val issuers = mutableListOf<String>()
+    forEach { issuer, _ -> issuers.add(issuer.issuer())}
+    return issuers.toTypedArray()
 }
