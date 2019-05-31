@@ -72,10 +72,14 @@ private fun HttpAuthHeader.decodeJwtOrNull() = try {
     null
 }
 
-fun Map<String, Issuer>.withoutAdditionalClaimRules() : Map<Issuer, Set<ClaimRule>> {
-    val noAdditionalClaimRules = mutableMapOf<Issuer, Set<ClaimRule>>()
-    forEach { _, issuer -> noAdditionalClaimRules[issuer] = setOf() }
-    return noAdditionalClaimRules.toMap()
+fun Map<String, Issuer>.withoutAdditionalClaimRules() = withAdditionalClaimRules(mapOf())
+
+fun Map<String, Issuer>.withAdditionalClaimRules(
+        additionalClaimRules: Map<String, Set<ClaimRule>>
+) : Map<Issuer, Set<ClaimRule>> {
+    val result = mutableMapOf<Issuer, Set<ClaimRule>>()
+    forEach { alias , issuer -> result[issuer] = additionalClaimRules.getOrDefault(alias, setOf()) }
+    return result.toMap()
 }
 
 fun Map<Issuer, Set<ClaimRule>>.allIssuers() : Array<String> {
