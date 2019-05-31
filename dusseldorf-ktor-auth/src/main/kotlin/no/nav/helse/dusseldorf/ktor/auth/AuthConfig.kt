@@ -2,12 +2,22 @@ package no.nav.helse.dusseldorf.ktor.auth
 
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
+import kotlinx.coroutines.runBlocking
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
+import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.net.URL
 
 private const val AZURE_TYPE = "azure"
+private const val ISSUER = "issuer"
+private const val JWKS_URI = "jwks_uri"
+
+private val jsonParser = JSONParser()
+private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.auth.AuthConfig")
 
 @KtorExperimentalAPI
 fun ApplicationConfig.jwtIssuers(path: String = "nav.auth.issuers") : Map<String, Issuer> {
@@ -17,8 +27,10 @@ fun ApplicationConfig.jwtIssuers(path: String = "nav.auth.issuers") : Map<String
     issuersConfigList.forEach { issuerConfig ->
         // Required
         val alias = issuerConfig.getRequiredString("alias", false)
-        val issuer = issuerConfig.getRequiredString("issuer", false)
-        val jwksUrl = URL(issuerConfig.getRequiredString("jwks_uri", false))
+        // Enten issuer+jwks_uri eller discovery_endpoint
+        val discoveryJson = runBlocking { issuerConfig.getOptionalString("discovery_endpoint", false)?.discover() }
+        val issuer = if (discoveryJson != null) discoveryJson[ISSUER] as String else issuerConfig.getRequiredString(ISSUER, false)
+        val jwksUrl = URL(if (discoveryJson != null) discoveryJson[JWKS_URI] as String else issuerConfig.getRequiredString(JWKS_URI, false))
         // Optional
         val type = issuerConfig.getOptionalString("type", false)
         val audience = issuerConfig.getOptionalString("audience", false)
@@ -61,4 +73,13 @@ fun ApplicationConfig.oauth2Clients(path: String = "nav.auth.clients") : Map<Str
         clients[alias] = resolvedClient
     }
     return clients.toMap()
+}
+
+private fun String.discover() : JSONObject? {
+    val asText = URL(this).readText()
+    val asJson = jsonParser.parse(asText) as JSONObject
+    return if (asJson.containsKey(ISSUER) && asJson.containsKey(JWKS_URI)) asJson else {
+        logger.warn("Response fra Discovery Endpoint inneholdt ikke attributtene '$ISSUER' og '$JWKS_URI'. Response='$asText'")
+        null
+    }
 }
