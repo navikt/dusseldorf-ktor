@@ -15,6 +15,7 @@ import java.net.URL
 private const val AZURE_TYPE = "azure"
 private const val ISSUER = "issuer"
 private const val JWKS_URI = "jwks_uri"
+private const val TOKEN_ENDPOINT = "token_endpoint"
 
 private val jsonParser = JSONParser()
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.auth.AuthConfig")
@@ -28,7 +29,7 @@ fun ApplicationConfig.jwtIssuers(path: String = "nav.auth.issuers") : Map<String
         // Required
         val alias = issuerConfig.getRequiredString("alias", false)
         // Enten issuer+jwks_uri eller discovery_endpoint
-        val discoveryJson = runBlocking { issuerConfig.getOptionalString("discovery_endpoint", false)?.discover() }
+        val discoveryJson = runBlocking { issuerConfig.getOptionalString("discovery_endpoint", false)?.discover(listOf(ISSUER, JWKS_URI)) }
         val issuer = if (discoveryJson != null) discoveryJson[ISSUER] as String else issuerConfig.getRequiredString(ISSUER, false)
         val jwksUrl = URL(if (discoveryJson != null) discoveryJson[JWKS_URI] as String else issuerConfig.getRequiredString(JWKS_URI, false))
         // Optional
@@ -62,7 +63,9 @@ fun ApplicationConfig.oauth2Clients(path: String = "nav.auth.clients") : Map<Str
         if (clientSecret == null && privateKeyJwk == null) throw IllegalStateException("Enten '$path[$index].client_secret' eller '$path[$index].private_key_jwk' må settes.")
         if (clientSecret != null && privateKeyJwk != null) throw IllegalStateException("Både '$path[$index].client_secret' og '$path[$index].private_key_jwk' kan ikke settes for samme en og samme client.")
         val clientId = clientConfig.getRequiredString("client_id", false)
-        val tokenEndpoint = URL(clientConfig.getRequiredString("token_endpoint", false))
+
+        val discoveryJson = runBlocking { clientConfig.getOptionalString("discovery_endpoint", false)?.discover(listOf(TOKEN_ENDPOINT)) }
+        val tokenEndpoint = URL(if (discoveryJson != null) discoveryJson[TOKEN_ENDPOINT] as String else clientConfig.getRequiredString(TOKEN_ENDPOINT, false))
 
         val resolvedClient = if (clientSecret != null) {
             ClientSecretClient(clientId, tokenEndpoint, clientSecret)
@@ -75,11 +78,18 @@ fun ApplicationConfig.oauth2Clients(path: String = "nav.auth.clients") : Map<Str
     return clients.toMap()
 }
 
-private fun String.discover() : JSONObject? {
+private fun String.discover(requiredAttributes : List<String>) : JSONObject? {
     val asText = URL(this).readText()
     val asJson = jsonParser.parse(asText) as JSONObject
-    return if (asJson.containsKey(ISSUER) && asJson.containsKey(JWKS_URI)) asJson else {
-        logger.warn("Response fra Discovery Endpoint inneholdt ikke attributtene '$ISSUER' og '$JWKS_URI'. Response='$asText'")
+    return if (asJson.containsKeys(requiredAttributes)) asJson else {
+        logger.warn("Response fra Discovery Endpoint inneholdt ikke attributtene '${requiredAttributes.joinToString()}'. Response='$asText'")
         null
     }
+}
+
+private fun JSONObject.containsKeys(requiredAttributes: List<String>): Boolean {
+    requiredAttributes.forEach {
+        if (!containsKey(it)) return false
+    }
+    return true
 }
