@@ -21,17 +21,26 @@ private val jsonParser = JSONParser()
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.auth.AuthConfig")
 
 @KtorExperimentalAPI
-fun ApplicationConfig.jwtIssuers(path: String = "nav.auth.issuers") : Map<String, Issuer> {
+fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, Issuer> {
     val issuersConfigList = configList(path)
     if (issuersConfigList.isNullOrEmpty()) return emptyMap()
     val issuers = mutableMapOf<String, Issuer>()
-    issuersConfigList.forEach { issuerConfig ->
+    for (issuerConfig in issuersConfigList) {
         // Required
         val alias = issuerConfig.getRequiredString("alias", false)
+        logger.info("Issuer[$alias]")
         // Enten issuer+jwks_uri eller discovery_endpoint
         val discoveryJson = runBlocking { issuerConfig.getOptionalString("discovery_endpoint", false)?.discover(listOf(ISSUER, JWKS_URI)) }
-        val issuer = if (discoveryJson != null) discoveryJson[ISSUER] as String else issuerConfig.getRequiredString(ISSUER, false)
-        val jwksUrl = URL(if (discoveryJson != null) discoveryJson[JWKS_URI] as String else issuerConfig.getRequiredString(JWKS_URI, false))
+        val issuer = if (discoveryJson != null) discoveryJson[ISSUER] as String else issuerConfig.getOptionalString(ISSUER, false)
+        val jwksUrl = if (discoveryJson != null) discoveryJson[JWKS_URI] as String else issuerConfig.getOptionalString(JWKS_URI, false)
+        logger.info("Issuer[$alias].issuer = '$issuer'")
+        logger.info("Issuer[$alias].jwks_uri =  '$jwksUrl'")
+        if (issuer == null || jwksUrl == null) {
+            logger.info("Issuer[$alias] ikke konfigurert.")
+            continue
+        } else {
+            logger.info("Issuer[$alias] er konfigurert.")
+        }
         // Optional
         val type = issuerConfig.getOptionalString("type", false)
         val audience = issuerConfig.getOptionalString("audience", false)
@@ -42,30 +51,39 @@ fun ApplicationConfig.jwtIssuers(path: String = "nav.auth.issuers") : Map<String
             val requiredGroups = issuerConfig.getOptionalList(key = "azure.required_groups", secret = false , builder = { value -> value }).toSet()
             val requiredRoles = issuerConfig.getOptionalList(key = "azure.required_roles", secret = false , builder = { value -> value }).toSet()
             val requireCertificateClientAuthentication = issuerConfig.getOptionalString("azure.require_certificate_client_authentication", false)
-            Azure(issuer, jwksUrl, audience, authorizedClient, requiredGroups, requiredRoles, requireCertificateClientAuthentication = requireCertificateClientAuthentication != null && "true".equals(requireCertificateClientAuthentication, true))
+            Azure(issuer, URL(jwksUrl), audience, authorizedClient, requiredGroups, requiredRoles, requireCertificateClientAuthentication = requireCertificateClientAuthentication != null && "true".equals(requireCertificateClientAuthentication, true))
         } else {
-            Issuer(issuer, jwksUrl, audience)
+            Issuer(issuer, URL(jwksUrl), audience)
         }
         issuers[alias] = resolvedIssuer
     }
+    logger.info("${issuers.size} Issuers konfigueret.")
     return issuers.toMap()
 }
 
 @KtorExperimentalAPI
-fun ApplicationConfig.oauth2Clients(path: String = "nav.auth.clients") : Map<String, Client> {
+fun ApplicationConfig.clients(path: String = "nav.auth.clients") : Map<String, Client> {
     val clientsConfigList = configList(path)
     if (clientsConfigList.isNullOrEmpty()) return emptyMap()
     val clients = mutableMapOf<String, Client>()
-    clientsConfigList.forEachIndexed { index, clientConfig ->
+    for (clientConfig in clientsConfigList) {
         val alias = clientConfig.getRequiredString("alias", false)
+        logger.info("Client[$alias]")
+        val clientId = clientConfig.getOptionalString("client_id", false)
+        if (clientId == null) {
+            logger.info("Client[$alias] ikke konfigurert.")
+            continue
+        } else {
+            logger.info("Client[$alias] er konfigurert.")
+        }
         val clientSecret = clientConfig.getOptionalString("client_secret", true)
         val privateKeyJwk = clientConfig.getOptionalString("private_key_jwk", true)
-        if (clientSecret == null && privateKeyJwk == null) throw IllegalStateException("Enten '$path[$index].client_secret' eller '$path[$index].private_key_jwk' må settes.")
-        if (clientSecret != null && privateKeyJwk != null) throw IllegalStateException("Både '$path[$index].client_secret' og '$path[$index].private_key_jwk' kan ikke settes for samme en og samme client.")
-        val clientId = clientConfig.getRequiredString("client_id", false)
+        if (clientSecret != null && privateKeyJwk != null) throw IllegalStateException("Både 'private_key_jwk' og 'client_secret' satt for Client[$alias]. Kun en av disse kan settes per client.")
+        if (clientSecret == null && privateKeyJwk == null) throw IllegalStateException("Hverken 'private_key_jwk' eller 'client_secret' satt for Client[$alias]. En av disse må settes per client.")
 
         val discoveryJson = runBlocking { clientConfig.getOptionalString("discovery_endpoint", false)?.discover(listOf(TOKEN_ENDPOINT)) }
         val tokenEndpoint = URL(if (discoveryJson != null) discoveryJson[TOKEN_ENDPOINT] as String else clientConfig.getRequiredString(TOKEN_ENDPOINT, false))
+        logger.info("Client[$alias].token_endpoint = '$tokenEndpoint'")
 
         val resolvedClient = if (clientSecret != null) {
             ClientSecretClient(clientId, tokenEndpoint, clientSecret)
@@ -75,6 +93,7 @@ fun ApplicationConfig.oauth2Clients(path: String = "nav.auth.clients") : Map<Str
         }
         clients[alias] = resolvedClient
     }
+    logger.info("${clients.size} clients konfigurert.")
     return clients.toMap()
 }
 
@@ -82,7 +101,7 @@ private fun String.discover(requiredAttributes : List<String>) : JSONObject? {
     val asText = URL(this).readText()
     val asJson = jsonParser.parse(asText) as JSONObject
     return if (asJson.containsKeys(requiredAttributes)) asJson else {
-        logger.warn("Response fra Discovery Endpoint inneholdt ikke attributtene '${requiredAttributes.joinToString()}'. Response='$asText'")
+        logger.warn("Response fra Discovery Endpoint inneholdt ikke attributtene '[${requiredAttributes.joinToString()}]'. Response='$asText'")
         null
     }
 }
