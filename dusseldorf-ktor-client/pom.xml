@@ -26,18 +26,19 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.ktor</groupId>
-            <artifactId>ktor-client-apache</artifactId>
-            <version>${ktor.version}</version>
+            <groupId>com.github.kittinunf.fuel</groupId>
+            <artifactId>fuel</artifactId>
+            <version>${fuel.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.ktor</groupId>
-            <artifactId>ktor-client-logging-jvm</artifactId>
-            <version>${ktor.version}</version>
+            <groupId>com.github.kittinunf.fuel</groupId>
+            <artifactId>fuel-coroutines</artifactId>
+            <version>${fuel.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_common</artifactId>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${orgjson.version}</version>
         </dependency>
     </dependencies>
 
