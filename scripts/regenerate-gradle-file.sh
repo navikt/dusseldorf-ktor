@@ -24,7 +24,6 @@ logstashLogbackVersion() {
     echo $version
 }
 
-
 prometheusVersion() {
     line=$(grep '<prometheus\.version>' pom.xml)
     version=$(echo $line | sed 's/<prometheus.version>\(.*\)<\/prometheus.version>/\1/g')
@@ -43,7 +42,6 @@ caffeineVersion() {
     echo $version
 }
 
-
 slf4jVersion() {
     line=$(grep '<slf4j\.version>' pom.xml)
     version=$(echo $line | sed 's/<slf4j.version>\(.*\)<\/slf4j.version>/\1/g')
@@ -53,6 +51,18 @@ slf4jVersion() {
 kotlinxCoroutinesVersion() {
     line=$(grep '<kotlinx\.coroutines\.version>' pom.xml)
     version=$(echo $line | sed 's/<kotlinx.coroutines.version>\(.*\)<\/kotlinx.coroutines.version>/\1/g')
+    echo $version
+}
+
+micrometerVersion() {
+    line=$(grep '<micrometer\.version>' pom.xml)
+    version=$(echo $line | sed 's/<micrometer.version>\(.*\)<\/micrometer.version>/\1/g')
+    echo $version
+}
+
+fuelVersion() {
+    line=$(grep '<fuel\.version>' pom.xml)
+    version=$(echo $line | sed 's/<fuel.version>\(.*\)<\/fuel.version>/\1/g')
     echo $version
 }
 
@@ -71,5 +81,7 @@ echo "val jacksonVersion by extra(\""$(jacksonVersion)\"")" >> "${filename}"
 echo "val caffeineVersion by extra(\""$(caffeineVersion)\"")" >> "${filename}"
 echo "val slf4jVersion by extra(\""$(slf4jVersion)\"")" >> "${filename}"
 echo "val kotlinxCoroutinesVersion by extra(\""$(kotlinxCoroutinesVersion)\"")" >> "${filename}"
+echo "val micrometerVersion by extra(\""$(micrometerVersion)\"")" >> "${filename}"
+echo "val fuelVersion by extra(\""$(fuelVersion)\"")" >> "${filename}"
 
 cat ${filename}
