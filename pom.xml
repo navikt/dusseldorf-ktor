@@ -87,11 +87,6 @@
                 <version>${ktor.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_common</artifactId>
-                <version>${prometheus.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>io.ktor</groupId>
                 <artifactId>ktor-server-test-host</artifactId>
                 <version>${ktor.version}</version>
