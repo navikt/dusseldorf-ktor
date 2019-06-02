@@ -12,7 +12,6 @@
     <artifactId>dusseldorf-ktor-metrics</artifactId>
     <name>dusseldorf-ktor-metrics</name>
 
-
     <dependencies>
         <dependency>
             <groupId>no.nav.helse</groupId>
