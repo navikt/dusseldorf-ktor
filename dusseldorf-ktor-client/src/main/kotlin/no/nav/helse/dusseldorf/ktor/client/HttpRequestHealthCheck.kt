@@ -15,6 +15,8 @@ import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.net.URL
 import java.time.Duration
 
@@ -24,6 +26,7 @@ class HttpRequestHealthCheck(
 
     private companion object {
         private val timeout = Duration.ofSeconds(2).toMillisPart()
+        private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthCheck")
     }
 
     override suspend fun check(): Result {
@@ -49,17 +52,14 @@ class HttpRequestHealthCheck(
             val json = JSONObject()
             val key = request.url.toString()
             val expected = urlExpectedHttpStatusCodeMap.getValue(request.url).value
-            var actual : Any? = response.statusCode
+            val actual : Int? = if (response.statusCode == -1) null else response.statusCode
 
             val message = result.fold(
-                    { success ->
-                        success.jsonOrString()
-                        actual = response.statusCode
-                    },
+                    { success -> success.jsonOrString() },
                     { error ->
                         if (error.cause != null) {
-                            actual = null // TODO: remove?
-                            error.toString()
+                            logger.error(error.toString())
+                            error.cause!!.message?: error.message?: "Ukjent feil."
                         }
                         else { (String(error.response.data).jsonOrString()) }
                     }
@@ -76,8 +76,8 @@ class HttpRequestHealthCheck(
         json.put("success", success)
         json.put("failure", failure)
 
-        return if (failure.isEmpty) Healthy(name = "HttpRequestHealthCheck", result = json)
-        else UnHealthy(name = "HttpRequestHealthCheck", result = json)
+        return if (failure.isEmpty) Healthy(name = "HttpRequestHealthCheck", result = json.toMap())
+        else UnHealthy(name = "HttpRequestHealthCheck", result = json.toMap())
     }
 }
 
