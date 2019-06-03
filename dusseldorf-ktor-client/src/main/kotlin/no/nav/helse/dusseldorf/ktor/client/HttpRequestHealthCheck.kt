@@ -29,6 +29,12 @@ class HttpRequestHealthCheck(
         private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthCheck")
     }
 
+    init {
+        urlExpectedHttpStatusCodeMap.forEach { uri, status ->
+            logger.info("$uri -> ${status.value}")
+        }
+    }
+
     override suspend fun check(): Result {
         val triplets = coroutineScope {
             val futures = mutableListOf<Deferred<ResponseResultOf<String>>>()
