@@ -9,7 +9,7 @@ open class Issuer(
         private val alias: String) {
     fun issuer() : String = issuer
     fun jwksUri() : URL = jwksUri
-    internal fun alias() = alias
+    fun alias() = alias
 
     open fun asClaimRules() : MutableSet<ClaimRule> {
         val claimRules = mutableSetOf<ClaimRule>()
