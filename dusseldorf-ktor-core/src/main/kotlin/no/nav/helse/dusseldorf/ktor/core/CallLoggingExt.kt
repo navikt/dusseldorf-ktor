@@ -3,8 +3,7 @@ package no.nav.helse.dusseldorf.ktor.core
 import io.ktor.features.CallLogging
 import io.ktor.features.callIdMdc
 import io.ktor.http.HttpHeaders
-import io.ktor.request.header
-import io.ktor.request.path
+import io.ktor.request.*
 import io.ktor.response.header
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -30,4 +29,11 @@ fun CallLogging.Configuration.logRequests(
     logger = LOG
     level = Level.INFO
     filter { call -> !excludePaths.contains(call.request.path()) }
+}
+
+fun ApplicationRequest.log(verbose : Boolean = false) = {
+    LOG.info("Request ${httpMethod.value} $uri (HTTP Version $httpVersion)")
+    if (verbose) {
+        LOG.info("Origin ${header(HttpHeaders.Origin)} (User Agent ${userAgent()})")
+    }
 }
