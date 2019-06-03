@@ -5,9 +5,11 @@ import java.net.URL
 open class Issuer(
         private val issuer: String,
         private val jwksUri: URL,
-        private val audience: String? = null) {
+        private val audience: String? = null,
+        private val alias: String) {
     fun issuer() : String = issuer
     fun jwksUri() : URL = jwksUri
+    internal fun alias() = alias
 
     open fun asClaimRules() : MutableSet<ClaimRule> {
         val claimRules = mutableSetOf<ClaimRule>()
@@ -20,11 +22,12 @@ data class Azure(
         private val issuer: String,
         private val jwksUri: URL,
         private val audience: String,
+        private val alias: String,
         private val authorizedClients: Set<String>,
         private val requiredGroups: Set<String>,
         private val requiredRoles: Set<String>,
         private val requireCertificateClientAuthentication: Boolean
-) : Issuer(issuer, jwksUri, audience) {
+) : Issuer(issuer, jwksUri, audience, alias) {
     override fun asClaimRules() : MutableSet<ClaimRule> {
         val claimRules = super.asClaimRules()
         if (requireCertificateClientAuthentication) claimRules.add(AzureClaimRules.Companion.EnforceCertificateClientAuthentication())

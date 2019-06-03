@@ -51,9 +51,23 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
             val requiredGroups = issuerConfig.getOptionalList(key = "azure.required_groups", secret = false , builder = { value -> value }).toSet()
             val requiredRoles = issuerConfig.getOptionalList(key = "azure.required_roles", secret = false , builder = { value -> value }).toSet()
             val requireCertificateClientAuthentication = issuerConfig.getOptionalString("azure.require_certificate_client_authentication", false)
-            Azure(issuer, URL(jwksUrl), audience, authorizedClient, requiredGroups, requiredRoles, requireCertificateClientAuthentication = requireCertificateClientAuthentication != null && "true".equals(requireCertificateClientAuthentication, true))
+            Azure(
+                    issuer = issuer,
+                    jwksUri = URL(jwksUrl),
+                    audience = audience,
+                    alias = alias,
+                    authorizedClients = authorizedClient,
+                    requiredGroups = requiredGroups,
+                    requiredRoles = requiredRoles,
+                    requireCertificateClientAuthentication = requireCertificateClientAuthentication != null && "true".equals(requireCertificateClientAuthentication, true)
+            )
         } else {
-            Issuer(issuer, URL(jwksUrl), audience)
+            Issuer(
+                    issuer = issuer,
+                    jwksUri = URL(jwksUrl),
+                    audience = audience,
+                    alias = alias
+            )
         }
         issuers[alias] = resolvedIssuer
     }

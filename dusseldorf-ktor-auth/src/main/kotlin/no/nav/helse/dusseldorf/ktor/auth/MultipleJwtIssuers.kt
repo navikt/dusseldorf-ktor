@@ -31,7 +31,7 @@ fun Authentication.Configuration.multipleJwtIssuers(
         claimRules.addAll(additionalClaimRules)
         val claimEnforcer = ClaimEnforcer(setOf(claimRules))
 
-        jwt (issuer.issuer()) {
+        jwt (issuer.alias()) {
             verifier (jwkProvider, issuer.issuer())
             authHeader { call ->
                 val httpAuthHeader = call.request.parseAuthorizationHeaderOrNull()
@@ -84,6 +84,6 @@ fun Map<String, Issuer>.withAdditionalClaimRules(
 
 fun Map<Issuer, Set<ClaimRule>>.allIssuers() : Array<String> {
     val issuers = mutableListOf<String>()
-    forEach { issuer, _ -> issuers.add(issuer.issuer())}
+    forEach { issuer, _ -> issuers.add(issuer.alias())}
     return issuers.toTypedArray()
 }

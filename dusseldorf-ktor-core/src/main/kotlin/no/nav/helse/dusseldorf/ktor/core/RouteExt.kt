@@ -16,4 +16,6 @@ private class RequiresCallIdRouteSelector : RouteSelector(RouteSelectorEvaluatio
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
         return RouteSelectorEvaluation.Constant
     }
+
+    override fun toString() = "RequiresCallId"
 }

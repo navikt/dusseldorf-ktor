@@ -7,16 +7,17 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import io.prometheus.client.CollectorRegistry
 
-fun MicrometerMetrics.Configuration.init(app: String) {
-    registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT, CollectorRegistry.defaultRegistry, Clock.SYSTEM)
+fun MicrometerMetrics.Configuration.init(
+        app: String,
+        collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
+) {
+    registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT, collectorRegistry, Clock.SYSTEM)
     timers { call, throwable ->
-        val hasHttpStatusCode = call.response.status() != null
         tag("app", app)
-        tag("code", if (hasHttpStatusCode) "${call.response.status()!!.value}" else "n/a")
         tag("result",
                 when {
                     throwable != null -> "failure"
-                    !hasHttpStatusCode -> "failure"
+                    call.response.status() == null -> "failure"
                     call.response.status()!!.isSuccessOrRedirect() -> "success"
                     else -> "failure"
                 }
