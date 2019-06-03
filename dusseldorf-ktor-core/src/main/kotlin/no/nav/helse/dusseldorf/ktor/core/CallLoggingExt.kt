@@ -31,9 +31,14 @@ fun CallLogging.Configuration.logRequests(
     filter { call -> !excludePaths.contains(call.request.path()) }
 }
 
-fun ApplicationRequest.log(verbose : Boolean = false) = {
-    LOG.info("Request ${httpMethod.value} $uri (HTTP Version $httpVersion)")
-    if (verbose) {
-        LOG.info("Origin ${header(HttpHeaders.Origin)} (User Agent ${userAgent()})")
+fun ApplicationRequest.log(
+        verbose : Boolean = false,
+        excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS
+) {
+    if (!excludePaths.contains(call.request.path())) {
+        LOG.info("Request ${httpMethod.value} $uri (HTTP Version $httpVersion)")
+        if (verbose) {
+            LOG.info("Origin ${header(HttpHeaders.Origin)} (User Agent ${userAgent()})")
+        }
     }
 }
