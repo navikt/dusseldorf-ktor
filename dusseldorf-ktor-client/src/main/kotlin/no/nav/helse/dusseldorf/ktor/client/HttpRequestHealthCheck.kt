@@ -17,11 +17,11 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.net.URL
+import java.net.URI
 import java.time.Duration
 
 class HttpRequestHealthCheck(
-        private val urlExpectedHttpStatusCodeMap : Map<URL, HttpStatusCode>
+        private val urlExpectedHttpStatusCodeMap : Map<URI, HttpStatusCode>
 ) : HealthCheck {
 
     private companion object {
@@ -51,7 +51,7 @@ class HttpRequestHealthCheck(
         triplets.forEach { (request,response,result) ->
             val json = JSONObject()
             val key = request.url.toString()
-            val expected = urlExpectedHttpStatusCodeMap.getValue(request.url).value
+            val expected = urlExpectedHttpStatusCodeMap.getValue(request.url.toURI()).value
             val actual : Int? = if (response.statusCode == -1) null else response.statusCode
 
             val message = result.fold(

@@ -22,7 +22,7 @@ fun Authentication.Configuration.multipleJwtIssuers(
     issuers.forEach { issuer, additionalClaimRules ->
         val otherIssuers = otherIssuers(issuer, issuers.keys)
 
-        val jwkProvider = JwkProviderBuilder(issuer.jwksUri())
+        val jwkProvider = JwkProviderBuilder(issuer.jwksUri().toURL())
                 .cached(10, 24, TimeUnit.HOURS)
                 .rateLimited(10, 1, TimeUnit.MINUTES)
                 .build()

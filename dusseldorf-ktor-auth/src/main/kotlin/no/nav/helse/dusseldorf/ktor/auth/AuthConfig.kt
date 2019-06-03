@@ -10,6 +10,7 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.net.URI
 import java.net.URL
 
 private const val AZURE_TYPE = "azure"
@@ -53,7 +54,7 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
             val requireCertificateClientAuthentication = issuerConfig.getOptionalString("azure.require_certificate_client_authentication", false)
             Azure(
                     issuer = issuer,
-                    jwksUri = URL(jwksUrl),
+                    jwksUri = URI(jwksUrl),
                     audience = audience,
                     alias = alias,
                     authorizedClients = authorizedClient,
@@ -64,7 +65,7 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
         } else {
             Issuer(
                     issuer = issuer,
-                    jwksUri = URL(jwksUrl),
+                    jwksUri = URI(jwksUrl),
                     audience = audience,
                     alias = alias
             )
@@ -96,7 +97,7 @@ fun ApplicationConfig.clients(path: String = "nav.auth.clients") : Map<String, C
         if (clientSecret == null && privateKeyJwk == null) throw IllegalStateException("Hverken 'private_key_jwk' eller 'client_secret' satt for Client[$alias]. En av disse må settes per client.")
 
         val discoveryJson = runBlocking { clientConfig.getOptionalString("discovery_endpoint", false)?.discover(listOf(TOKEN_ENDPOINT)) }
-        val tokenEndpoint = URL(if (discoveryJson != null) discoveryJson[TOKEN_ENDPOINT] as String else clientConfig.getRequiredString(TOKEN_ENDPOINT, false))
+        val tokenEndpoint = URI(if (discoveryJson != null) discoveryJson[TOKEN_ENDPOINT] as String else clientConfig.getRequiredString(TOKEN_ENDPOINT, false))
         logger.info("Client[$alias].token_endpoint = '$tokenEndpoint'")
 
         val resolvedClient = if (clientSecret != null) {

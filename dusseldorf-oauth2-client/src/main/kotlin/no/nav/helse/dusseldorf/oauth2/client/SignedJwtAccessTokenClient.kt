@@ -8,7 +8,7 @@ import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.oauth2.sdk.*
 import com.nimbusds.oauth2.sdk.auth.PrivateKeyJWT
 import org.slf4j.LoggerFactory
-import java.net.URL
+import java.net.URI
 import java.security.KeyFactory
 import java.time.*
 import java.util.*
@@ -23,7 +23,7 @@ class SignedJwtAccessTokenClient(
         private val clientId: String,
         privateKeyProvider: PrivateKeyProvider,
         keyIdProvider: KeyIdProvider,
-        private val tokenEndpoint: URL
+        private val tokenEndpoint: URI
 ) : AccessTokenClient, NimbusAccessTokenClient() {
     private val jwsSigner: JWSSigner
     private val algorithm : JWSAlgorithm = JWSAlgorithm.RS256
@@ -50,7 +50,7 @@ class SignedJwtAccessTokenClient(
     private fun getClientCredentialsTokenRequest(
             scopes: Set<String>
     ) : TokenRequest = TokenRequest(
-            tokenEndpoint.toURI(),
+            tokenEndpoint,
             PrivateKeyJWT(getSignedJwt()),
             ClientCredentialsGrant(),
             getScope(scopes)
@@ -61,7 +61,7 @@ class SignedJwtAccessTokenClient(
             onBehalfOf: String,
             scopes: Set<String>
     ) : TokenRequest = TokenRequest(
-            tokenEndpoint.toURI(),
+            tokenEndpoint,
             PrivateKeyJWT(getSignedJwt()),
             JWTBearerGrant(SignedJWT.parse(onBehalfOf)),
             getScope(scopes),

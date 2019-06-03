@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import io.ktor.http.HttpHeaders
 import io.ktor.http.encodeURLParameter
-import java.net.URL
+import java.net.URI
 import java.util.*
 
 private val tokenEndpoint = WireMock.urlPathMatching(".*/token.*")
@@ -26,8 +26,8 @@ class Oauth2ServerWireMock {
         this.wireMockServer = wireMockServer
     }
 
-    fun getTokenUrl() : URL {
-        return URL(wireMockServer.baseUrl() + "/token")
+    fun getTokenUrl() : URI {
+        return URI(wireMockServer.baseUrl() + "/token")
     }
 
     fun stubGetTokenSignedJwtClientCredentials(

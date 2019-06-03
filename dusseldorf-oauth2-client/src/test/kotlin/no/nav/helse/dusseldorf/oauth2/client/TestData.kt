@@ -1,10 +1,10 @@
 package no.nav.helse.dusseldorf.oauth2.client
 
-import java.net.URL
+import java.net.URI
 
 class TestData {
     companion object {
-        val AZURE_PREPROD_TOKEN_URL = URL("https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token")
+        val AZURE_PREPROD_TOKEN_URL = URI("https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token")
 
         const val CERTIFICATE_THUMBPRINT_SHA1_HEX = "D254A26835EA39102965CBFD58FC03897DFF127F"
         const val CERTIFICATE_THUMBPRINT_SHA1_HEX_BASE64 = "0lSiaDXqORApZcv9WPwDiX3_En8="

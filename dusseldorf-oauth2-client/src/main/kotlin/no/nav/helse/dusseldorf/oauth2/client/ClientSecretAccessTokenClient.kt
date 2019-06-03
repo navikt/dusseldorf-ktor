@@ -7,12 +7,12 @@ import com.nimbusds.oauth2.sdk.TokenRequest
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
 import com.nimbusds.oauth2.sdk.auth.Secret
 import com.nimbusds.oauth2.sdk.id.ClientID
-import java.net.URL
+import java.net.URI
 
 class ClientSecretAccessTokenClient(
         clientId : String,
         clientSecret: String,
-        private val tokenEndpoint : URL
+        private val tokenEndpoint : URI
 ) : AccessTokenClient, NimbusAccessTokenClient() {
 
     private val clientAuthentication = ClientSecretBasic(
@@ -33,7 +33,7 @@ class ClientSecretAccessTokenClient(
     private fun getClientCredentialsTokenRequest(
             scopes: Set<String>
     ) : TokenRequest = TokenRequest(
-            tokenEndpoint.toURI(),
+            tokenEndpoint,
             clientAuthentication,
             ClientCredentialsGrant(),
             getScope(scopes)
@@ -44,7 +44,7 @@ class ClientSecretAccessTokenClient(
             onBehalfOf: String,
             scopes: Set<String>
     ) : TokenRequest = TokenRequest(
-            tokenEndpoint.toURI(),
+            tokenEndpoint,
             clientAuthentication,
             JWTBearerGrant(SignedJWT.parse(onBehalfOf)),
             getScope(scopes),

@@ -4,15 +4,15 @@ import io.ktor.http.*
 import io.ktor.http.URLBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.net.URL
+import java.net.URI
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.client.UrlExt")
 
 fun Url.Companion.buildURL(
-    baseUrl: URL,
+    baseUrl: URI,
     pathParts: List<String> = listOf(),
     queryParameters: Map<String, List<String>> = mapOf()
-) : URL {
+) : URI {
     val withBasePath= mutableListOf(baseUrl.path)
     withBasePath.addAll(pathParts)
 
@@ -27,7 +27,7 @@ fun Url.Companion.buildURL(
             .takeFrom(baseUrl.toString())
             .trimmedPath(withBasePath)
 
-    val url = urlBuilder.build().toURI().toURL()
+    val url = urlBuilder.build().toURI()
     logger.trace("Built URL '$url'")
     return url
 }

@@ -1,14 +1,14 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
-import java.net.URL
+import java.net.URI
 
 open class Issuer(
         private val issuer: String,
-        private val jwksUri: URL,
+        private val jwksUri: URI,
         private val audience: String? = null,
         private val alias: String) {
     fun issuer() : String = issuer
-    fun jwksUri() : URL = jwksUri
+    fun jwksUri() : URI = jwksUri
     fun alias() = alias
 
     open fun asClaimRules() : MutableSet<ClaimRule> {
@@ -20,7 +20,7 @@ open class Issuer(
 
 data class Azure(
         private val issuer: String,
-        private val jwksUri: URL,
+        private val jwksUri: URI,
         private val audience: String,
         private val alias: String,
         private val authorizedClients: Set<String>,
