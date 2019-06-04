@@ -7,7 +7,9 @@ import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.thread
 
 class HealthReporter(
-        private val healthService: HealthService
+        private val app: String,
+        private val healthService: HealthService,
+        frequency: Duration = Duration.ofSeconds(30)
 ) {
     init {
         Runtime.getRuntime().addShutdownHook(thread {
@@ -16,9 +18,12 @@ class HealthReporter(
     }
 
     private companion object {
+        private const val HEALTHY = 0.0
+        private const val UNHEALTHY = 1.0
+
         private val gauge = Gauge
                 .build("health_check_status",
-                        "Indikerer applikasjonens helse status. 1=OK, 0=Feiler")
+                        "Indikerer applikasjonens helse status. 0 er OK, 1 indikerer feil.")
                 .labelNames("app")
                 .register()
     }
@@ -26,18 +31,16 @@ class HealthReporter(
     private val timer = fixedRateTimer(
             name = "health_reporter",
             initialDelay = Duration.ofMinutes(1).toMillis(),
-            period = Duration.ofSeconds(30).toMillis()) {
+            period = frequency.toMillis()) {
         val results = runBlocking { healthService.check() }
         gauge.setFromResults(results)
     }
-}
 
-private const val HEALTHY = 0.0
-private const val UNHEALTHY = 1.0
-private fun Gauge.setFromResults(results: List<Result>) {
-    if (results.any { it is UnHealthy }) {
-        set(UNHEALTHY)
-    } else {
-        set(HEALTHY)
+    private fun Gauge.setFromResults(results: List<Result>) {
+        if (results.any { it is UnHealthy }) {
+            labels(app).set(UNHEALTHY)
+        } else {
+            labels(app).set(HEALTHY)
+        }
     }
 }
