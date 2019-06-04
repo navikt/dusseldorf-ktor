@@ -92,6 +92,11 @@
                 <version>${ktor.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_common</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

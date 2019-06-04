@@ -5,21 +5,14 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import no.nav.helse.dusseldorf.ktor.core.Paths
-import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import kotlin.system.measureTimeMillis
 
-private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.health.HealthRoute")
-
 fun Route.HealthRoute(
         path: String = Paths.DEFAULT_HEALTH_PATH,
-        healthChecks : Set<HealthCheck>
+        healthService: HealthService
 ) {
 
     get(path) {
@@ -28,22 +21,7 @@ fun Route.HealthRoute(
 
 
         val duration = Duration.of(measureTimeMillis {
-            val results = coroutineScope {
-                val futures = mutableListOf<Deferred<Result>>()
-                healthChecks.forEach { healthCheck ->
-                    futures.add(async {
-                        try {
-                            healthCheck.check()
-                        } catch (cause: Throwable) {
-                            logger.error("Feil ved eksekvering av helsesjekk.", cause)
-                            UnHealthy(name = healthCheck.javaClass.simpleName, result = cause.message ?: "Feil ved eksekvering av helsesjekk.")
-                        }
-                    })
-
-                }
-                futures.awaitAll()
-            }
-
+            val results = healthService.check()
             results.forEach { result ->
                 when (result) {
                     is Healthy -> healthy.add(result.result())
@@ -51,8 +29,6 @@ fun Route.HealthRoute(
                 }
             }
         }, ChronoUnit.MILLIS)
-
-        if (unhealthy.isNotEmpty()) logger.error("$unhealthy")
 
         call.respond(
                 status = if (unhealthy.isEmpty()) HttpStatusCode.OK else HttpStatusCode.ServiceUnavailable,
