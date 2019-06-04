@@ -20,8 +20,13 @@ import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.Duration
 
+data class HttpRequestHealthConfig(
+        internal val expectedStatus: HttpStatusCode,
+        internal val includeExpectedStatusEntity : Boolean = true
+)
+
 class HttpRequestHealthCheck(
-        private val urlExpectedHttpStatusCodeMap : Map<URI, HttpStatusCode>
+        private val urlConfigMap : Map<URI, HttpRequestHealthConfig>
 ) : HealthCheck {
 
     private companion object {
@@ -30,15 +35,15 @@ class HttpRequestHealthCheck(
     }
 
     init {
-        urlExpectedHttpStatusCodeMap.forEach { uri, status ->
-            logger.info("$uri -> ${status.value}")
+        urlConfigMap.forEach { uri, config ->
+            logger.info("$uri -> ${config.expectedStatus.value}")
         }
     }
 
     override suspend fun check(): Result {
         val triplets = coroutineScope {
             val futures = mutableListOf<Deferred<ResponseResultOf<String>>>()
-            urlExpectedHttpStatusCodeMap.forEach { url, _ ->
+            urlConfigMap.forEach { url, _ ->
                 futures.add(async {
                     url.toString()
                             .httpGet()
@@ -57,17 +62,30 @@ class HttpRequestHealthCheck(
         triplets.forEach { (request,response,result) ->
             val json = JSONObject()
             val key = request.url.toString()
-            val expected = urlExpectedHttpStatusCodeMap.getValue(request.url.toURI()).value
+            val config = urlConfigMap.getValue(request.url.toURI())
+            val expected = config.expectedStatus.value
             val actual : Int? = if (response.statusCode == -1) null else response.statusCode
+            val isExpected = expected == actual
 
             val message = result.fold(
-                    { success -> success.jsonOrString() },
+                    { success ->
+                        if (isExpected) {
+                            if (config.includeExpectedStatusEntity) {
+                                success.jsonOrString()
+                            } else "Healthy!"
+                        } else success.jsonOrString()
+                    },
                     { error ->
                         if (error.cause != null) {
                             logger.error(error.toString())
                             error.cause!!.message?: error.message?: "Ukjent feil."
+                        } else {
+                            if (isExpected) {
+                                if (config.includeExpectedStatusEntity) {
+                                    (String(error.response.data).jsonOrString())
+                                } else "Healthy!"
+                            } else (String(error.response.data).jsonOrString())
                         }
-                        else { (String(error.response.data).jsonOrString()) }
                     }
             )
 
@@ -75,7 +93,7 @@ class HttpRequestHealthCheck(
             json.put("expected_http_status_code", expected)
             json.put("actual_http_status_code", actual)
 
-            if (expected == actual) success.put(key, json) else failure.put(key, json)
+            if (isExpected) success.put(key, json) else failure.put(key, json)
         }
 
         val json = JSONObject()
@@ -86,7 +104,6 @@ class HttpRequestHealthCheck(
         else UnHealthy(name = "HttpRequestHealthCheck", result = json.toMap())
     }
 }
-
 
 private fun String.jsonOrString() : Any {
     return try { JSONObject(this) }
