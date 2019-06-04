@@ -32,7 +32,10 @@ fun Authentication.Configuration.multipleJwtIssuers(
         val claimEnforcer = ClaimEnforcer(setOf(claimRules))
 
         jwt (issuer.alias()) {
-            verifier (jwkProvider, issuer.issuer())
+            verifier (jwkProvider, issuer.issuer()) {
+                acceptNotBefore(10)
+                acceptIssuedAt(10)
+            }
             authHeader { call ->
                 val httpAuthHeader = call.request.parseAuthorizationHeaderOrNull()
                 val jwt = httpAuthHeader?.decodeJwtOrNull()
