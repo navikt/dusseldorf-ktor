@@ -17,6 +17,11 @@ Status pages og dependencies for jackson
 
 ### dusseldorf-ktor-health
 Helsesjekker og tilgjengeliggjøre helsjesjekk end point
+Gauge "health_check_status" kan brukes i Grafana på følgende måte
+```
+sum_over_time(health_check_status{app="<APP>"}[2m])
+```
+Videre mappe alt over 0 som feil, 0 som OK
 
 ### dusselforf-ktor-auth
 Verifisere innhold av claims i token
