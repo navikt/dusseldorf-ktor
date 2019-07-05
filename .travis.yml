@@ -4,8 +4,6 @@ jdk:
   - openjdk11
 before_install:
   - openssl aes-256-cbc -K $encrypted_075df4eec6b6_key -iv $encrypted_075df4eec6b6_iv -in travis/codesigning.asc.enc -out travis/codesigning.asc -d
-  - rm "${JAVA_HOME}/lib/security/cacerts"
-  - ln -s /etc/ssl/certs/java/cacerts "${JAVA_HOME}/lib/security/cacerts"
 script:
   - ./mvnw clean install
   - |
@@ -18,7 +16,7 @@ script:
        ./scripts/set-maven-version.sh
 
        echo "Running release"
-       ./mvnw --settings travis/settings.xml deploy -Prelease -DskipTests=true
+       ./mvnw --settings travis/settings.xml deploy -Prelease -DskipTests=true -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts
     fi
 env:
   global:
