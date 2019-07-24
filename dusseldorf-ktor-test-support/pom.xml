@@ -11,5 +11,17 @@
 
     <artifactId>dusseldorf-oauth2-test-support</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-oauth2-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+    </build>
 
 </project>

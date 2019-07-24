@@ -20,6 +20,7 @@
         <module>dusseldorf-ktor-health</module>
         <module>dusseldorf-oauth2-client</module>
         <module>dusseldorf-ktor-auth</module>
+        <module>dusseldorf-ktor-test-support</module>
     </modules>
 
     <properties>
