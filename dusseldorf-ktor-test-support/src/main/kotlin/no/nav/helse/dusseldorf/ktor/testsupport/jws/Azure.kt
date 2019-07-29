@@ -19,7 +19,8 @@ object Azure {
                 audience: String,
                 clientAuthenticationMode: ClientAuthenticationMode = Azure.ClientAuthenticationMode.CERTIFICATE,
                 groups: Set<String> = emptySet(),
-                roles: Set<String> = emptySet()
+                roles: Set<String> = emptySet(),
+                scopes: Set<String> = emptySet()
         ) = JwsFunctions.generateJwt(
                 claims = mapOf(
                         "ver" to version,
@@ -28,7 +29,8 @@ object Azure {
                         "appid" to clientId,
                         "appidacr" to clientAuthenticationMode.claimValue,
                         "groups" to groups,
-                        "roles" to roles
+                        "roles" to roles,
+                        "scp" to scopes.joinToString(" ")
                 )
         )
     }
@@ -45,7 +47,8 @@ object Azure {
                 audience: String,
                 clientAuthenticationMode: ClientAuthenticationMode = Azure.ClientAuthenticationMode.CERTIFICATE,
                 groups: Set<String> = emptySet(),
-                roles: Set<String> = emptySet()
+                roles: Set<String> = emptySet(),
+                scopes: Set<String> = emptySet()
         ) = JwsFunctions.generateJwt(
                 claims = mapOf(
                         "ver" to version,
@@ -54,7 +57,8 @@ object Azure {
                         "azp" to clientId,
                         "azpacr" to clientAuthenticationMode.claimValue,
                         "groups" to groups,
-                        "roles" to roles
+                        "roles" to roles,
+                        "scp" to scopes.joinToString(" ")
                 )
         )
     }

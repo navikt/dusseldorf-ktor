@@ -25,7 +25,6 @@
         <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-server-test-host</artifactId>
-            <version>${ktor.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty</groupId>

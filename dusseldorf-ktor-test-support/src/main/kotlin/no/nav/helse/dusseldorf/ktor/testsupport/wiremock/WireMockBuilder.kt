@@ -45,10 +45,10 @@ class WireMockBuilder {
 
     fun withAzureSupport() : WireMockBuilder {
         val azureV1 = AzureTokenResponseTransformer(name = AZURE_V1_TRANSFORMER, accessTokenGenerator = { clientId, audience, scopes ->
-            Azure.V1_0.generateJwt(clientId, audience)
+            Azure.V1_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes)
         })
         val azureV2 = AzureTokenResponseTransformer(name = AZURE_V2_TRANSFORMER, accessTokenGenerator = { clientId, audience, scopes ->
-            Azure.V2_0.generateJwt(clientId, audience)
+            Azure.V2_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes)
         })
 
         config.extensions(azureV1, azureV2)
