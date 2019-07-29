@@ -52,7 +52,7 @@ internal class AzureTokenResponseTransformer(
         else afterParamName
     }
     private fun getScopes(urlDecodedBody: String) = getParameter("scope", urlDecodedBody).split( " ").toSet()
-    private fun extractAudience(scopes: Set<String>) = scopes.first { it.endsWith("/.default") }
+    private fun extractAudience(scopes: Set<String>) = scopes.first { it.endsWith("/.default") }.substringBefore("/.default")
 }
 
 
