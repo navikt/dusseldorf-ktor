@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dusseldorf-oauth2-test-support</artifactId>
+    <artifactId>dusseldorf-ktor-test-support</artifactId>
 
     <dependencies>
         <dependency>

@@ -1,8 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.testsupport.jws
 
 object Azure {
-    private const val issuerTemplate = "http://localhost:8080/azure/issuer/v"
-
     enum class ClientAuthenticationMode(val claimValue: String) {
         PUBLIC("0"),
         CLIENT_SECRET("1"),
@@ -11,7 +9,7 @@ object Azure {
 
     object V1_0 : Issuer {
         private const val version = "1.0"
-        private const val issuer = "$issuerTemplate$version"
+        private const val issuer = "http://localhost/azure/v1.0"
 
         override fun getIssuer() = issuer
         override fun getPublicJwk() = JwsFunctions.getPublicJwk()
@@ -37,7 +35,7 @@ object Azure {
 
     object V2_0 : Issuer {
         private const val version = "2.0"
-        private const val issuer = "$issuerTemplate$version"
+        private const val issuer = "http://localhost/azure/v2.0"
 
         override fun getIssuer() = issuer
         override fun getPublicJwk() = JwsFunctions.getPublicJwk()

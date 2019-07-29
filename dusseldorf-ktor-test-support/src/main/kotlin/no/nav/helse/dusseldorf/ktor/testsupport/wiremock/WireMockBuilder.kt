@@ -5,15 +5,19 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.helse.dusseldorf.ktor.testsupport.jws.Azure
 import no.nav.helse.dusseldorf.ktor.testsupport.jws.LoginService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class WireMockBuilder {
 
     private companion object {
+        private val logger: Logger = LoggerFactory.getLogger(WireMockBuilder::class.java)
+
         private const val AZURE_V1_TRANSFORMER = "azure-v1"
         private const val AZURE_V2_TRANSFORMER = "azure-v2"
         private const val LOGIN_SERVICE_V1_TRANSFORMER = "login-service-v1"
         private const val NAIS_STS_TRANSFORMER = "nais-sts"
-        private const val NAIS_STS_ISSUER = "http://localhost:8080/nais-sts"
+        private const val NAIS_STS_ISSUER = "http://localhost/nais-sts"
     }
 
     private val config = WireMockConfiguration.options()
@@ -75,6 +79,10 @@ class WireMockBuilder {
                 jwkSetUrl = server.getLoginServiceV1JwksUrl(),
                 tokenEndpoint = "http://localhost:8080/not-in-use-for-login-service"
         )
+
+        logger.info("Login Service V1 JWKS URL = ${server.getLoginServiceV1JwksUrl()}")
+        logger.info("Login Service V1 Well-Known URL = ${server.getLoginServiceV1WellKnownUrl()}")
+        logger.info("Login Service V1 Login URL = ${server.baseUrl()}/login?redirect={REDIRECT_URL}&fnr={FNR}")
     }
 
     private fun addAzureStubs(server: WireMockServer) {
@@ -87,6 +95,10 @@ class WireMockBuilder {
                 tokenEndpoint = server.getAzureV1TokenUrl()
         )
 
+        logger.info("Azure V1 Token URL = ${server.getAzureV1TokenUrl()}")
+        logger.info("Azure V1 JWKS URL = ${server.getAzureV1JwksUrl()}")
+        logger.info("Azure V1 Well-Known URL = ${server.getAzureV1WellKnownUrl()}")
+
         WireMock.stubFor(WireMock.post(WireMock.urlPathMatching(".*${Paths.AZURE_V2_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(AZURE_V2_TRANSFORMER)))
         WireMockStubs.stubJwks(Paths.AZURE_V2_JWKS_PATH)
         WireMockStubs.stubWellKnown(
@@ -95,6 +107,10 @@ class WireMockBuilder {
                 jwkSetUrl = server.getAzureV2JwksUrl(),
                 tokenEndpoint = server.getAzureV2TokenUrl()
         )
+
+        logger.info("Azure V2 Token URL = ${server.getAzureV2TokenUrl()}")
+        logger.info("Azure V2 JWKS URL = ${server.getAzureV2JwksUrl()}")
+        logger.info("Azure V2 Well-Known URL = ${server.getAzureV2WellKnownUrl()}")
     }
 
     private fun addNaisStsStubs(server: WireMockServer) {
@@ -106,6 +122,9 @@ class WireMockBuilder {
                 jwkSetUrl = server.getNaisStsJwksUrl(),
                 tokenEndpoint = server.getNaisStsTokenUrl()
         )
+        logger.info("Nais STS Token URL = ${server.getNaisStsTokenUrl()}")
+        logger.info("Nais STS JWKS URL = ${server.getNaisStsJwksUrl()}")
+        logger.info("Nais STS Well-Known URL = ${server.getNaisStsWellKnownUrl()}")
     }
 
     fun build() : WireMockServer {
@@ -122,6 +141,8 @@ class WireMockBuilder {
         if (withAzureSupport) addAzureStubs(server)
         if (withLoginServieSupport) addLoginServiceStubs(server)
         if (withNaisStsSupport) addNaisStsStubs(server)
+
+        logger.info("WireMock Base URL = ${server.baseUrl()}")
 
         return server
     }

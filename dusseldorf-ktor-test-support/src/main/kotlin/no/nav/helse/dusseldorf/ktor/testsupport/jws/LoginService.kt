@@ -1,16 +1,14 @@
 package no.nav.helse.dusseldorf.ktor.testsupport.jws
 
+import no.nav.helse.dusseldorf.ktor.testsupport.wiremock.Paths
 import java.time.LocalDateTime
 import java.util.*
 
 object LoginService {
-    private const val audienceTemplate = "http://localhost:8080/loginservice/audience/v"
-    private const val issuerTemplate = "http://localhost:8080/loginservice/issuer/v"
-
     object V1_0 : Issuer {
         private const val version = "1.0"
-        private const val audience = "$audienceTemplate$version"
-        private const val issuer = "$issuerTemplate$version"
+        private const val audience = "http://localhost${Paths.LOGIN_SERVICE_V1_PATH}/audience"
+        private const val issuer = "http://localhost${Paths.LOGIN_SERVICE_V1_PATH}/issuer"
 
         override fun getIssuer() = issuer
         fun getAudience() = audience

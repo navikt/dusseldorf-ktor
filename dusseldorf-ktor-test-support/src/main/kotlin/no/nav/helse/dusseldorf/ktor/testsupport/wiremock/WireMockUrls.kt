@@ -24,7 +24,7 @@ internal object Paths {
     internal const val AZURE_V2_WELL_KNOWN_PATH = "$AZURE_V2_PATH/.well-known"
     internal const val AZURE_V2_JWKS_PATH = "$AZURE_V2_PATH/jwks"
 
-    private const val LOGIN_SERVICE_V1_PATH = "/login-service/v1.0"
+    internal const val LOGIN_SERVICE_V1_PATH = "/login-service/v1.0"
     internal const val LOGIN_SERVICE_V1_LOGIN_PATH = "$LOGIN_SERVICE_V1_PATH/login"
     internal const val LOGIN_SERVICE_V1_WELL_KNOWN_PATH = "$LOGIN_SERVICE_V1_PATH/.well-known"
     internal const val LOGIN_SERVICE_V1_JWKS_PATH = "$LOGIN_SERVICE_V1_PATH/jwks"

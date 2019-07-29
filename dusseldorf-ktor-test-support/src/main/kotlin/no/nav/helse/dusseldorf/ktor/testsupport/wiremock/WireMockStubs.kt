@@ -25,7 +25,6 @@ internal object WireMockStubs {
                                                 "$ISSUER": "$issuer",
                                                 "$JWKS_URI": "$jwkSetUrl",
                                                 "$TOKEN_ENDPOINT": "$tokenEndpoint"
-
                                             }
                                         """.trimIndent())
                         )
