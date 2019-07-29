@@ -43,7 +43,7 @@
         <caffeine.version>2.7.0</caffeine.version>
         <fuel.version>2.1.0</fuel.version>
         <!-- Interne versjoner -->
-        <oauth2-oidc-sdk.version>6.13</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>6.14</oauth2-oidc-sdk.version>
         <orgjson.version>20180813</orgjson.version>
         <wiremock.version>2.24.0</wiremock.version>
     </properties>
