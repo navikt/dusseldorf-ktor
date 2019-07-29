@@ -77,12 +77,12 @@ class WireMockBuilder {
                 path = Paths.LOGIN_SERVICE_V1_WELL_KNOWN_PATH,
                 issuer = LoginService.V1_0.getIssuer(),
                 jwkSetUrl = server.getLoginServiceV1JwksUrl(),
-                tokenEndpoint = "http://localhost:8080/not-in-use-for-login-service"
+                tokenEndpoint = "http://localhost/not-in-use-for-login-service"
         )
 
         logger.info("Login Service V1 JWKS URL = ${server.getLoginServiceV1JwksUrl()}")
         logger.info("Login Service V1 Well-Known URL = ${server.getLoginServiceV1WellKnownUrl()}")
-        logger.info("Login Service V1 Login URL = ${server.baseUrl()}/login?redirect={REDIRECT_URL}&fnr={FNR}")
+        logger.info("Login Service V1 Login URL = ${server.baseUrl()}${Paths.LOGIN_SERVICE_V1_LOGIN_PATH}?redirect={REDIRECT_URL}&fnr={FNR}")
     }
 
     private fun addAzureStubs(server: WireMockServer) {
