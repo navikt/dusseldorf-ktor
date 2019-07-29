@@ -4,12 +4,14 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.helse.dusseldorf.ktor.testsupport.jws.Azure
+import no.nav.helse.dusseldorf.ktor.testsupport.jws.LoginService
 
 class WireMockBuilder {
 
     private companion object {
         private const val AZURE_V1_TRANSFORMER = "azure-v1"
         private const val AZURE_V2_TRANSFORMER = "azure-v2"
+        private const val LOGIN_SERVICE_V1_TRANSFORMER = "login-service-v1"
     }
 
     private val config = WireMockConfiguration.options()
@@ -17,7 +19,7 @@ class WireMockBuilder {
     private var serverFunction : ((wireMockServer: WireMockServer) -> Unit)? = null
     private var configFunction : ((wireMockConfiguration: WireMockConfiguration) -> Unit)? = null
     private var withAzureSupport = false
-
+    private var withLoginServieSupport = false
 
     fun withPort(port: Int) : WireMockBuilder {
         this.port = port
@@ -45,6 +47,24 @@ class WireMockBuilder {
         config.extensions(azureV1, azureV2)
         withAzureSupport = true
         return this
+    }
+
+    fun withLoginServiceSupport(cookieName: String = "localhost-idtoken") : WireMockBuilder {
+        val loginServiceV1 = LoginServiceLoginResponseTransformer(name = LOGIN_SERVICE_V1_TRANSFORMER, cookieName = cookieName)
+        config.extensions(loginServiceV1)
+        withLoginServieSupport = true
+        return this
+    }
+
+    private fun addLoginServiceStubs(server: WireMockServer) {
+        WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.LOGIN_SERVICE_V1_LOGIN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(LOGIN_SERVICE_V1_TRANSFORMER)))
+        WireMockStubs.stubJwks(Paths.LOGIN_SERVICE_V1_JWKS_PATH)
+        WireMockStubs.stubWellKnown(
+                path = Paths.LOGIN_SERVICE_V1_WELL_KNOWN_PATH,
+                issuer = LoginService.V1_0.getIssuer(),
+                jwkSetUrl = server.getLoginServiceV1JwksUrl(),
+                tokenEndpoint = "http://localhost:8080/not-in-use-for-login-service"
+        )
     }
 
     private fun addAzureStubs(server: WireMockServer) {
@@ -79,6 +99,9 @@ class WireMockBuilder {
         WireMock.configureFor(server.port())
 
         if (withAzureSupport) addAzureStubs(server)
+        if (withLoginServieSupport) addLoginServiceStubs(server)
         return server
     }
+
+
 }
