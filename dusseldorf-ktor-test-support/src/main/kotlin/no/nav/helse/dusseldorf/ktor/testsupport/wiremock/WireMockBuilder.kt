@@ -12,6 +12,8 @@ class WireMockBuilder {
         private const val AZURE_V1_TRANSFORMER = "azure-v1"
         private const val AZURE_V2_TRANSFORMER = "azure-v2"
         private const val LOGIN_SERVICE_V1_TRANSFORMER = "login-service-v1"
+        private const val NAIS_STS_TRANSFORMER = "nais-sts"
+        private const val NAIS_STS_ISSUER = "http://localhost:8080/nais-sts"
     }
 
     private val config = WireMockConfiguration.options()
@@ -20,6 +22,7 @@ class WireMockBuilder {
     private var configFunction : ((wireMockConfiguration: WireMockConfiguration) -> Unit)? = null
     private var withAzureSupport = false
     private var withLoginServieSupport = false
+    private var withNaisStsSupport = false
 
     fun withPort(port: Int) : WireMockBuilder {
         this.port = port
@@ -56,6 +59,13 @@ class WireMockBuilder {
         return this
     }
 
+    fun withNaisStsSupport() : WireMockBuilder {
+        val naisSts = NaisStsTokenResponseTransformer(NAIS_STS_TRANSFORMER, NAIS_STS_ISSUER)
+        config.extensions(naisSts)
+        withNaisStsSupport = true
+        return this
+    }
+
     private fun addLoginServiceStubs(server: WireMockServer) {
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.LOGIN_SERVICE_V1_LOGIN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(LOGIN_SERVICE_V1_TRANSFORMER)))
         WireMockStubs.stubJwks(Paths.LOGIN_SERVICE_V1_JWKS_PATH)
@@ -68,7 +78,7 @@ class WireMockBuilder {
     }
 
     private fun addAzureStubs(server: WireMockServer) {
-        WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.AZURE_V1_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(AZURE_V1_TRANSFORMER)))
+        WireMock.stubFor(WireMock.post(WireMock.urlPathMatching(".*${Paths.AZURE_V1_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(AZURE_V1_TRANSFORMER)))
         WireMockStubs.stubJwks(Paths.AZURE_V1_JWKS_PATH)
         WireMockStubs.stubWellKnown(
                 path = Paths.AZURE_V1_WELL_KNOWN_PATH,
@@ -77,13 +87,24 @@ class WireMockBuilder {
                 tokenEndpoint = server.getAzureV1TokenUrl()
         )
 
-        WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.AZURE_V2_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(AZURE_V2_TRANSFORMER)))
+        WireMock.stubFor(WireMock.post(WireMock.urlPathMatching(".*${Paths.AZURE_V2_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(AZURE_V2_TRANSFORMER)))
         WireMockStubs.stubJwks(Paths.AZURE_V2_JWKS_PATH)
         WireMockStubs.stubWellKnown(
                 path = Paths.AZURE_V2_WELL_KNOWN_PATH,
                 issuer = Azure.V2_0.getIssuer(),
                 jwkSetUrl = server.getAzureV2JwksUrl(),
                 tokenEndpoint = server.getAzureV2TokenUrl()
+        )
+    }
+
+    private fun addNaisStsStubs(server: WireMockServer) {
+        WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.NAIS_STS_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(NAIS_STS_TRANSFORMER)))
+        WireMockStubs.stubJwks(Paths.NAIS_STS_JWKS_PATH)
+        WireMockStubs.stubWellKnown(
+                path = Paths.NAIS_STS_WELL_KNOWN_PATH,
+                issuer = NAIS_STS_ISSUER,
+                jwkSetUrl = server.getNaisStsJwksUrl(),
+                tokenEndpoint = server.getNaisStsTokenUrl()
         )
     }
 
@@ -100,8 +121,8 @@ class WireMockBuilder {
 
         if (withAzureSupport) addAzureStubs(server)
         if (withLoginServieSupport) addLoginServiceStubs(server)
+        if (withNaisStsSupport) addNaisStsStubs(server)
+
         return server
     }
-
-
 }
