@@ -26,6 +26,7 @@ data class Azure(
         private val authorizedClients: Set<String>,
         private val requiredGroups: Set<String>,
         private val requiredRoles: Set<String>,
+        private val requiredScopes: Set<String>,
         private val requireCertificateClientAuthentication: Boolean
 ) : Issuer(issuer, jwksUri, audience, alias) {
     override fun asClaimRules() : MutableSet<ClaimRule> {
@@ -34,6 +35,7 @@ data class Azure(
         if (authorizedClients.isNotEmpty()) claimRules.add(AzureClaimRules.Companion.EnforceAuthorizedClient(authorizedClients))
         if (requiredGroups.isNotEmpty()) claimRules.add(AzureClaimRules.Companion.EnforceInAllGroups(requiredGroups))
         if (requiredRoles.isNotEmpty()) claimRules.add(AzureClaimRules.Companion.EnforceHasAllRoles(requiredRoles))
+        if (requiredScopes.isNotEmpty()) claimRules.add(AzureClaimRules.Companion.EnforceHasAllScopes(requiredScopes))
         return claimRules
     }
 }

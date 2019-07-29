@@ -125,6 +125,30 @@ class ClaimEnforcerTest {
         assertEquals(5, successful.size)
     }
 
+
+    @Test
+    fun `Azure token med scope håndteres riktig`() {
+        val medAlle = getClaims("""{"scp":"en to tre"}""".trimIndent())
+        val manglerEn = getClaims("""{"scp":"en to"}""".trimIndent())
+        val uten = getClaims("{}")
+        val tom = getClaims("""{"scp":""}""".trimIndent())
+
+        val scopeEnforcer = ClaimEnforcer(oneOf = setOf(setOf(AzureClaimRules.Companion.EnforceHasAllScopes(setOf("en", "to", "tre")))))
+
+        assertOutcome(getOutcomes(scopeEnforcer, medAlle).first(), 1, 0)
+        assertOutcome(getOutcomes(scopeEnforcer, manglerEn).first(), 0, 1)
+        assertOutcome(getOutcomes(scopeEnforcer, uten).first(), 0, 1)
+        assertOutcome(getOutcomes(scopeEnforcer, tom).first(), 0, 1)
+
+    }
+
+    private fun assertOutcome(outcomes: Set<EnforcementOutcome>, expectedSuccess: Int, expectedFailure: Int) {
+        val successful = outcomes.filter { it is Successful }
+        val failure = outcomes.filter { it is Failure }
+        assertEquals(expectedSuccess, successful.size)
+        assertEquals(expectedFailure, failure.size)
+    }
+
     private fun getOutcomes(
             enforcer: ClaimEnforcer,
             claims: Map<String, Claim>

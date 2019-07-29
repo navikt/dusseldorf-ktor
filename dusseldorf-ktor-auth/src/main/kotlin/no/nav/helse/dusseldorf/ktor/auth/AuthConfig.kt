@@ -51,6 +51,7 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
             val authorizedClient = issuerConfig.getOptionalList(key = "azure.authorized_clients", secret = false , builder = { value -> value }).toSet()
             val requiredGroups = issuerConfig.getOptionalList(key = "azure.required_groups", secret = false , builder = { value -> value }).toSet()
             val requiredRoles = issuerConfig.getOptionalList(key = "azure.required_roles", secret = false , builder = { value -> value }).toSet()
+            val requiredScopes = issuerConfig.getOptionalList(key = "azure.required_scopes", secret = false , builder = { value -> value }).toSet()
             val requireCertificateClientAuthentication = issuerConfig.getOptionalString("azure.require_certificate_client_authentication", false)
             Azure(
                     issuer = issuer,
@@ -60,6 +61,7 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
                     authorizedClients = authorizedClient,
                     requiredGroups = requiredGroups,
                     requiredRoles = requiredRoles,
+                    requiredScopes = requiredScopes,
                     requireCertificateClientAuthentication = requireCertificateClientAuthentication != null && "true".equals(requireCertificateClientAuthentication, true)
             )
         } else {

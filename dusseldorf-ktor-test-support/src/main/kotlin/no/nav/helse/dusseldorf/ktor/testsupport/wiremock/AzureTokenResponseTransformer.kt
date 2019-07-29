@@ -7,9 +7,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.http.Response
-import com.nimbusds.jwt.SignedJWT
 import java.net.URLDecoder
-import java.util.*
 import kotlin.IllegalStateException
 
 internal class AzureTokenResponseTransformer(
@@ -30,14 +28,14 @@ internal class AzureTokenResponseTransformer(
         val scopes = getScopes(body)
         val audience = extractAudience(scopes)
         val accessToken = accessTokenGenerator(clientId, audience, scopes)
-        val expiresIn = (SignedJWT.parse(accessToken).jwtClaimsSet.expirationTime.time - Date().time) / 1000
+
         return Response.Builder.like(response)
                 .status(200)
                 .headers(HttpHeaders(HttpHeader.httpHeader("Content-Type", "application/json")))
                 .body("""
                     {
                         "access_token" : "$accessToken",
-                        "expires_in" : $expiresIn,
+                        "expires_in" : ${accessToken.getExpiresIn()},
                         "token_type": "Bearer"
                     }
                 """.trimIndent())
