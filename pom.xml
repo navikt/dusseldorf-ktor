@@ -45,6 +45,7 @@
         <!-- Interne versjoner -->
         <oauth2-oidc-sdk.version>6.13</oauth2-oidc-sdk.version>
         <orgjson.version>20180813</orgjson.version>
+        <wiremock.version>2.24.0</wiremock.version>
     </properties>
 
     <repositories>
