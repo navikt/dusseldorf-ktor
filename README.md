@@ -26,6 +26,9 @@ Videre mappe alt over 0 som feil, 0 som OK
 ### dusselforf-ktor-auth
 Verifisere innhold av claims i token
 
+### dusseldorft-ktor-test-support
+Modul for testing av applikasjonene. Inneholder funksjonalitet for å genrere Access Tokens for tester og WireMock for tilgjengeliggjøring av OIDC/Oauth2 end points
+
 ### dusseldorf-oauth2-client
 Client for å hente Oauth2 Access Tokens.
 Ikke KTOR-spesifikk.
