@@ -9,9 +9,9 @@ object Azure {
 
     object V1_0 : Issuer {
         private const val version = "1.0"
-        private const val issuer = "http://localhost/azure/v1.0"
+        private const val actualIssuer = "http://localhost/azure/v1.0"
 
-        override fun getIssuer() = issuer
+        override fun getIssuer() = actualIssuer
         override fun getPublicJwk() = JwsFunctions.getPublicJwk()
 
         fun generateJwt(
@@ -20,7 +20,8 @@ object Azure {
                 clientAuthenticationMode: ClientAuthenticationMode = Azure.ClientAuthenticationMode.CERTIFICATE,
                 groups: Set<String> = emptySet(),
                 roles: Set<String> = emptySet(),
-                scopes: Set<String> = emptySet()
+                scopes: Set<String> = emptySet(),
+                issuer: String = actualIssuer
         ) = JwsFunctions.generateJwt(
                 claims = mapOf(
                         "ver" to version,
@@ -37,9 +38,9 @@ object Azure {
 
     object V2_0 : Issuer {
         private const val version = "2.0"
-        private const val issuer = "http://localhost/azure/v2.0"
+        private const val actualIssuer = "http://localhost/azure/v2.0"
 
-        override fun getIssuer() = issuer
+        override fun getIssuer() = actualIssuer
         override fun getPublicJwk() = JwsFunctions.getPublicJwk()
 
         fun generateJwt(
@@ -48,7 +49,8 @@ object Azure {
                 clientAuthenticationMode: ClientAuthenticationMode = Azure.ClientAuthenticationMode.CERTIFICATE,
                 groups: Set<String> = emptySet(),
                 roles: Set<String> = emptySet(),
-                scopes: Set<String> = emptySet()
+                scopes: Set<String> = emptySet(),
+                issuer: String = actualIssuer
         ) = JwsFunctions.generateJwt(
                 claims = mapOf(
                         "ver" to version,

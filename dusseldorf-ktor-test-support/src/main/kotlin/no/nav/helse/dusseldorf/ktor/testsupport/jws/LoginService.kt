@@ -6,15 +6,16 @@ object LoginService {
     object V1_0 : Issuer {
         private const val version = "1.0"
         private const val audience = "http://localhost/login-service/v1.0/audience"
-        private const val issuer = "http://localhost/login-service/v1.0/issuer"
+        private const val actualIssuer = "http://localhost/login-service/v1.0/issuer"
 
-        override fun getIssuer() = issuer
+        override fun getIssuer() = actualIssuer
         fun getAudience() = audience
         override fun getPublicJwk() = JwsFunctions.getPublicJwk()
 
         fun generateJwt(
-                level: Int,
-                fnr: String
+                fnr: String,
+                level: Int = 4,
+                issuer: String = actualIssuer
         ) = JwsFunctions.generateJwt(
                 claims = mapOf(
                         "acr" to "Level$level",
