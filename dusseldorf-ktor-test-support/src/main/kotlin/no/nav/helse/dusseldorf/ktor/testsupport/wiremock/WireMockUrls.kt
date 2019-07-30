@@ -36,16 +36,16 @@ internal object Paths {
 }
 
 fun WireMockServer.getAzureV1WellKnownUrl() = baseUrl() + AZURE_V1_WELL_KNOWN_PATH
-fun WireMockServer.getAzureV1TokenUrl() = baseUrl() + AZURE_V1_TOKEN_PATH
-fun WireMockServer.getAzureV1JwksUrl() = baseUrl() + AZURE_V1_JWKS_PATH
+internal fun WireMockServer.getAzureV1TokenUrl() = baseUrl() + AZURE_V1_TOKEN_PATH
+internal fun WireMockServer.getAzureV1JwksUrl() = baseUrl() + AZURE_V1_JWKS_PATH
 
 fun WireMockServer.getAzureV2WellKnownUrl() = baseUrl() + AZURE_V2_WELL_KNOWN_PATH
-fun WireMockServer.getAzureV2TokenUrl() = baseUrl() + AZURE_V2_TOKEN_PATH
-fun WireMockServer.getAzureV2JwksUrl() = baseUrl() + AZURE_V2_JWKS_PATH
+internal fun WireMockServer.getAzureV2TokenUrl() = baseUrl() + AZURE_V2_TOKEN_PATH
+internal fun WireMockServer.getAzureV2JwksUrl() = baseUrl() + AZURE_V2_JWKS_PATH
 
 fun WireMockServer.getNaisStsWellKnownUrl() = baseUrl() + NAIS_STS_WELL_KNOWN_PATH
-fun WireMockServer.getNaisStsTokenUrl() = baseUrl() + NAIS_STS_TOKEN_PATH
-fun WireMockServer.getNaisStsJwksUrl() = baseUrl() + NAIS_STS_JWKS_PATH
+internal fun WireMockServer.getNaisStsTokenUrl() = baseUrl() + NAIS_STS_TOKEN_PATH
+internal fun WireMockServer.getNaisStsJwksUrl() = baseUrl() + NAIS_STS_JWKS_PATH
 
 fun WireMockServer.getLoginServiceV1WellKnownUrl() = baseUrl() + LOGIN_SERVICE_V1_WELL_KNOWN_PATH
-fun WireMockServer.getLoginServiceV1JwksUrl() = baseUrl() + LOGIN_SERVICE_V1_JWKS_PATH
+internal fun WireMockServer.getLoginServiceV1JwksUrl() = baseUrl() + LOGIN_SERVICE_V1_JWKS_PATH

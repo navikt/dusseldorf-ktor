@@ -7,6 +7,8 @@ import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import net.minidev.json.JSONArray
+import net.minidev.json.JSONObject
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
@@ -32,7 +34,7 @@ internal class JwsFunctions {
         """.trimIndent())
 
         private val signer = RSASSASigner(rsaKey)
-        private val publicJwk = rsaKey.toPublicJWK().toJSONString()
+        private val publicJwk = JSONObject().appendField("keys", JSONArray().appendElement(rsaKey.toPublicJWK().toJSONObject().appendField("use", "sig"))).toJSONString()
 
         internal fun getPublicJwk() = publicJwk
 
