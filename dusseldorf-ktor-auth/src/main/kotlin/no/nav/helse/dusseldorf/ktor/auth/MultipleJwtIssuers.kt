@@ -7,21 +7,24 @@ import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 import io.ktor.auth.parseAuthorizationHeader
+import io.ktor.http.HttpHeaders
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.request.ApplicationRequest
+import io.ktor.request.header
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.auth.MultipleJwtIssuers")
 private const val AUTH_SCHEME = "Bearer "
+private const val FALLBACK_ALIAS = "fallback"
 
 fun Authentication.Configuration.multipleJwtIssuers(
         issuers : Map<Issuer, Set<ClaimRule>>
 ) {
-    issuers.forEach { issuer, additionalClaimRules ->
-        val otherIssuers = otherIssuers(issuer, issuers.keys)
+    val configuredIssuers = issuers.keys.map { it.alias() }
 
+    issuers.forEach { issuer, additionalClaimRules ->
         val jwkProvider = JwkProviderBuilder(issuer.jwksUri().toURL())
                 .cached(10, 24, TimeUnit.HOURS)
                 .rateLimited(10, 1, TimeUnit.MINUTES)
@@ -32,6 +35,7 @@ fun Authentication.Configuration.multipleJwtIssuers(
         val claimEnforcer = ClaimEnforcer(setOf(claimRules))
 
         jwt (issuer.alias()) {
+            realm = issuer.alias()
             verifier (jwkProvider, issuer.issuer()) {
                 acceptNotBefore(10)
                 acceptIssuedAt(10)
@@ -46,16 +50,33 @@ fun Authentication.Configuration.multipleJwtIssuers(
                 }
                 httpAuthHeader
             }
-            skipWhen { call -> otherIssuers.isNotEmpty() && call.tokenIsSetAndIssuerIsOneOf(otherIssuers) }
+            skipWhen { call -> call.tokenIsAbsentOrNotIssuedBy(issuer.issuer()) }
             validate { credentials -> JWTPrincipal(credentials.payload) }
         }
     }
+
+    jwt(FALLBACK_ALIAS) {
+        skipWhen { call ->
+            val skipping = call.tokenIsSetAndIssuerIsOneOf(configuredIssuers)
+            if (!skipping) {
+                val token = call.request.parseAuthorizationHeaderOrNull()?.decodeJwtOrNull()
+                if (token != null) logger.error("Request med token utstedt av '${token.issuer}' stoppes da issuer ikke er konfigurert. Token uten signatur = '${token.header}.${token.payload}'")
+                else {
+                    val authorizationHeader = call.request.header(HttpHeaders.Authorization)
+                    if (authorizationHeader != null) logger.error("Request med ugylidig format på Authorization header stoppes. Authorization header = '$authorizationHeader'")
+                    else logger.error("Request uten Authorization header satt stoppes.")
+                }
+            }
+            skipping
+        }
+        validate { return@validate null }
+    }
 }
 
-private fun otherIssuers(
-        currentIssuer : Issuer,
-        allIssuers : Set<Issuer>
-) = allIssuers.filter { it.issuer() != currentIssuer.issuer() }.map { it.issuer() }
+private fun ApplicationCall.tokenIsAbsentOrNotIssuedBy(issuer: String): Boolean {
+    val jwt = request.parseAuthorizationHeaderOrNull()?.decodeJwtOrNull() ?: return true
+    return jwt.issuer != issuer
+}
 
 private fun ApplicationCall.tokenIsSetAndIssuerIsOneOf(otherIssuers: List<String>): Boolean {
     val jwt = request.parseAuthorizationHeaderOrNull()?.decodeJwtOrNull() ?: return false
@@ -88,5 +109,6 @@ fun Map<String, Issuer>.withAdditionalClaimRules(
 fun Map<Issuer, Set<ClaimRule>>.allIssuers() : Array<String> {
     val issuers = mutableListOf<String>()
     forEach { issuer, _ -> issuers.add(issuer.alias())}
+    issuers.add(FALLBACK_ALIAS)
     return issuers.toTypedArray()
 }
