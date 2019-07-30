@@ -72,7 +72,7 @@ class WireMockBuilder {
 
     private fun addLoginServiceStubs(server: WireMockServer) {
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.LOGIN_SERVICE_V1_LOGIN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(LOGIN_SERVICE_V1_TRANSFORMER)))
-        WireMockStubs.stubJwks(Paths.LOGIN_SERVICE_V1_JWKS_PATH)
+        WireMockStubs.stubJwks(path = Paths.LOGIN_SERVICE_V1_JWKS_PATH, jwkSet = LoginService.V1_0.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.LOGIN_SERVICE_V1_WELL_KNOWN_PATH,
                 issuer = LoginService.V1_0.getIssuer(),
@@ -87,7 +87,7 @@ class WireMockBuilder {
 
     private fun addAzureStubs(server: WireMockServer) {
         WireMock.stubFor(WireMock.post(WireMock.urlPathMatching(".*${Paths.AZURE_V1_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(AZURE_V1_TRANSFORMER)))
-        WireMockStubs.stubJwks(Paths.AZURE_V1_JWKS_PATH)
+        WireMockStubs.stubJwks(path = Paths.AZURE_V1_JWKS_PATH, jwkSet = Azure.V1_0.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.AZURE_V1_WELL_KNOWN_PATH,
                 issuer = Azure.V1_0.getIssuer(),
@@ -100,7 +100,7 @@ class WireMockBuilder {
         logger.info("Azure V1 Well-Known URL = ${server.getAzureV1WellKnownUrl()}")
 
         WireMock.stubFor(WireMock.post(WireMock.urlPathMatching(".*${Paths.AZURE_V2_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(AZURE_V2_TRANSFORMER)))
-        WireMockStubs.stubJwks(Paths.AZURE_V2_JWKS_PATH)
+        WireMockStubs.stubJwks(path = Paths.AZURE_V2_JWKS_PATH, jwkSet = Azure.V2_0.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.AZURE_V2_WELL_KNOWN_PATH,
                 issuer = Azure.V2_0.getIssuer(),
@@ -115,7 +115,7 @@ class WireMockBuilder {
 
     private fun addNaisStsStubs(server: WireMockServer) {
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.NAIS_STS_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(NAIS_STS_TRANSFORMER)))
-        WireMockStubs.stubJwks(Paths.NAIS_STS_JWKS_PATH)
+        WireMockStubs.stubJwks(path = Paths.NAIS_STS_JWKS_PATH, jwkSet = NaisSts.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.NAIS_STS_WELL_KNOWN_PATH,
                 issuer = NaisSts.getIssuer(),

@@ -31,14 +31,17 @@ internal object WireMockStubs {
         )
     }
 
-    internal fun stubJwks(path: String) {
+    internal fun stubJwks(
+            path: String,
+            jwkSet: String
+    ) {
         WireMock.stubFor(
                 WireMock.get(WireMock.urlPathMatching(".*$path.*"))
                         .willReturn(
                                 WireMock.aResponse()
                                         .withHeader("Content-Type", "application/json")
                                         .withStatus(200)
-                                        .withBody(JwsFunctions.getPublicJwk())
+                                        .withBody(jwkSet)
                         )
         )
     }
