@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.helse.dusseldorf.ktor.testsupport.jws.Azure
 import no.nav.helse.dusseldorf.ktor.testsupport.jws.LoginService
+import no.nav.helse.dusseldorf.ktor.testsupport.jws.NaisSts
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -17,7 +18,6 @@ class WireMockBuilder {
         private const val AZURE_V2_TRANSFORMER = "azure-v2"
         private const val LOGIN_SERVICE_V1_TRANSFORMER = "login-service-v1"
         private const val NAIS_STS_TRANSFORMER = "nais-sts"
-        private const val NAIS_STS_ISSUER = "http://localhost/nais-sts"
     }
 
     private val config = WireMockConfiguration.options()
@@ -64,7 +64,7 @@ class WireMockBuilder {
     }
 
     fun withNaisStsSupport() : WireMockBuilder {
-        val naisSts = NaisStsTokenResponseTransformer(NAIS_STS_TRANSFORMER, NAIS_STS_ISSUER)
+        val naisSts = NaisStsTokenResponseTransformer(NAIS_STS_TRANSFORMER)
         config.extensions(naisSts)
         withNaisStsSupport = true
         return this
@@ -118,7 +118,7 @@ class WireMockBuilder {
         WireMockStubs.stubJwks(Paths.NAIS_STS_JWKS_PATH)
         WireMockStubs.stubWellKnown(
                 path = Paths.NAIS_STS_WELL_KNOWN_PATH,
-                issuer = NAIS_STS_ISSUER,
+                issuer = NaisSts.getIssuer(),
                 jwkSetUrl = server.getNaisStsJwksUrl(),
                 tokenEndpoint = server.getNaisStsTokenUrl()
         )
