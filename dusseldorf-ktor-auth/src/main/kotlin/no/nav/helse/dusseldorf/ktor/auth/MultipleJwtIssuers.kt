@@ -22,7 +22,6 @@ private const val FALLBACK_ALIAS = "fallback"
 fun Authentication.Configuration.multipleJwtIssuers(
         issuers : Map<Issuer, Set<ClaimRule>>
 ) {
-    val configuredIssuers = issuers.keys.map { it.alias() }
 
     issuers.forEach { issuer, additionalClaimRules ->
         val jwkProvider = JwkProviderBuilder(issuer.jwksUri().toURL())
@@ -54,6 +53,8 @@ fun Authentication.Configuration.multipleJwtIssuers(
             validate { credentials -> JWTPrincipal(credentials.payload) }
         }
     }
+
+    val configuredIssuers = issuers.keys.map { it.issuer() }
 
     jwt(FALLBACK_ALIAS) {
         skipWhen { call ->
