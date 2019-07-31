@@ -4,6 +4,9 @@
 * Bruker openssl
 * Bruker npm-pakke pem-jwk (https://www.npmjs.com/package/pem-jwk). Må installeres globalt.
 
+
+Sett `${client_name}` == Display name på app i Azure
+
 ```bash
 cd scripts
 ./genereate-client-certificate ${client_name} ${environment}
