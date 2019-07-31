@@ -2,19 +2,24 @@
 
 ## Generere Client sertifikat
 * Bruker openssl
-* Bruker npm-pakke pem-jwk (https://www.npmjs.com/package/pem-jwk)
+* Bruker npm-pakke pem-jwk (https://www.npmjs.com/package/pem-jwk). Må installeres globalt.
 
 ```bash
 cd scripts
-./genereate-client-certificate ${client_name}
+./genereate-client-certificate ${client_name} ${environment}
 ```
 
 Opprettes to filer som brukes til å registrere og bruke clienten.
 
-### certificate_${client_name}.pem
+Om det ikke settes environment (prod) blir `${common_name}` satt til `${client_name}.nav.no`
+
+
+Om det settes et environment blir `${common_name}` satt til `${client_name}.${environment}.nav.no`
+
+### certificate_${common_name}.pem
 Lastes opp i Azure Portal
 
-### private_key_${client_name}.jwk
+### private_key_${common_name}.jwk
 Legges i vault og brukes i applikasjonen i `PrivateKeyProvider:FromJwk`
 
 ## Hente Key ID
