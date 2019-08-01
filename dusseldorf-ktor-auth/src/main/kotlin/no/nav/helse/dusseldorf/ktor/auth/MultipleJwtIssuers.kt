@@ -40,6 +40,7 @@ fun Authentication.Configuration.multipleJwtIssuers(
                 acceptIssuedAt(10)
             }
             authHeader { call ->
+                logger.info("Issuer[${issuer.alias()}]")
                 val httpAuthHeader = call.request.parseAuthorizationHeaderOrNull()
                 val jwt = httpAuthHeader?.decodeJwtOrNull()
                 if (httpAuthHeader != null && jwt != null) {

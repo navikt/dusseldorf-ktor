@@ -35,7 +35,7 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
         val issuer = if (discoveryJson != null) discoveryJson[ISSUER] as String else issuerConfig.getOptionalString(ISSUER, false)
         val jwksUrl = if (discoveryJson != null) discoveryJson[JWKS_URI] as String else issuerConfig.getOptionalString(JWKS_URI, false)
         logger.info("Issuer[$alias].issuer = '$issuer'")
-        logger.info("Issuer[$alias].jwks_uri =  '$jwksUrl'")
+        logger.info("Issuer[$alias].jwks_uri = '$jwksUrl'")
         if (issuer == null || jwksUrl == null) {
             logger.info("Issuer[$alias] ikke konfigurert.")
             continue
