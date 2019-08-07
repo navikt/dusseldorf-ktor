@@ -40,12 +40,12 @@
         <slf4j.version>1.7.25</slf4j.version>
         <logstash.logback.version>6.1</logstash.logback.version>
         <prometheus.version>0.6.0</prometheus.version>
-        <caffeine.version>2.7.0</caffeine.version>
+        <caffeine.version>2.8.0</caffeine.version>
         <fuel.version>2.2.0</fuel.version>
         <!-- Interne versjoner -->
         <oauth2-oidc-sdk.version>6.14</oauth2-oidc-sdk.version>
-        <orgjson.version>20180813</orgjson.version>
-        <wiremock.version>2.24.0</wiremock.version>
+        <orgjson.version>20190722</orgjson.version>
+        <wiremock.version>2.24.1</wiremock.version>
     </properties>
 
     <repositories>
