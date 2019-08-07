@@ -26,12 +26,13 @@ object NaisSts : Issuer {
 
     fun generateJwt(
             application: String,
-            issuer: String = actualIssuer
+            issuer: String = actualIssuer,
+            overridingClaims: Map<String, Any> = emptyMap()
     ) = jwsFunctions.generateJwt(
-            claims = mapOf(
-                    "sub" to application,
-                    "aud" to audience,
-                    "iss" to issuer
-            )
+            claims = overridingClaims.toMutableMap().apply {
+                if (!containsKey("sub")) put("sub", application)
+                if (!containsKey("aud")) put("aud", audience)
+                if (!containsKey("iss")) put("iss", issuer)
+            }.toMap()
     )
 }

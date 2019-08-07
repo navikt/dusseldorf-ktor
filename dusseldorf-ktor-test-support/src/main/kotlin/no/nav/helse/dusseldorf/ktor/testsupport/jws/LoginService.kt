@@ -31,17 +31,18 @@ object LoginService {
         fun generateJwt(
                 fnr: String,
                 level: Int = 4,
-                issuer: String = actualIssuer
+                issuer: String = actualIssuer,
+                overridingClaims: Map<String, Any> = emptyMap()
         ) = jwsFunctions.generateJwt(
-                claims = mapOf(
-                        "acr" to "Level$level",
-                        "sub" to fnr,
-                        "aud" to audience,
-                        "iss" to issuer,
-                        "auth_time" to LocalDateTime.now().toDate(),
-                        "ver" to version,
-                        "nonce" to UUID.randomUUID().toString()
-                )
+                claims = overridingClaims.toMutableMap().apply {
+                    if (!containsKey("acr")) put("acr","Level$level")
+                    if (!containsKey("sub")) put("sub", fnr)
+                    if (!containsKey("aud")) put("aud", audience)
+                    if (!containsKey("iss")) put("iss", issuer)
+                    if (!containsKey("auth_time")) put("auth_time", LocalDateTime.now().toDate())
+                    if (!containsKey("ver")) put("ver", version)
+                    if (!containsKey("nonce")) put("nonce", UUID.randomUUID().toString())
+                }.toMap()
         )
     }
 }

@@ -37,18 +37,19 @@ object Azure {
                 groups: Set<String> = emptySet(),
                 roles: Set<String> = emptySet(),
                 scopes: Set<String> = emptySet(),
-                issuer: String = actualIssuer
+                issuer: String = actualIssuer,
+                overridingClaims: Map<String, Any> = emptyMap()
         ) = jwsFunctions.generateJwt(
-                claims = mapOf(
-                        "ver" to version,
-                        "aud" to audience,
-                        "iss" to issuer,
-                        "appid" to clientId,
-                        "appidacr" to clientAuthenticationMode.claimValue,
-                        "groups" to groups,
-                        "roles" to roles,
-                        "scp" to scopes.joinToString(" ")
-                )
+                claims = overridingClaims.toMutableMap().apply {
+                    if (!containsKey("ver")) put("ver", version)
+                    if (!containsKey("aud")) put("aud", audience)
+                    if (!containsKey("iss")) put("iss", issuer)
+                    if (!containsKey("appid")) put("appid", clientId)
+                    if (!containsKey("appidacr")) put("appidacr", clientAuthenticationMode.claimValue)
+                    if (!containsKey("groups")) put("groups", groups)
+                    if (!containsKey("roles")) put("roles", roles)
+                    if (!containsKey("scp")) put("scp", scopes.joinToString(" "))
+                }.toMap()
         )
     }
 
@@ -82,18 +83,19 @@ object Azure {
                 groups: Set<String> = emptySet(),
                 roles: Set<String> = emptySet(),
                 scopes: Set<String> = emptySet(),
-                issuer: String = actualIssuer
+                issuer: String = actualIssuer,
+                overridingClaims: Map<String, Any> = emptyMap()
         ) = jwsFunctions.generateJwt(
-                claims = mapOf(
-                        "ver" to version,
-                        "aud" to audience,
-                        "iss" to issuer,
-                        "azp" to clientId,
-                        "azpacr" to clientAuthenticationMode.claimValue,
-                        "groups" to groups,
-                        "roles" to roles,
-                        "scp" to scopes.joinToString(" ")
-                )
+                claims = overridingClaims.toMutableMap().apply {
+                    if (!containsKey("ver")) put("ver", version)
+                    if (!containsKey("aud")) put("aud", audience)
+                    if (!containsKey("iss")) put("iss", issuer)
+                    if (!containsKey("azp")) put("azp", clientId)
+                    if (!containsKey("azpacr")) put("azpacr", clientAuthenticationMode.claimValue)
+                    if (!containsKey("groups")) put("groups", groups)
+                    if (!containsKey("roles")) put("roles", roles)
+                    if (!containsKey("scp")) put("scp", scopes.joinToString(" "))
+                }.toMap()
         )
     }
 }
