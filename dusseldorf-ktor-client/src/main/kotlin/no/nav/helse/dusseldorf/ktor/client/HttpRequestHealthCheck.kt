@@ -22,7 +22,8 @@ import java.time.Duration
 
 data class HttpRequestHealthConfig(
         internal val expectedStatus: HttpStatusCode,
-        internal val includeExpectedStatusEntity : Boolean = true
+        internal val includeExpectedStatusEntity : Boolean = true,
+        internal val httpHeaders : Map<String, String> = emptyMap()
 )
 
 class HttpRequestHealthCheck(
@@ -43,10 +44,11 @@ class HttpRequestHealthCheck(
     override suspend fun check(): Result {
         val triplets = coroutineScope {
             val futures = mutableListOf<Deferred<ResponseResultOf<String>>>()
-            urlConfigMap.forEach { url, _ ->
+            urlConfigMap.forEach { url, config ->
                 futures.add(async {
                     url.toString()
                             .httpGet()
+                            .header(config.httpHeaders)
                             .timeout(timeout)
                             .timeoutRead(timeout)
                             .awaitStringResponseResult()
