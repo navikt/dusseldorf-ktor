@@ -12,7 +12,7 @@ deploy() {
         file=$2/target/$2-$version.$1
     fi
 
-    echo ./mvnw --settings .github/settings.xml deploy:deploy-file \
+    ./mvnw --settings .github/settings.xml deploy:deploy-file \
       -DgroupId=$groupId \
       -DartifactId=$2 \
       -Dversion=$version \
