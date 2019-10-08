@@ -4,8 +4,10 @@ import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.ApplicationConfigExt")
+private val VaultPath = "/var/run/secrets/nais.io/vault"
 
 @KtorExperimentalAPI
 internal class ApplicationConfigExt(
@@ -46,4 +48,15 @@ fun <T>ApplicationConfig.getOptionalList(key : String, secret: Boolean, builder:
 @KtorExperimentalAPI
 fun ApplicationConfig.id() : String = ApplicationConfigExt(this).getRequiredString("ktor.application.id", secret = false)
 
-
+@KtorExperimentalAPI
+fun ApplicationConfig.getRequiredSecret(key: String) : String {
+    val secret = getOptionalString(key, true)
+    return if (secret != null) secret
+    else {
+        val file = File("$VaultPath/$key")
+        require(file.exists()) { "$key må settes." }
+        val value = file.readText(Charsets.UTF_8)
+        require(!value.isBlank()) { "$key må settes." }
+        value
+    }
+}
