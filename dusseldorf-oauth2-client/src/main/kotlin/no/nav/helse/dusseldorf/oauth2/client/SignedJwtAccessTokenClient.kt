@@ -2,6 +2,7 @@ package no.nav.helse.dusseldorf.oauth2.client
 
 import com.nimbusds.jose.*
 import com.nimbusds.jose.crypto.RSASSASigner
+import com.nimbusds.jose.jwk.JWK
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
@@ -9,13 +10,11 @@ import com.nimbusds.oauth2.sdk.*
 import com.nimbusds.oauth2.sdk.auth.PrivateKeyJWT
 import org.slf4j.LoggerFactory
 import java.net.URI
-import java.security.KeyFactory
 import java.time.*
 import java.util.*
 import java.security.cert.CertificateFactory
 import java.security.MessageDigest
 import java.security.interfaces.RSAPrivateKey
-import java.security.spec.PKCS8EncodedKeySpec
 
 private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.oauth2.client.ClientAuthenticationPrivateKeyJwt")
 
@@ -139,14 +138,7 @@ class FromJwk(private val jwk: String) : PrivateKeyProvider {
 }
 class FromPrivateKeyPem(private val pem: String) : PrivateKeyProvider {
     override fun getPrivateKey(): RSAPrivateKey {
-        val trimmedPem = pem
-                .replace("\n", "")
-                .replace("\r", "")
-                .replace("-----BEGIN RSA PRIVATE KEY-----", "")
-                .replace("-----END RSA PRIVATE KEY-----", "")
-        val encoded = Base64.getDecoder().decode(trimmedPem)
-        val keyFactory = KeyFactory.getInstance("RSA")
-        val keySpec = PKCS8EncodedKeySpec(encoded)
-        return keyFactory.generatePrivate(keySpec) as RSAPrivateKey
+        val jwk = JWK.parseFromPEMEncodedObjects(pem)
+        return RSAKey.parse(jwk.toJSONObject()).toRSAPrivateKey()
     }
 }
