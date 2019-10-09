@@ -10,8 +10,12 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.net.URI
 import java.net.URL
+
+private const val AZURE_AD_MOUNT_PATH = "/var/run/secrets/nais.io/azuread"
+private const val AZURE_AD_ALIAS = "azuread"
 
 private const val AZURE_TYPE = "azure"
 private const val ISSUER = "issuer"
@@ -47,7 +51,7 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
         val audience = issuerConfig.getOptionalString("audience", false)
         // Resolve issuer
         val resolvedIssuer = if (AZURE_TYPE.equals(type, false)) {
-            if (audience == null) throw IllegalStateException("'audience' må settes for en issuer med type='azure'")
+            checkNotNull(audience) { "'audience' må settes for en issuer med type='azure'" }
             val authorizedClient = issuerConfig.getOptionalList(key = "azure.authorized_clients", secret = false , builder = { value -> value }).toSet()
             val requiredGroups = issuerConfig.getOptionalList(key = "azure.required_groups", secret = false , builder = { value -> value }).toSet()
             val requiredRoles = issuerConfig.getOptionalList(key = "azure.required_roles", secret = false , builder = { value -> value }).toSet()
@@ -93,25 +97,48 @@ fun ApplicationConfig.clients(path: String = "nav.auth.clients") : Map<String, C
         } else {
             logger.info("Client[$alias] er konfigurert.")
         }
-        val clientSecret = clientConfig.getOptionalString("client_secret", true)
-        val privateKeyJwk = clientConfig.getOptionalString("private_key_jwk", true)
-        if (clientSecret != null && privateKeyJwk != null) throw IllegalStateException("Både 'private_key_jwk' og 'client_secret' satt for Client[$alias]. Kun en av disse kan settes per client.")
-        if (clientSecret == null && privateKeyJwk == null) throw IllegalStateException("Hverken 'private_key_jwk' eller 'client_secret' satt for Client[$alias]. En av disse må settes per client.")
 
         val discoveryJson = runBlocking { clientConfig.getOptionalString("discovery_endpoint", false)?.discover(listOf(TOKEN_ENDPOINT)) }
         val tokenEndpoint = URI(if (discoveryJson != null) discoveryJson[TOKEN_ENDPOINT] as String else clientConfig.getRequiredString(TOKEN_ENDPOINT, false))
         logger.info("Client[$alias].token_endpoint = '$tokenEndpoint'")
 
-        val resolvedClient = if (clientSecret != null) {
-            ClientSecretClient(clientId, tokenEndpoint, clientSecret)
+
+        val resolvedClient = if (alias == AZURE_AD_ALIAS) {
+            azureAdClient(clientId, tokenEndpoint)
         } else {
-            val certificateHexThumbprint = clientConfig.getRequiredString("certificate_hex_thumbprint", false)
-            PrivateKeyClient(clientId, tokenEndpoint, privateKeyJwk!!, certificateHexThumbprint)
+            val clientSecret = clientConfig.getOptionalString("client_secret", true)
+            val privateKeyJwk = clientConfig.getOptionalString("private_key_jwk", true)
+            check(!(clientSecret != null && privateKeyJwk != null)) { "Både 'private_key_jwk' og 'client_secret' satt for Client[$alias]. Kun en av disse kan settes per client." }
+            check(!(clientSecret == null && privateKeyJwk == null)) { "Hverken 'private_key_jwk' eller 'client_secret' satt for Client[$alias]. En av disse må settes per client." }
+
+            if (clientSecret != null) {
+                ClientSecretClient(clientId, tokenEndpoint, clientSecret)
+            } else {
+                val certificateHexThumbprint = clientConfig.getRequiredString("certificate_hex_thumbprint", false)
+                PrivateKeyClient(clientId, tokenEndpoint, privateKeyJwk!!, certificateHexThumbprint)
+            }
         }
+
         clients[alias] = resolvedClient
     }
     logger.info("${clients.size} clients konfigurert.")
     return clients.toMap()
+}
+
+private fun azureAdClient(clientId: String, tokenEndpoint: URI) = PrivateKeyClientV2(
+        clientId = clientId,
+        tokenEndpoint = tokenEndpoint,
+        certificateBase64Thumbprint = azureAdSecret("kid_b64"),
+        privateKeyPem = azureAdSecret("client_privkey_b64")
+)
+
+private fun azureAdSecret(key: String) : String {
+    val filePath = "$AZURE_AD_MOUNT_PATH/$key"
+    return try {
+        File(filePath).readText(Charsets.UTF_8)
+    } catch (cause: Throwable) {
+        throw IllegalStateException("Fant ikke AzureAD $key på path $filePath", cause)
+    }
 }
 
 private fun String.discover(requiredAttributes : List<String>) : JSONObject? {
