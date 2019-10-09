@@ -141,6 +141,7 @@ class FromPrivateKeyPem(private val pem: String) : PrivateKeyProvider {
     override fun getPrivateKey(): RSAPrivateKey {
         val trimmedPem = pem
                 .replace("\n", "")
+                .replace("\r", "")
                 .replace("-----BEGIN RSA PRIVATE KEY-----", "")
                 .replace("-----END RSA PRIVATE KEY-----", "")
         val encoded = Base64.getDecoder().decode(trimmedPem)
