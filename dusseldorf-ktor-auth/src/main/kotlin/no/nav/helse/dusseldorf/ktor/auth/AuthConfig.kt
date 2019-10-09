@@ -3,6 +3,7 @@ package no.nav.helse.dusseldorf.ktor.auth
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.dusseldorf.ktor.core.fromResources
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
@@ -135,9 +136,13 @@ private fun azureAdClient(clientId: String, tokenEndpoint: URI) = PrivateKeyClie
 private fun azureAdSecret(key: String) : String {
     val filePath = "$AZURE_AD_MOUNT_PATH/$key"
     return try {
-        File(filePath).readText(Charsets.UTF_8)
-    } catch (cause: Throwable) {
-        throw IllegalStateException("Fant ikke AzureAD $key på path $filePath", cause)
+        filePath.fromResources().readText(Charsets.UTF_8)
+    } catch (ignore: Throwable) {
+        return try {
+            File(filePath).readText(Charsets.UTF_8)
+        } catch (cause: Throwable) {
+            throw IllegalStateException("Fant ikke AzureAD $key på path $filePath", cause)
+        }
     }
 }
 
