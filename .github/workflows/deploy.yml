@@ -16,7 +16,7 @@ jobs:
       - name: Set version
         run: ./scripts/set-maven-version.sh
       - name: Test and build
-        run: ./mvnw clean install
+        run: ./mvnw clean package --batch-mode --file pom.xml
       - name: Upload artifacts
         run: ./scripts/maven-deploy.sh
         env:

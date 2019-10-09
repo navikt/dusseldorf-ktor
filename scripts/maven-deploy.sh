@@ -7,8 +7,10 @@ version=$(./scripts/get-version.sh)
 
 deploy() {
     if [ "$1" == "pom" ]; then
+        pomFile=pom.xml
         file=pom.xml
     else
+        pomFile=$2/pom.xml
         file=$2/target/$2-$version.$1
     fi
 
@@ -20,7 +22,7 @@ deploy() {
       -Dfile=$file \
       -DrepositoryId=$repositoryId \
       -Durl=$url \
-      -DgeneratePom=false
+      -DpomFile=$pomFile
 }
 
 deploy pom dusseldorf-ktor
