@@ -15,7 +15,7 @@ import java.io.File
 import java.net.URI
 import java.net.URL
 
-private const val AZURE_AD_MOUNT_PATH = "/var/run/secrets/nais.io/azuread"
+private const val AZURE_AD_MOUNT_PATH = "var/run/secrets/nais.io/azuread"
 private const val AZURE_AD_ALIAS = "azuread"
 
 private const val AZURE_TYPE = "azure"
@@ -134,10 +134,10 @@ private fun azureAdClient(clientId: String, tokenEndpoint: URI) = PrivateKeyClie
 )
 
 private fun azureAdSecret(key: String) : String {
-    val filePath = "$AZURE_AD_MOUNT_PATH/$key"
     return try {
-        filePath.fromResources().readText(Charsets.UTF_8)
+        "$AZURE_AD_MOUNT_PATH/$key".fromResources().readText(Charsets.UTF_8)
     } catch (ignore: Throwable) {
+        val filePath = "/$AZURE_AD_MOUNT_PATH/$key"
         return try {
             File(filePath).readText(Charsets.UTF_8)
         } catch (cause: Throwable) {
