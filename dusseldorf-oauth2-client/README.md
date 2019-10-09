@@ -1,6 +1,11 @@
 # Düsseldorf-oauth2-client
 
 ## Generere Client sertifikat
+
+### For DEV og PROD
+https://github.com/navikt/aad-iac
+
+### Gjøre det selv
 * Bruker openssl
 * Bruker npm-pakke pem-jwk (https://www.npmjs.com/package/pem-jwk). Må installeres globalt.
 
@@ -19,12 +24,12 @@ Om det ikke settes environment (prod) blir `${common_name}` satt til `${client_n
 
 Om det settes et environment blir `${common_name}` satt til `${client_name}.${environment}.nav.no`
 
-### certificate_${common_name}.pem
+#### certificate_${common_name}.pem
 Lastes opp i Azure Portal
 
-### private_key_${common_name}.jwk
+#### private_key_${common_name}.jwk
 Legges i vault og brukes i applikasjonen i `PrivateKeyProvider:FromJwk`
 
-## Hente Key ID
+### Hente Key ID
 * Bruk thumbprint som vises i Azure når sertifikat er lastet opp i `KeyIdProvider:FromCertificateHexThumbprint`
 * Bruk sertifikat pem-fil i `KeyIdProvider:FromCertificatePem`
