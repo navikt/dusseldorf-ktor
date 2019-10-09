@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URI
 import java.net.URL
+import java.util.*
 
 private const val AZURE_AD_MOUNT_PATH = "var/run/secrets/nais.io/azuread"
 private const val AZURE_AD_ALIAS = "azuread"
@@ -130,7 +131,7 @@ private fun azureAdClient(clientId: String, tokenEndpoint: URI) = PrivateKeyClie
         clientId = clientId,
         tokenEndpoint = tokenEndpoint,
         certificateBase64Thumbprint = azureAdSecret("kid_b64"),
-        privateKeyPem = azureAdSecret("client_privkey_b64")
+        privateKeyPem = String(Base64.getDecoder().decode(azureAdSecret("client_privkey_b64")))
 )
 
 private fun azureAdSecret(key: String) : String {
