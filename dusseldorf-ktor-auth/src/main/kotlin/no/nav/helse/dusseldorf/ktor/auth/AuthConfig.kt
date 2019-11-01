@@ -3,7 +3,6 @@ package no.nav.helse.dusseldorf.ktor.auth
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.dusseldorf.ktor.core.fromResources
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
@@ -11,13 +10,8 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 import java.net.URI
 import java.net.URL
-import java.util.*
-
-private const val AZURE_AD_MOUNT_PATH = "var/run/secrets/nais.io/azuread"
-private const val AZURE_AD_ALIAS = "azuread"
 
 private const val AZURE_TYPE = "azure"
 private const val ISSUER = "issuer"
@@ -104,47 +98,22 @@ fun ApplicationConfig.clients(path: String = "nav.auth.clients") : Map<String, C
         val tokenEndpoint = URI(if (discoveryJson != null) discoveryJson[TOKEN_ENDPOINT] as String else clientConfig.getRequiredString(TOKEN_ENDPOINT, false))
         logger.info("Client[$alias].token_endpoint = '$tokenEndpoint'")
 
+        val clientSecret = clientConfig.getOptionalString("client_secret", true)
+        val privateKeyJwk = clientConfig.getOptionalString("private_key_jwk", true)
+        check(!(clientSecret != null && privateKeyJwk != null)) { "Både 'private_key_jwk' og 'client_secret' satt for Client[$alias]. Kun en av disse kan settes per client." }
+        check(!(clientSecret == null && privateKeyJwk == null)) { "Hverken 'private_key_jwk' eller 'client_secret' satt for Client[$alias]. En av disse må settes per client." }
 
-        val resolvedClient = if (alias == AZURE_AD_ALIAS) {
-            azureAdClient(clientId, tokenEndpoint)
+        val resolvedClient = if (clientSecret != null) {
+            ClientSecretClient(clientId, tokenEndpoint, clientSecret)
         } else {
-            val clientSecret = clientConfig.getOptionalString("client_secret", true)
-            val privateKeyJwk = clientConfig.getOptionalString("private_key_jwk", true)
-            check(!(clientSecret != null && privateKeyJwk != null)) { "Både 'private_key_jwk' og 'client_secret' satt for Client[$alias]. Kun en av disse kan settes per client." }
-            check(!(clientSecret == null && privateKeyJwk == null)) { "Hverken 'private_key_jwk' eller 'client_secret' satt for Client[$alias]. En av disse må settes per client." }
-
-            if (clientSecret != null) {
-                ClientSecretClient(clientId, tokenEndpoint, clientSecret)
-            } else {
-                val certificateHexThumbprint = clientConfig.getRequiredString("certificate_hex_thumbprint", false)
-                PrivateKeyClient(clientId, tokenEndpoint, privateKeyJwk!!, certificateHexThumbprint)
-            }
+            val certificateHexThumbprint = clientConfig.getRequiredString("certificate_hex_thumbprint", false)
+            PrivateKeyClient(clientId, tokenEndpoint, privateKeyJwk!!, certificateHexThumbprint)
         }
 
         clients[alias] = resolvedClient
     }
     logger.info("${clients.size} clients konfigurert.")
     return clients.toMap()
-}
-
-private fun azureAdClient(clientId: String, tokenEndpoint: URI) = PrivateKeyClientV2(
-        clientId = clientId,
-        tokenEndpoint = tokenEndpoint,
-        certificateBase64Thumbprint = azureAdSecret("kid_b64"),
-        privateKeyPem = String(Base64.getDecoder().decode(azureAdSecret("client_privkey_b64")))
-)
-
-private fun azureAdSecret(key: String) : String {
-    return try {
-        "$AZURE_AD_MOUNT_PATH/$key".fromResources().readText(Charsets.UTF_8)
-    } catch (ignore: Throwable) {
-        val filePath = "/$AZURE_AD_MOUNT_PATH/$key"
-        return try {
-            File(filePath).readText(Charsets.UTF_8)
-        } catch (cause: Throwable) {
-            throw IllegalStateException("Fant ikke AzureAD $key på path $filePath", cause)
-        }
-    }
 }
 
 private fun String.discover(requiredAttributes : List<String>) : JSONObject? {
