@@ -18,7 +18,7 @@ internal class AzureTokenResponseTransformer(
 
     private companion object {
         private const val CLIENT_ASSERTION_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
-        private const val GRANT_TYPE = "client_credentials"
+        private val GRANT_TYPES = listOf("client_credentials", "urn:ietf:params:oauth:grant-type:jwt-bearer")
     }
 
     override fun getName() = name
@@ -33,10 +33,10 @@ internal class AzureTokenResponseTransformer(
         val body = URLDecoder.decode(request!!.bodyAsString,"UTF-8")
 
         val clientAssertionType = getParameter("client_assertion_type", body)
-        if (CLIENT_ASSERTION_TYPE != clientAssertionType.toLowerCase()) throw IllegalStateException("client_assertion_type må være $CLIENT_ASSERTION_TYPE, var $clientAssertionType")
+        check(CLIENT_ASSERTION_TYPE == clientAssertionType.toLowerCase()) { "client_assertion_type må være $CLIENT_ASSERTION_TYPE, var $clientAssertionType" }
 
         val granType = getParameter("grant_type", body)
-        if (GRANT_TYPE != granType.toLowerCase()) throw IllegalStateException("grant_type må være $GRANT_TYPE, var $granType")
+        check(GRANT_TYPES.contains(granType.toLowerCase())) { "grant_type må være en av ${GRANT_TYPES.joinToString()}, var $granType" }
 
         val clientAssertion = getParameter("client_assertion", body)
         val clientId = SignedJWT.parse(clientAssertion).jwtClaimsSet.issuer
