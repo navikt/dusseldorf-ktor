@@ -18,6 +18,8 @@ object ClientCredentials {
     object ClientA {
         val privateKeyJwk = """
         {
+            "kid": "MGBHHGXl7ITAVj-fHgBkPBQ-T5A=",
+            "x5t": "MGBHHGXl7ITAVj-fHgBkPBQ-T5A=",
             "kty": "RSA",
             "n": "vTs0mS-huLVOv7_EaaIHoqkM3Rz1TOImAEVdQK6PZqqQLnbRC5yszxuqOOFPvw8QFY3HT2iUrkxlVPkW3Z9LAXS3dmZKw0MJboLHvusdmLFn0FhIgbldRyAxJ4UcepLJdcR4xofW_MgIH34xkjEDY-dSeDB4fiKi1_8lPTJYuVP5vAywfV3Z_R7msK6rlvl0g28SsOZrxJ9OC6nH3cVsT75vZcmd2eip7LLGCkO8-V9qGgAYUjocn7x6-0XlPVilCF8ic6PNClwe4bmjDR2a_SbDSc3akE8vxaMtINt49CcPfUhkPPm_0mfWsayCXzuwBfUeTaXF_ABCxkipYYpu6w",
             "e": "AQAB",
@@ -60,6 +62,8 @@ object ClientCredentials {
     object ClientB {
         val privateKeyJwk = """
         {
+            "kid": "IIx3o-0TZaznLLk0wOCkcB_be78=",
+            "x5t": "IIx3o-0TZaznLLk0wOCkcB_be78=",
             "kty": "RSA",
             "n": "0CUjU__2-sJHzVfdO1JDbTsCJnvh2ITTF6hp6LHAUsldVxkOjiBmINr_PFJuSS3J4nRq3YEjkGFXBhpE6yrRGIlfNNBlcOi7DB6L7FBdG9C1_IlDPoMwH_ddTd1Ki8IkeMbGH9xjMy9eoylIRPS7fbFguKIZ-FbGSPiyGGCwVbgN-x2-TrkCuuYexuVRe_sVqP0XtmVpMaHsgVvW1dJZocY0dbEvj2yQWpry0gHEgMZFNWYgpALPiIO8zZg7-yb0AmeD6tNWjR8fMvsxkXX85UqyHAa-XbzyxVjLvumaerFj27BTgDJ_k6LMRYPoCjQDtKnNA_0P-EIe-gWVqA3vYQ",
             "e": "AQAB",
@@ -94,15 +98,17 @@ object ClientCredentials {
         8njlmZAB/bG1ngTODSuuwlKlub+jRyaIyqLhwEgcqr2HjfrjVjvxo3eWEYDoEEB2
         hdBEJHh19mOmTCUf4JLwvcNVVlpqOzIb+A4fG+hLH6Oflx50Rsb+jdVAicdn7ZYX
         r7A7Q6AGosZP2kAEtulbvuj1
-        -----END CERTIFICATE----
+        -----END CERTIFICATE-----
         """.trimIndent()
 
-        val certificateHexThumbprint = asHexThumbprint(ClientA.certificatePem)
+        val certificateHexThumbprint = asHexThumbprint(certificatePem)
 
     }
     object ClientC {
         val privateKeyJwk = """
         {
+            "kid": "bAa3TOJkF6sInF_jX50kbv6DwYQ=",
+            "x5t": "bAa3TOJkF6sInF_jX50kbv6DwYQ=",
             "kty": "RSA",
             "n": "yYBQnAbJNZnY6374Y-FmRmyM8JGsrSGIJV7dTCs90E5oQqjlBZdOBUCb0BOi7vcgRy6gjkrR6PA1jp6G__Obk5bBxrJdmHZVzNMRaj7znCA8Qo1uYhk3b_L5MhnWFnDGvcyWQCksvnp_FtI0e7KpQ5-6bfahDtf5Ov0ZconmGvUR9eH-2yvT4OAUy3fpEDXyU1-0ait8NMa8QtzuKsH4p79eVx5lB1_feCoWvCU4FplzrduYdrF61cniAxwvtCd0HrT-yeCIZAd8TPKLZBNUb_n3wCN-UpiD8aJA7V7DlzdtdawyisUjjBztjsoE7HXnHPtaOdYq9hXD9tIRslVPfQ",
             "e": "AQAB",
@@ -140,6 +146,6 @@ object ClientCredentials {
         -----END CERTIFICATE-----
         """.trimIndent()
 
-        val certificateHexThumbprint = asHexThumbprint(ClientA.certificatePem)
+        val certificateHexThumbprint = asHexThumbprint(certificatePem)
     }
 }
