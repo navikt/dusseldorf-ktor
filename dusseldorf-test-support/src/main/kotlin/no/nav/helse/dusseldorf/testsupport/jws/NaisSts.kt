@@ -1,4 +1,4 @@
-package no.nav.helse.dusseldorf.ktor.testsupport.jws
+package no.nav.helse.dusseldorf.testsupport.jws
 
 object NaisSts : Issuer {
     private val privateKeyJwk = """

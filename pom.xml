@@ -18,9 +18,10 @@
         <module>dusseldorf-ktor-client</module>
         <module>dusseldorf-ktor-jackson</module>
         <module>dusseldorf-ktor-health</module>
-        <module>dusseldorf-oauth2-client</module>
         <module>dusseldorf-ktor-auth</module>
-        <module>dusseldorf-ktor-test-support</module>
+        <!-- ikke ktor spesefikke moduler -->
+        <module>dusseldorf-oauth2-client</module>
+        <module>dusseldorf-test-support</module>
     </modules>
 
     <properties>

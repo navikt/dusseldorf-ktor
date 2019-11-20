@@ -1,4 +1,4 @@
-package no.nav.helse.dusseldorf.ktor.testsupport.jws
+package no.nav.helse.dusseldorf.testsupport.jws
 import java.time.LocalDateTime
 import java.util.*
 

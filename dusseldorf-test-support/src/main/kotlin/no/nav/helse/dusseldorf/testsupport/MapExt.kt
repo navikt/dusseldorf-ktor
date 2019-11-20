@@ -1,4 +1,4 @@
-package no.nav.helse.dusseldorf.ktor.testsupport
+package no.nav.helse.dusseldorf.testsupport
 
 fun Map<String, String>.asArguments() : Array<String>  {
     val list = mutableListOf<String>()

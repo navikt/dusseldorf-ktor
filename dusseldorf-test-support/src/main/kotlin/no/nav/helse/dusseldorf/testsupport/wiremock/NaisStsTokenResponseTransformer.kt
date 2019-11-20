@@ -1,10 +1,10 @@
-package no.nav.helse.dusseldorf.ktor.testsupport.wiremock
+package no.nav.helse.dusseldorf.testsupport.wiremock
 
 import com.github.tomakehurst.wiremock.common.FileSource
 import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer
 import com.github.tomakehurst.wiremock.http.*
-import no.nav.helse.dusseldorf.ktor.testsupport.jws.NaisSts
+import no.nav.helse.dusseldorf.testsupport.jws.NaisSts
 import java.util.*
 
 internal class NaisStsTokenResponseTransformer(

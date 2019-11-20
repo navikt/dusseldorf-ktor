@@ -1,11 +1,11 @@
-package no.nav.helse.dusseldorf.ktor.testsupport.wiremock
+package no.nav.helse.dusseldorf.testsupport.wiremock
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import no.nav.helse.dusseldorf.ktor.testsupport.jws.Azure
-import no.nav.helse.dusseldorf.ktor.testsupport.jws.LoginService
-import no.nav.helse.dusseldorf.ktor.testsupport.jws.NaisSts
+import no.nav.helse.dusseldorf.testsupport.jws.Azure
+import no.nav.helse.dusseldorf.testsupport.jws.LoginService
+import no.nav.helse.dusseldorf.testsupport.jws.NaisSts
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

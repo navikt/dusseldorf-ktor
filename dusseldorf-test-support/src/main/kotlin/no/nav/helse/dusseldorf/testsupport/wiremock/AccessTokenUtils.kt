@@ -1,4 +1,4 @@
-package no.nav.helse.dusseldorf.ktor.testsupport.wiremock
+package no.nav.helse.dusseldorf.testsupport.wiremock
 
 import com.nimbusds.jwt.SignedJWT
 import java.util.*

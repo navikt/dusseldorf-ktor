@@ -1,4 +1,4 @@
-package no.nav.helse.dusseldorf.ktor.testsupport.wiremock
+package no.nav.helse.dusseldorf.testsupport.wiremock
 
 import com.github.tomakehurst.wiremock.common.FileSource
 import com.github.tomakehurst.wiremock.extension.Parameters

@@ -1,4 +1,4 @@
-package no.nav.helse.dusseldorf.ktor.testsupport.jws
+package no.nav.helse.dusseldorf.testsupport.jws
 
 import org.apache.commons.codec.binary.Hex
 import java.security.MessageDigest
@@ -97,7 +97,7 @@ object ClientCredentials {
         -----END CERTIFICATE----
         """.trimIndent()
 
-        val certificateHexThumbprint = asHexThumbprint(ClientCredentials.ClientA.certificatePem)
+        val certificateHexThumbprint = asHexThumbprint(ClientA.certificatePem)
 
     }
     object ClientC {
@@ -140,6 +140,6 @@ object ClientCredentials {
         -----END CERTIFICATE-----
         """.trimIndent()
 
-        val certificateHexThumbprint = asHexThumbprint(ClientCredentials.ClientA.certificatePem)
+        val certificateHexThumbprint = asHexThumbprint(ClientA.certificatePem)
     }
 }

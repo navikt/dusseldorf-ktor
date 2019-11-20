@@ -1,4 +1,4 @@
-package no.nav.helse.dusseldorf.ktor.testsupport.jws
+package no.nav.helse.dusseldorf.testsupport.jws
 
 object Azure {
     enum class ClientAuthenticationMode(val claimValue: String) {
@@ -33,7 +33,7 @@ object Azure {
         fun generateJwt(
                 clientId: String,
                 audience: String,
-                clientAuthenticationMode: ClientAuthenticationMode = Azure.ClientAuthenticationMode.CERTIFICATE,
+                clientAuthenticationMode: ClientAuthenticationMode = ClientAuthenticationMode.CERTIFICATE,
                 groups: Set<String> = emptySet(),
                 roles: Set<String> = emptySet(),
                 scopes: Set<String> = emptySet(),
@@ -79,7 +79,7 @@ object Azure {
         fun generateJwt(
                 clientId: String,
                 audience: String,
-                clientAuthenticationMode: ClientAuthenticationMode = Azure.ClientAuthenticationMode.CERTIFICATE,
+                clientAuthenticationMode: ClientAuthenticationMode = ClientAuthenticationMode.CERTIFICATE,
                 groups: Set<String> = emptySet(),
                 roles: Set<String> = emptySet(),
                 scopes: Set<String> = emptySet(),

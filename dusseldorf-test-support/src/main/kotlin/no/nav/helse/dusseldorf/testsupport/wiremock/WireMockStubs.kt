@@ -1,7 +1,7 @@
-package no.nav.helse.dusseldorf.ktor.testsupport.wiremock
+package no.nav.helse.dusseldorf.testsupport.wiremock
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import no.nav.helse.dusseldorf.ktor.testsupport.jws.JwsFunctions
+import no.nav.helse.dusseldorf.testsupport.jws.JwsFunctions
 
 internal object WireMockStubs {
     private const val ISSUER = "issuer"
