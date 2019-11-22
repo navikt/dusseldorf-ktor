@@ -30,7 +30,7 @@
         <maven.compiler.target>11</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
-        <ktor.version>1.2.5</ktor.version>
+        <ktor.version>1.2.6</ktor.version>
         <kotlin.version>1.3.60</kotlin.version>
         <!-- På samme versjon som i KTOR -->
         <!-- https://github.com/ktorio/ktor/blob/1.2.5/gradle.properties -->
