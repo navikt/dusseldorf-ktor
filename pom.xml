@@ -35,7 +35,7 @@
         <!-- På samme versjon som i KTOR -->
         <!-- https://github.com/ktorio/ktor/blob/1.2.5/gradle.properties -->
         <kotlinx.coroutines.version>1.3.2</kotlinx.coroutines.version>
-        <micrometer.version>1.3.1</micrometer.version>
+        <micrometer.version>1.3.2</micrometer.version>
         <jackson.version>2.10.1</jackson.version>
         <!-- Ikke fra KTOR -->
         <logback.version>1.2.3</logback.version>
