@@ -57,7 +57,7 @@ class WireMockBuilder {
             Azure.V2_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes)
         })
         val azureV1ClientSecret = AzureTokenClientSecretResponseTransformer(name = AZURE_V1_TOKEN_CLIENT_SECRET_TRANSFORMER, accessTokenGenerator = { clientId, audience, scopes ->
-            Azure.V1_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes, clientAuthenticationMode = Azure.ClientAuthenticationMode.CLIENT_SECRET))
+            Azure.V1_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes, clientAuthenticationMode = Azure.ClientAuthenticationMode.CLIENT_SECRET)
         })
         val azureV2ClientSecret = AzureTokenClientSecretResponseTransformer(name = AZURE_V2_TOKEN_CLIENT_SECRET_TRANSFORMER, accessTokenGenerator = { clientId, audience, scopes ->
             Azure.V2_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes, clientAuthenticationMode = Azure.ClientAuthenticationMode.CLIENT_SECRET)
