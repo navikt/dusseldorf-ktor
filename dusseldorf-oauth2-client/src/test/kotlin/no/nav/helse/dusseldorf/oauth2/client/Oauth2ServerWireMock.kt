@@ -26,6 +26,10 @@ class Oauth2ServerWireMock {
         this.wireMockServer = wireMockServer
     }
 
+    fun stop() {
+        wireMockServer.stop()
+    }
+
     fun getTokenUrl() : URI {
         return URI(wireMockServer.baseUrl() + "/token")
     }

@@ -7,7 +7,6 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.http.Response
-import java.net.URLDecoder
 import java.util.*
 
 internal class AzureTokenClientSecretResponseTransformer(
@@ -24,14 +23,14 @@ internal class AzureTokenClientSecretResponseTransformer(
             files: FileSource?,
             parameters: Parameters?
     ): Response {
-        val scopes = URLDecoder.decode(request!!.queryParameter("scope")
-                .firstValue(),"UTF-8")
-                .split(" ")
-                .toSet()
+        val urlDecodedBody = AzureTokenTransformerUtils.urlDecodedBody(request!!)
 
-        val clientId = String(Base64.getDecoder().decode(request.getHeader("Authorization"))).split(":")[0]
+        val scopes = AzureTokenTransformerUtils.getScopes(urlDecodedBody)
 
-        val audience = extractAudience(scopes)
+        val credentials = request.getHeader("Authorization").substringAfter("Basic ")
+        val clientId = String(Base64.getDecoder().decode(credentials)).split(":")[0]
+
+        val audience = AzureTokenTransformerUtils.extractAudience(scopes)
 
         val accessToken = accessTokenGenerator(clientId, audience, scopes)
 
@@ -47,6 +46,4 @@ internal class AzureTokenClientSecretResponseTransformer(
                 """.trimIndent())
                 .build()
     }
-
-    private fun extractAudience(scopes: Set<String>) = scopes.first { it.endsWith("/.default") }.substringBefore("/.default")
 }

@@ -1,6 +1,9 @@
 package no.nav.helse.dusseldorf.oauth2.client
 
 import com.nimbusds.jwt.SignedJWT
+import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
+import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2TokenUrl
+import java.net.URI
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -35,6 +38,7 @@ class ClientSecretAccessTokenClientTest {
         val clientId = "test-client-id"
         val clientSecret = "client-secret"
 
+
         mock.stubGetTokenClientSecretClientCredentials(clientId, clientSecret)
 
         val client = ClientSecretAccessTokenClient(
@@ -48,5 +52,24 @@ class ClientSecretAccessTokenClientTest {
         )
 
         assertNotNull(resp)
+        mock.stop()
+    }
+
+    @Test
+    fun `Hente access token med test support`() {
+        val wireMock = WireMockBuilder()
+                .withAzureSupport()
+                .build()
+
+        val client = ClientSecretAccessTokenClient(
+                clientId = "foo",
+                clientSecret = "bar",
+                tokenEndpoint = URI(wireMock.getAzureV2TokenUrl())
+        )
+
+        val response = client.getAccessToken(setOf("fooscope/.default"))
+
+        assertNotNull(response)
+        wireMock.stop()
     }
 }

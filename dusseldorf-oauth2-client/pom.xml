@@ -50,10 +50,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <version>${wiremock.version}</version>
-            <scope>test</scope>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-test-support</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

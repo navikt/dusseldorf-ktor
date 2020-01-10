@@ -9,7 +9,6 @@ import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.http.Response
 import com.nimbusds.jwt.SignedJWT
 import java.net.URLDecoder
-import kotlin.IllegalStateException
 
 internal class AzureTokenSignetJwtResponseTransformer(
         private val name: String,
@@ -32,17 +31,17 @@ internal class AzureTokenSignetJwtResponseTransformer(
     ): Response {
         val body = URLDecoder.decode(request!!.bodyAsString,"UTF-8")
 
-        val clientAssertionType = getParameter("client_assertion_type", body)
+        val clientAssertionType = AzureTokenTransformerUtils.getParameter("client_assertion_type", body)
         check(CLIENT_ASSERTION_TYPE == clientAssertionType.toLowerCase()) { "client_assertion_type må være $CLIENT_ASSERTION_TYPE, var $clientAssertionType" }
 
-        val granType = getParameter("grant_type", body)
+        val granType = AzureTokenTransformerUtils.getParameter("grant_type", body)
         check(GRANT_TYPES.contains(granType.toLowerCase())) { "grant_type må være en av ${GRANT_TYPES.joinToString()}, var $granType" }
 
-        val clientAssertion = getParameter("client_assertion", body)
+        val clientAssertion = AzureTokenTransformerUtils.getParameter("client_assertion", body)
         val clientId = SignedJWT.parse(clientAssertion).jwtClaimsSet.issuer
 
-        val scopes = getScopes(body)
-        val audience = extractAudience(scopes)
+        val scopes = AzureTokenTransformerUtils.getScopes(body)
+        val audience = AzureTokenTransformerUtils.extractAudience(scopes)
 
         val accessToken = accessTokenGenerator(clientId, audience, scopes)
 
@@ -59,15 +58,6 @@ internal class AzureTokenSignetJwtResponseTransformer(
                 .build()
 
     }
-
-    private fun getParameter(parameterName: String, urlDecodedBody: String) : String {
-        if (!urlDecodedBody.contains("$parameterName=")) throw IllegalStateException("Parameter $parameterName ikke funnet i request $urlDecodedBody")
-        val afterParamName = urlDecodedBody.substringAfter("$parameterName=")
-        return if (afterParamName.contains("&")) afterParamName.substringBefore("&")
-        else afterParamName
-    }
-    private fun getScopes(urlDecodedBody: String) = getParameter("scope", urlDecodedBody).split( " ").toSet()
-    private fun extractAudience(scopes: Set<String>) = scopes.first { it.endsWith("/.default") }.substringBefore("/.default")
 }
 
 
