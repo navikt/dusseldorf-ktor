@@ -42,7 +42,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <logstash.logback.version>6.3</logstash.logback.version>
         <prometheus.version>0.8.0</prometheus.version>
-        <caffeine.version>2.8.0</caffeine.version>
+        <caffeine.version>2.8.1</caffeine.version>
         <fuel.version>2.2.1</fuel.version>
         <!-- Interne versjoner -->
         <oauth2-oidc-sdk.version>6.23</oauth2-oidc-sdk.version>
