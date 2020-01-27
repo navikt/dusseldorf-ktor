@@ -3,6 +3,7 @@ package no.nav.helse.dusseldorf.testsupport.wiremock
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import no.nav.helse.dusseldorf.testsupport.http.AzureWellKnown
 import no.nav.helse.dusseldorf.testsupport.jws.Azure
 import no.nav.helse.dusseldorf.testsupport.jws.LoginService
 import no.nav.helse.dusseldorf.testsupport.jws.NaisSts
@@ -88,9 +89,12 @@ class WireMockBuilder {
         WireMockStubs.stubJwks(path = Paths.AZURE_V1_JWKS_PATH, jwkSet = Azure.V1_0.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.AZURE_V1_WELL_KNOWN_PATH,
-                issuer = Azure.V1_0.getIssuer(),
-                jwkSetUrl = server.getAzureV1JwksUrl(),
-                tokenEndpoint = server.getAzureV1TokenUrl()
+                response = AzureWellKnown.response(
+                        issuer = Azure.V1_0.getIssuer(),
+                        jwksUri = server.getAzureV1JwksUrl(),
+                        tokenEndpoint = server.getAzureV1TokenUrl(),
+                        authorizationEndpoint = server.getAzureV1AuthorizationUrl()
+                )
         )
 
         logger.info("Azure V1 Token URL = ${server.getAzureV1TokenUrl()}")
@@ -104,9 +108,12 @@ class WireMockBuilder {
         WireMockStubs.stubJwks(path = Paths.AZURE_V2_JWKS_PATH, jwkSet = Azure.V2_0.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.AZURE_V2_WELL_KNOWN_PATH,
-                issuer = Azure.V2_0.getIssuer(),
-                jwkSetUrl = server.getAzureV2JwksUrl(),
-                tokenEndpoint = server.getAzureV2TokenUrl()
+                response = AzureWellKnown.response(
+                        issuer = Azure.V2_0.getIssuer(),
+                        jwksUri = server.getAzureV2JwksUrl(),
+                        tokenEndpoint = server.getAzureV2TokenUrl(),
+                        authorizationEndpoint = server.getAzureV2AuthorizationUrl()
+                )
         )
 
         logger.info("Azure V2 Token URL = ${server.getAzureV2TokenUrl()}")
