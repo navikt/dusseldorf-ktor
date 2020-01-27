@@ -9,7 +9,7 @@ import java.util.*
 object AzureToken {
     fun response(
             request: TokenRequest,
-            issuer: String = Azure.V2_0.getIssuer()) : String {
+            issuer: String) : String {
         return when {
             request.isClientCredentials() -> clientCredentials(request, issuer)
             request.isOnBehalfOf() -> onBehalfOf(request, issuer)
@@ -26,7 +26,7 @@ object AzureToken {
         val scopes = request.getScopes()
         val audience = scopes.extractAudience()
 
-        val accessToken = if (request.isV2()) Azure.V2_0.generateJwt(
+        val accessToken = if (issuer.isV2()) Azure.V2_0.generateJwt(
                 issuer = issuer,
                 clientId = clientId,
                 clientAuthenticationMode = clientAuthenticationMode,
@@ -60,7 +60,7 @@ object AzureToken {
         val audience = scopes.extractAudience()
         val name = request.getAssertion().jwtClaimsSet.getStringClaim("name")
 
-        val accessToken = if (request.isV2()) Azure.V2_0.generateJwt(
+        val accessToken = if (issuer.isV2()) Azure.V2_0.generateJwt(
                 issuer = issuer,
                 clientId = clientId,
                 clientAuthenticationMode = clientAuthenticationMode,
@@ -99,7 +99,7 @@ object AzureToken {
         val scopes = code.scopes()
         val audience = scopes.extractAudience()
 
-        val accessToken = if (request.isV2()) Azure.V2_0.generateJwt(
+        val accessToken = if (issuer.isV2()) Azure.V2_0.generateJwt(
                 issuer = issuer,
                 clientId = clientId,
                 clientAuthenticationMode = clientAuthenticationMode,
@@ -121,7 +121,7 @@ object AzureToken {
             )
         }
 
-        val idToken = if (request.isV2()) Azure.V2_0.generateJwt(
+        val idToken = if (issuer.isV2()) Azure.V2_0.generateJwt(
                 issuer = issuer,
                 clientId = clientId,
                 audience = audience,
@@ -186,7 +186,6 @@ object AzureToken {
 
 interface TokenRequest {
     fun urlDecodedBody(): String
-    fun path(): String
     fun authorizationHeader() : String?
 }
 
@@ -206,7 +205,7 @@ private fun String.getRequiredParameter(parameterName: String) : String {
     else afterParamName
 }
 
-private fun TokenRequest.isV2() = path().contains("v2.0")
+private fun String.isV2() = contains("v2.0")
 private fun TokenRequest.isClientCredentials() = urlDecodedBody().getOptionalParameter("grant_type")?.equals("client_credentials")?:false
 private fun TokenRequest.isOnBehalfOf() = urlDecodedBody().getOptionalParameter("requested_token_use")?.equals("on_behalf_of")?:false
 private fun TokenRequest.isAuthorizationCode() = urlDecodedBody().getOptionalParameter("grant_type")?.equals("authorization_code")?:false

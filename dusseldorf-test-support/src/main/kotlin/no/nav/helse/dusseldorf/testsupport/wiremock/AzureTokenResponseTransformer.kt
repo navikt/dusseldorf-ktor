@@ -12,7 +12,8 @@ import no.nav.helse.dusseldorf.testsupport.http.TokenRequest
 import java.net.URLDecoder
 
 internal class AzureTokenResponseTransformer(
-        private val name: String
+        private val name: String,
+        private val issuer: String
 ) : ResponseTransformer() {
 
     override fun getName() = name
@@ -25,7 +26,8 @@ internal class AzureTokenResponseTransformer(
             parameters: Parameters?
     ): Response {
         val tokenResponse = AzureToken.response(
-                request = WireMockTokenRequest(request!!)
+                request = WireMockTokenRequest(request!!),
+                issuer = issuer
         )
 
         return Response.Builder.like(response)
@@ -38,9 +40,7 @@ internal class AzureTokenResponseTransformer(
 
 internal class WireMockTokenRequest(request: Request) : TokenRequest {
     private val body = URLDecoder.decode(request.bodyAsString, Charsets.UTF_8)!!
-    private val path = request.absoluteUrl!!
     private val authorizationHeader = request.getHeader("Authorization")
     override fun urlDecodedBody() = body
-    override fun path() = path
     override fun authorizationHeader() : String? = authorizationHeader
 }

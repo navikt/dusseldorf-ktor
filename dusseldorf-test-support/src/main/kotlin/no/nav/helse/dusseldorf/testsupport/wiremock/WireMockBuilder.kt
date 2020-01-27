@@ -45,8 +45,8 @@ class WireMockBuilder {
     }
 
     fun withAzureSupport() : WireMockBuilder {
-        val azureV1 = AzureTokenResponseTransformer(name = AZURE_V1_TOKEN_TRANSFORMER)
-        val azureV2 = AzureTokenResponseTransformer(name = AZURE_V2_TOKEN_TRANSFORMER)
+        val azureV1 = AzureTokenResponseTransformer(name = AZURE_V1_TOKEN_TRANSFORMER, issuer = Azure.V1_0.getIssuer())
+        val azureV2 = AzureTokenResponseTransformer(name = AZURE_V2_TOKEN_TRANSFORMER, issuer = Azure.V2_0.getIssuer())
         config.extensions(azureV1, azureV2)
         withAzureSupport = true
         return this
