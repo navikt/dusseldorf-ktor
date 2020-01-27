@@ -9,27 +9,32 @@ internal object WireMockStubs {
 
     internal fun stubWellKnown(
             path: String,
-            issuer: String,
-            jwkSetUrl: String,
-            tokenEndpoint: String
-    ) {
+            response: String) {
         WireMock.stubFor(
                 WireMock.get(WireMock.urlPathMatching(".*$path.*"))
                         .willReturn(
                                 WireMock.aResponse()
-                                        .withHeader("Content-Type", "application/json")
+                                        .withHeader("Content-Type", "application/json; charset=UTF-8")
                                         .withStatus(200)
-                                        .withBody("""
-                                            {
-                                                "$ISSUER": "$issuer",
-                                                "$JWKS_URI": "$jwkSetUrl",
-                                                "$TOKEN_ENDPOINT": "$tokenEndpoint",
-                                                "subject_types_supported": [
-                                                    "pairwise"
-                                                ]
-                                            }
-                                        """.trimIndent())
+                                        .withBody(response)
                         )
+        )
+    }
+
+    internal fun stubWellKnown(
+            path: String,
+            issuer: String,
+            jwkSetUrl: String,
+            tokenEndpoint: String) {
+        stubWellKnown(
+                path = path,
+                response = """
+                    {
+                        "$ISSUER": "$issuer",
+                        "$JWKS_URI": "$jwkSetUrl",
+                        "$TOKEN_ENDPOINT": "$tokenEndpoint"
+                    }
+                """.trimIndent()
         )
     }
 
@@ -41,7 +46,7 @@ internal object WireMockStubs {
                 WireMock.get(WireMock.urlPathMatching(".*$path.*"))
                         .willReturn(
                                 WireMock.aResponse()
-                                        .withHeader("Content-Type", "application/json")
+                                        .withHeader("Content-Type", "application/json; charset=UTF-8")
                                         .withStatus(200)
                                         .withBody(jwkSet)
                         )

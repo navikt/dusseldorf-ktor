@@ -3,8 +3,7 @@ package no.nav.helse.dusseldorf.testsupport.wiremock
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import com.github.tomakehurst.wiremock.matching.AbsentPattern
-import com.github.tomakehurst.wiremock.matching.RegexPattern
+import no.nav.helse.dusseldorf.testsupport.http.AzureWellKnown
 import no.nav.helse.dusseldorf.testsupport.jws.Azure
 import no.nav.helse.dusseldorf.testsupport.jws.LoginService
 import no.nav.helse.dusseldorf.testsupport.jws.NaisSts
@@ -16,12 +15,8 @@ class WireMockBuilder {
     private companion object {
         private val logger: Logger = LoggerFactory.getLogger(WireMockBuilder::class.java)
 
-        private const val AZURE_V1_TOKEN_SIGNET_JWT_TRANSFORMER = "azure-v1-token-signed-jwt"
-        private const val AZURE_V2_TOKEN_SIGNED_JWT_TRANSFORMER = "azure-v2-token-signed-jwt"
-
-        private const val AZURE_V1_TOKEN_CLIENT_SECRET_TRANSFORMER = "azure-v1-token-client-secret"
-        private const val AZURE_V2_TOKEN_CLIENT_SECRET_TRANSFORMER = "azure-v2-token-client-secret"
-
+        private const val AZURE_V1_TOKEN_TRANSFORMER = "azure-v1-token"
+        private const val AZURE_V2_TOKEN_TRANSFORMER = "azure-v2-token"
         private const val LOGIN_SERVICE_V1_TRANSFORMER = "login-service-v1"
         private const val NAIS_STS_TRANSFORMER = "nais-sts"
     }
@@ -50,20 +45,9 @@ class WireMockBuilder {
     }
 
     fun withAzureSupport() : WireMockBuilder {
-        val azureV1SignedJwt = AzureTokenSignetJwtResponseTransformer(name = AZURE_V1_TOKEN_SIGNET_JWT_TRANSFORMER, accessTokenGenerator = { clientId, audience, scopes ->
-            Azure.V1_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes)
-        })
-        val azureV2SignedJwt = AzureTokenSignetJwtResponseTransformer(name = AZURE_V2_TOKEN_SIGNED_JWT_TRANSFORMER, accessTokenGenerator = { clientId, audience, scopes ->
-            Azure.V2_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes)
-        })
-        val azureV1ClientSecret = AzureTokenClientSecretResponseTransformer(name = AZURE_V1_TOKEN_CLIENT_SECRET_TRANSFORMER, accessTokenGenerator = { clientId, audience, scopes ->
-            Azure.V1_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes, clientAuthenticationMode = Azure.ClientAuthenticationMode.CLIENT_SECRET)
-        })
-        val azureV2ClientSecret = AzureTokenClientSecretResponseTransformer(name = AZURE_V2_TOKEN_CLIENT_SECRET_TRANSFORMER, accessTokenGenerator = { clientId, audience, scopes ->
-            Azure.V2_0.generateJwt(clientId = clientId, audience = audience, scopes = scopes, clientAuthenticationMode = Azure.ClientAuthenticationMode.CLIENT_SECRET)
-        })
-
-        config.extensions(azureV1SignedJwt, azureV2SignedJwt, azureV1ClientSecret, azureV2ClientSecret)
+        val azureV1 = AzureTokenResponseTransformer(name = AZURE_V1_TOKEN_TRANSFORMER, issuer = Azure.V1_0.getIssuer())
+        val azureV2 = AzureTokenResponseTransformer(name = AZURE_V2_TOKEN_TRANSFORMER, issuer = Azure.V2_0.getIssuer())
+        config.extensions(azureV1, azureV2)
         withAzureSupport = true
         return this
     }
@@ -100,20 +84,17 @@ class WireMockBuilder {
     private fun addAzureStubs(server: WireMockServer) {
         WireMock.stubFor(WireMock.post(WireMock
                 .urlPathMatching(".*${Paths.AZURE_V1_TOKEN_PATH}.*"))
-                .withHeader("Authorization", AbsentPattern.ABSENT)
-                .willReturn(WireMock.aResponse().withTransformers(AZURE_V1_TOKEN_SIGNET_JWT_TRANSFORMER)))
-
-        WireMock.stubFor(WireMock.post(WireMock
-                .urlPathMatching(".*${Paths.AZURE_V1_TOKEN_PATH}.*"))
-                .withHeader("Authorization", RegexPattern("Basic .*"))
-                .willReturn(WireMock.aResponse().withTransformers(AZURE_V1_TOKEN_CLIENT_SECRET_TRANSFORMER)))
+                .willReturn(WireMock.aResponse().withTransformers(AZURE_V1_TOKEN_TRANSFORMER)))
 
         WireMockStubs.stubJwks(path = Paths.AZURE_V1_JWKS_PATH, jwkSet = Azure.V1_0.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.AZURE_V1_WELL_KNOWN_PATH,
-                issuer = Azure.V1_0.getIssuer(),
-                jwkSetUrl = server.getAzureV1JwksUrl(),
-                tokenEndpoint = server.getAzureV1TokenUrl()
+                response = AzureWellKnown.response(
+                        issuer = Azure.V1_0.getIssuer(),
+                        jwksUri = server.getAzureV1JwksUrl(),
+                        tokenEndpoint = server.getAzureV1TokenUrl(),
+                        authorizationEndpoint = server.getAzureV1AuthorizationUrl()
+                )
         )
 
         logger.info("Azure V1 Token URL = ${server.getAzureV1TokenUrl()}")
@@ -122,20 +103,17 @@ class WireMockBuilder {
 
         WireMock.stubFor(WireMock.post(WireMock
                 .urlPathMatching(".*${Paths.AZURE_V2_TOKEN_PATH}.*"))
-                .withHeader("Authorization", AbsentPattern.ABSENT)
-                .willReturn(WireMock.aResponse().withTransformers(AZURE_V2_TOKEN_SIGNED_JWT_TRANSFORMER)))
-
-        WireMock.stubFor(WireMock.post(WireMock
-                .urlPathMatching(".*${Paths.AZURE_V2_TOKEN_PATH}.*"))
-                .withHeader("Authorization", RegexPattern("Basic .*"))
-                .willReturn(WireMock.aResponse().withTransformers(AZURE_V2_TOKEN_CLIENT_SECRET_TRANSFORMER)))
+                .willReturn(WireMock.aResponse().withTransformers(AZURE_V2_TOKEN_TRANSFORMER)))
 
         WireMockStubs.stubJwks(path = Paths.AZURE_V2_JWKS_PATH, jwkSet = Azure.V2_0.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.AZURE_V2_WELL_KNOWN_PATH,
-                issuer = Azure.V2_0.getIssuer(),
-                jwkSetUrl = server.getAzureV2JwksUrl(),
-                tokenEndpoint = server.getAzureV2TokenUrl()
+                response = AzureWellKnown.response(
+                        issuer = Azure.V2_0.getIssuer(),
+                        jwksUri = server.getAzureV2JwksUrl(),
+                        tokenEndpoint = server.getAzureV2TokenUrl(),
+                        authorizationEndpoint = server.getAzureV2AuthorizationUrl()
+                )
         )
 
         logger.info("Azure V2 Token URL = ${server.getAzureV2TokenUrl()}")
