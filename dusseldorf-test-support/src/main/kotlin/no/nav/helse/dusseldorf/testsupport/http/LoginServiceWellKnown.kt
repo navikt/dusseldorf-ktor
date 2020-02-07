@@ -3,13 +3,12 @@ package no.nav.helse.dusseldorf.testsupport.http
 object LoginServiceWellKnown {
     fun response(
             issuer : String,
-            tokenEndpoint: String,
             jwksUri: String
     ) = """
         {
             "issuer": "$issuer",
             "jwks_uri": "$jwksUri",
-            "token_endpoint": "$tokenEndpoint",
+            "token_endpoint": "$issuer/not-in-use-for-login-service",
             "response_modes_supported": [
                 "query",
                 "fragment",

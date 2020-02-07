@@ -4,6 +4,8 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.helse.dusseldorf.testsupport.http.AzureWellKnown
+import no.nav.helse.dusseldorf.testsupport.http.LoginServiceWellKnown
+import no.nav.helse.dusseldorf.testsupport.http.NaisStsWellKnown
 import no.nav.helse.dusseldorf.testsupport.jws.Azure
 import no.nav.helse.dusseldorf.testsupport.jws.LoginService
 import no.nav.helse.dusseldorf.testsupport.jws.NaisSts
@@ -71,9 +73,10 @@ class WireMockBuilder {
         WireMockStubs.stubJwks(path = Paths.LOGIN_SERVICE_V1_JWKS_PATH, jwkSet = LoginService.V1_0.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.LOGIN_SERVICE_V1_WELL_KNOWN_PATH,
-                issuer = LoginService.V1_0.getIssuer(),
-                jwkSetUrl = server.getLoginServiceV1JwksUrl(),
-                tokenEndpoint = "http://localhost/not-in-use-for-login-service"
+                response = LoginServiceWellKnown.response(
+                        issuer = LoginService.V1_0.getIssuer(),
+                        jwksUri = server.getLoginServiceV1JwksUrl()
+                )
         )
 
         logger.info("Login Service V1 JWKS URL = ${server.getLoginServiceV1JwksUrl()}")
@@ -126,9 +129,11 @@ class WireMockBuilder {
         WireMockStubs.stubJwks(path = Paths.NAIS_STS_JWKS_PATH, jwkSet = NaisSts.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.NAIS_STS_WELL_KNOWN_PATH,
-                issuer = NaisSts.getIssuer(),
-                jwkSetUrl = server.getNaisStsJwksUrl(),
-                tokenEndpoint = server.getNaisStsTokenUrl()
+                response = NaisStsWellKnown.response(
+                        issuer = NaisSts.getIssuer(),
+                        jwksUri = server.getNaisStsJwksUrl(),
+                        tokenEndpoint = server.getNaisStsTokenUrl()
+                )
         )
         logger.info("Nais STS Token URL = ${server.getNaisStsTokenUrl()}")
         logger.info("Nais STS JWKS URL = ${server.getNaisStsJwksUrl()}")
