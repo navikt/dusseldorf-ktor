@@ -38,7 +38,7 @@ internal class AzureTokenResponseTransformer(
     }
 }
 
-internal class WireMockTokenRequest(request: Request) : TokenRequest {
+private class WireMockTokenRequest(request: Request) : TokenRequest {
     private val body = URLDecoder.decode(request.bodyAsString, Charsets.UTF_8)!!
     private val authorizationHeader = request.getHeader("Authorization")
     override fun urlDecodedBody() = body

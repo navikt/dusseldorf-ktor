@@ -60,7 +60,7 @@ class WireMockBuilder {
     }
 
     fun withNaisStsSupport() : WireMockBuilder {
-        val naisSts = NaisStsTokenResponseTransformer(NAIS_STS_TRANSFORMER)
+        val naisSts = NaisStsTokenResponseTransformer(name = NAIS_STS_TRANSFORMER, issuer = NaisSts.getIssuer())
         config.extensions(naisSts)
         withNaisStsSupport = true
         return this
