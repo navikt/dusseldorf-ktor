@@ -52,8 +52,8 @@ class WireMockBuilder {
         return this
     }
 
-    fun withLoginServiceSupport(cookieName: String = "localhost-idtoken") : WireMockBuilder {
-        val loginServiceV1 = LoginServiceLoginResponseTransformer(name = LOGIN_SERVICE_V1_TRANSFORMER, cookieName = cookieName)
+    fun withLoginServiceSupport() : WireMockBuilder {
+        val loginServiceV1 = LoginServiceLoginResponseTransformer(name = LOGIN_SERVICE_V1_TRANSFORMER)
         config.extensions(loginServiceV1)
         withLoginServieSupport = true
         return this
