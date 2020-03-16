@@ -29,14 +29,14 @@ internal class JwsFunctions(
         val headerBuilder = JWSHeader.Builder(JWSAlgorithm.RS256)
         if (!headers.containsKey("kid")) headerBuilder.keyID(rsaKey.keyID)
         if (!headers.containsKey("typ")) headerBuilder.type(JOSEObjectType.JWT)
-        headers.forEach { key, value -> headerBuilder.customParam(key, value) }
+        headers.forEach { (key, value) -> headerBuilder.customParam(key, value) }
 
         val claimBuilder = JWTClaimsSet.Builder()
         if (!claims.containsKey("iat")) claimBuilder.issueTime(LocalDateTime.now().toDate())
         if (!claims.containsKey("exp")) claimBuilder.expirationTime(LocalDateTime.now().plusHours(1).toDate())
         if (!claims.containsKey("nbf")) claimBuilder.notBeforeTime(LocalDateTime.now().toDate())
         if (!claims.containsKey("jti")) claimBuilder.jwtID(UUID.randomUUID().toString())
-        claims.forEach { key, value -> claimBuilder.claim(key, value) }
+        claims.forEach { (key, value) -> claimBuilder.claim(key, value) }
 
         val signedJWT = SignedJWT(headerBuilder.build(), claimBuilder.build())
 
