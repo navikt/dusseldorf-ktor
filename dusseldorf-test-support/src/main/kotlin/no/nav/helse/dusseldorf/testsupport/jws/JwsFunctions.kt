@@ -18,7 +18,18 @@ internal class JwsFunctions(
 ) {
     private val rsaKey = RSAKey.parse(privateKeyJwk)
     private val signer = RSASSASigner(rsaKey)
-    private val publicJwk = JSONObject().appendField("keys", JSONArray().appendElement(rsaKey.toPublicJWK().toJSONObject().appendField("use", "sig"))).toJSONString()
+
+
+    private val publicJwk = JSONObject().apply {
+        val key = rsaKey.toPublicJWK().toJSONObject().apply {
+            this["use"] = "sig"
+        }
+        val keys = JSONArray().apply {
+            this.add(key)
+        }
+        this["keys"] = keys
+    }.toJSONString()
+
 
     internal fun getPublicJwk() = publicJwk
 
