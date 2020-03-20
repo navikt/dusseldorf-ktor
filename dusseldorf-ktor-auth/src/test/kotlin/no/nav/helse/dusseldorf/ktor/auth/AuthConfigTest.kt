@@ -91,16 +91,26 @@ class AuthConfigTest {
     }
 
     @Test
-    fun `Client som bruker discovery endpoint`() {
+    fun `Private key client defaulter til å hente thumbprint fra JWK, men kan også konfigureres eksplisitt`() {
         val config = config(
-                "$CLIENT_PREFIX.0.alias" to "nais-sts",
-                "$CLIENT_PREFIX.0.client_id" to "nais-sts-client-id",
-                "$CLIENT_PREFIX.0.client_secret" to "very-very-secret",
-                "$CLIENT_PREFIX.0.discovery_endpoint" to mock.getValidDiscoveryEndpoint()
+                "$CLIENT_PREFIX.0.alias" to "azure-v1",
+                "$CLIENT_PREFIX.0.client_id" to "azure-client-id",
+                "$CLIENT_PREFIX.0.private_key_jwk" to """{}""".trimIndent(),
+                "$CLIENT_PREFIX.0.certificate_hex_thumbprint" to "jeg-er-konfigurert-eksplisitt",
+                "$CLIENT_PREFIX.0.discovery_endpoint" to mock.getValidDiscoveryEndpoint(),
+
+                "$CLIENT_PREFIX.1.alias" to "azure-v2",
+                "$CLIENT_PREFIX.1.client_id" to "azure-client-id",
+                "$CLIENT_PREFIX.1.private_key_jwk" to """{"kid" : "jeg-er-hentet-fra-kid"}""".trimIndent(),
+                "$CLIENT_PREFIX.1.discovery_endpoint" to mock.getValidDiscoveryEndpoint()
         )
         val client = config.clients()
-        assertEquals(1, client.size)
+        assertEquals(2, client.size)
+        assertEquals("jeg-er-konfigurert-eksplisitt", (client["azure-v1"] as PrivateKeyClient).certificateHexThumbprint)
+        assertEquals("jeg-er-hentet-fra-kid", (client["azure-v2"] as PrivateKeyClient).certificateHexThumbprint)
     }
+
+
 
     private fun config(vararg pairs: Pair<String, String>) = HoconApplicationConfig(ConfigFactory.parseMap(mapOf(*pairs)))
 }
