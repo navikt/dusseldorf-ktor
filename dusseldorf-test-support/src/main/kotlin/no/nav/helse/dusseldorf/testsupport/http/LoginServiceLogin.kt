@@ -40,7 +40,7 @@ interface LoginRequest {
     fun fnr() : String?
     fun redirect() : URI
     fun cookieName(): String?
-    fun cookieSecure(): Boolean = false
+    fun cookieSecure(): Boolean = redirect().toString().toLowerCase().startsWith("https")
 }
 
 private fun LoginRequest.levelOrFallback() : Int = if (level() != null) level()!! else 4
