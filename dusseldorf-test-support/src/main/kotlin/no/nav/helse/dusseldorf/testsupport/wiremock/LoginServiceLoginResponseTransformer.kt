@@ -21,17 +21,17 @@ internal class LoginServiceLoginResponseTransformer(
         val loginRequest = WiremockLoginRequest(request!!)
         val loginResponse = LoginServiceLogin.login(loginRequest)
 
-        val cookie = Cookie(listOf(
+        val cookie = Cookie(listOfNotNull(
                 "${loginResponse.cookie.name}=${loginResponse.cookie.value}",
                 "Path=${loginResponse.cookie.path}",
                 "Domain=${loginResponse.cookie.domain}",
-                "Secure=${loginResponse.cookie.secure}",
+                if (loginResponse.cookie.secure) "Secure=true" else null,
                 "HttpOnly=${loginResponse.cookie.httpOnly}"
         ))
 
         return Response.Builder.like(response)
                 .headers(HttpHeaders(
-                        HttpHeader.httpHeader("Location", loginRequest.toString()),
+                        HttpHeader.httpHeader("Location", loginResponse.location.toString()),
                         HttpHeader.httpHeader("Set-Cookie", cookie.toString())
                 ))
                 .status(302)
