@@ -71,7 +71,7 @@ class ManagedStream(
         kafkaStreams.start()
     }
 
-    fun stop(becauseOfError: Boolean) {
+    fun stop(becauseOfError: Boolean = false) {
         when (kafkaStreams.state()) {
             KafkaStreams.State.PENDING_SHUTDOWN, KafkaStreams.State.NOT_RUNNING -> log.info("Stoppes allerede. er i state ${kafkaStreams.state().name}")
             else -> {
@@ -96,7 +96,7 @@ class ManagedStream(
         streams.setUncaughtExceptionHandler { _, _ -> stop(becauseOfError = true) }
 
         Runtime.getRuntime().addShutdownHook(Thread {
-            stop(becauseOfError = false)
+            stop()
         })
 
         return streams

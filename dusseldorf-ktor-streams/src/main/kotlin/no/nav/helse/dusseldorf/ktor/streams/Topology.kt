@@ -10,35 +10,36 @@ private object StreamCounter {
     private val counter = Counter.build()
             .name("stream_processing_status_counter")
             .help("Teller for status av prosessering av meldinger på streams.")
-            .labelNames("stream", "status")
+            .labelNames("steg", "status")
             .register()
-    internal fun ok(name: String) = counter.labels(name, "OK").inc()
-    internal fun feil(name: String) = counter.labels(name, "FEIL").inc()
+    internal fun ok(steg: String) = counter.labels(steg, "OK").inc()
+    internal fun feil(steg: String) = counter.labels(steg, "FEIL").inc()
 }
 
-fun <BEFORE, AFTER>process(
-        name: String,
+fun process(
+        steg: String,
         id: Pair<String, String>,
-        entry: TopicEntry<BEFORE>,
-        block: suspend() -> AFTER) : TopicEntry<AFTER> {
+        entry: TopicEntry,
+        block: suspend() -> Data) : TopicEntry {
     return runBlocking(MDCContext(mapOf(
-            "correlation_id" to entry.metadata.correlationId(),
-            "request_id" to entry.metadata.requestId(),
+            "correlation_id" to entry.metadata.correlationId,
+            "request_id" to entry.metadata.requestId,
+            "steg" to steg,
             id.first to id.second
     ))) {
         val processed = try {
             Retry.retry(
-                    operation = name,
+                    operation = steg,
                     initialDelay = Duration.ofSeconds(30),
                     maxDelay = Duration.ofSeconds(60)
             ) { block() }
         } catch (cause: Throwable) {
-            StreamCounter.feil(name)
+            StreamCounter.feil(steg)
             throw cause
         }
-        StreamCounter.ok(name)
+        StreamCounter.ok(steg)
         TopicEntry(
-                metadata = entry.metadata,
+                metadata = entry.metadata.copy(utførtSteg = steg),
                 data = processed
         )
     }

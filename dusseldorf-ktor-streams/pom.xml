@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dusseldorf-kafka-streams</artifactId>
-    <name>dusseldorf-kafka-streams</name>
+    <artifactId>dusseldorf-ktor-streams</artifactId>
+    <name>dusseldorf-ktor-streams</name>
 
     <dependencies>
         <dependency>
@@ -32,12 +32,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>no.nav.helse</groupId>
-            <artifactId>dusseldorf-ktor-jackson</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-slf4j</artifactId>
             <version>${kotlinx.coroutines.version}</version>
@@ -46,6 +40,11 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-streams</artifactId>
             <version>${kafka.version}</version> <!-- TODO:  embedded-->
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${orgjson.version}</version>
         </dependency>
     </dependencies>
 
