@@ -43,7 +43,9 @@ data class TopicEntry(val rawJson: String) {
     )
     val data = Data(dataJson.toString())
 }
-data class Data(val rawJson: String)
+data class Data(val rawJson: String) {
+
+}
 data class Metadata(
         val utførtSteg: String,
         val versjon : Int,

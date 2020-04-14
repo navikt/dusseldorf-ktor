@@ -29,12 +29,17 @@ class KafkaConfig(
         val unreadyAfterStreamStoppedIn: Duration
 ) {
     private val streams = Properties().apply {
+        val antallBoostrapServers = bootstrapServers
+                .split(",")
+                .filterNot { it.isBlank() }
+                .size
+        logger.info("Starter opp med $antallBoostrapServers bootstarp servers.")
         put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
         put(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, LogAndFailExceptionHandler::class.java)
         put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
         medCredentials(credentials)
         medTrustStore(trustStore)
-        medProcessingGuarantee()
+        medProcessingGuarantee(antallBoostrapServers)
     }
 
     private val producers = Properties().apply {
@@ -52,8 +57,9 @@ class KafkaConfig(
     }
 }
 
-private fun Properties.medProcessingGuarantee() {
-    logger.info("$PROCESSING_GUARANTEE_CONFIG=$EXACTLY_ONCE")
+private fun Properties.medProcessingGuarantee(antallBootstrapServers: Int) {
+    val replicationFactor = if (antallBootstrapServers < 3) antallBootstrapServers else 3
+    logger.info("$REPLICATION_FACTOR_CONFIG=$replicationFactor")
     put(PROCESSING_GUARANTEE_CONFIG, EXACTLY_ONCE)
     put(REPLICATION_FACTOR_CONFIG, "3")
 }
