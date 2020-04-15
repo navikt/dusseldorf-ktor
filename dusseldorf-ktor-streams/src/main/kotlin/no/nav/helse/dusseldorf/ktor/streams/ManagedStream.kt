@@ -8,6 +8,8 @@ import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.Topology
 import org.slf4j.LoggerFactory
+import java.lang.System.currentTimeMillis
+import java.lang.Thread.sleep
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -82,6 +84,21 @@ class ManagedStream(
                 log.info("Stopper fra state ${kafkaStreams.state().name}")
                 kafkaStreams.close()
             }
+        }
+        ventPåNotRunning()
+    }
+
+    private fun ventPåNotRunning() {
+        log.info("Venter til state er NOT_RUNNING.")
+        val giOpp = currentTimeMillis() + Duration.ofMinutes(1).toMillis()
+        while (kafkaStreams.state() != KafkaStreams.State.NOT_RUNNING && currentTimeMillis() < giOpp) {
+            sleep(1000)
+        }
+        val stateNå = kafkaStreams.state()
+        if (stateNå != KafkaStreams.State.NOT_RUNNING) {
+            log.warn("State ikke NOT_RUNNING. Fortsatt $stateNå etter å ha ventet i 1 min.")
+        } else {
+            log.info("State NOT_RUNNING.")
         }
     }
 
