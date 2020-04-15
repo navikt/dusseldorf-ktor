@@ -19,10 +19,10 @@
         <module>dusseldorf-ktor-jackson</module>
         <module>dusseldorf-ktor-health</module>
         <module>dusseldorf-ktor-auth</module>
+        <module>dusseldorf-ktor-streams</module>
         <!-- ikke ktor spesefikke moduler -->
         <module>dusseldorf-oauth2-client</module>
         <module>dusseldorf-test-support</module>
-        <module>dusseldorf-ktor-streams</module>
     </modules>
 
     <properties>
@@ -32,12 +32,10 @@
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
         <ktor.version>1.3.2</ktor.version>
-        <kotlin.version>1.3.71</kotlin.version>
-        <!-- https://github.com/ktorio/ktor/blob/1.3.2/gradle.properties -->
-        <kotlinx.coroutines.version>1.3.4</kotlinx.coroutines.version>
+        <kotlin.version>1.3.72</kotlin.version>
+        <kotlinx.coroutines.version>1.3.5</kotlinx.coroutines.version>
         <micrometer.version>1.4.1</micrometer.version>
         <jackson.version>2.10.3</jackson.version>
-        <!-- Ikke fra KTOR -->
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logstash.logback.version>6.3</logstash.logback.version>
@@ -46,6 +44,7 @@
         <fuel.version>2.2.2</fuel.version>
         <kafka.version>2.4.0</kafka.version>
         <kafka.embedded.env.version>2.4.0</kafka.embedded.env.version>
+
         <!-- Interne versjoner -->
         <oauth2-oidc-sdk.version>7.3</oauth2-oidc-sdk.version>
         <orgjson.version>20190722</orgjson.version>
