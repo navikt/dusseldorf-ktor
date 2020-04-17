@@ -26,6 +26,7 @@ class KafkaConfig(
         bootstrapServers: String,
         credentials: Pair<String, String>,
         trustStore: Pair<String, String>?,
+        autoOffsetReset: String,
         val unreadyAfterStreamStoppedIn: Duration
 ) {
     private val streams = Properties().apply {
@@ -36,7 +37,7 @@ class KafkaConfig(
         logger.info("Starter opp med $antallBoostrapServers bootstarp servers.")
         put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
         put(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, LogAndFailExceptionHandler::class.java)
-        put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+        put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset)
         medCredentials(credentials)
         medTrustStore(trustStore)
         medProcessingGuarantee(antallBoostrapServers)
@@ -110,6 +111,7 @@ fun ApplicationConfig.kafkaConfig() : KafkaConfig {
                     getRequiredString("nav.kafka.username", secret = false),
                     getRequiredString("nav.kafka.password", secret = true)),
             trustStore = trustStore,
-            unreadyAfterStreamStoppedIn = unreadyAfterStreamStoppedIn
+            unreadyAfterStreamStoppedIn = unreadyAfterStreamStoppedIn,
+            autoOffsetReset = getOptionalString("nav.kafka.auto_offset_reset", false)?:"earliest"
     )
 }

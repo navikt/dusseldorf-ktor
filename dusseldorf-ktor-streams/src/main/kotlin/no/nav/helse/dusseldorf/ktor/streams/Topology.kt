@@ -7,6 +7,7 @@ import no.nav.helse.dusseldorf.ktor.core.Retry
 import org.apache.kafka.streams.processor.RecordContext
 import org.apache.kafka.streams.processor.TopicNameExtractor
 import java.time.Duration
+import java.time.ZonedDateTime
 
 private object StreamCounter {
     private val counter = Counter.build()
@@ -50,7 +51,10 @@ fun process(
         if (processed != null) {
             StreamCounter.ok(steg)
             TopicEntry(
-                    metadata = entry.metadata.copy(utførtSteg = steg),
+                    metadata = entry.metadata.copy(
+                            opprettet = ZonedDateTime.now(),
+                            utførtSteg = steg
+                    ),
                     data = processed
             )
         } else {

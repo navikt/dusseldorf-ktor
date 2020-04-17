@@ -6,6 +6,7 @@ import org.apache.kafka.common.serialization.Serializer
 import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.Produced
 import org.json.JSONObject
+import java.time.ZonedDateTime
 
 class TopicEntrySerDes : Serializer<TopicEntry>, Deserializer<TopicEntry> {
     companion object {
@@ -24,6 +25,7 @@ data class TopicEntry(val rawJson: String) {
     constructor(metadata: Metadata, data: Data) : this(
             JSONObject(mapOf(
                     "metadata" to JSONObject(mapOf(
+                            "opprettet" to metadata.opprettet.toString(),
                             "utførtSteg" to metadata.utførtSteg,
                             "versjon" to metadata.versjon,
                             "correlationId" to metadata.correlationId,
@@ -36,6 +38,7 @@ data class TopicEntry(val rawJson: String) {
     private val metadataJson = requireNotNull(entityJson.getJSONObject("metadata"))
     private val dataJson = requireNotNull(entityJson.getJSONObject("data"))
     val metadata = Metadata(
+            opprettet = ZonedDateTime.parse(requireNotNull(metadataJson.getString("opprettet"))),
             utførtSteg = requireNotNull(metadataJson.getString("utførtSteg")),
             versjon = requireNotNull(metadataJson.getInt("versjon")),
             correlationId = requireNotNull(metadataJson.getString("correlationId")),
@@ -47,6 +50,7 @@ data class Data(val rawJson: String) {
 
 }
 data class Metadata(
+        val opprettet: ZonedDateTime,
         val utførtSteg: String,
         val versjon : Int,
         val correlationId : String,
