@@ -7,6 +7,7 @@ import no.nav.helse.dusseldorf.ktor.core.Retry
 import org.apache.kafka.streams.processor.RecordContext
 import org.apache.kafka.streams.processor.TopicNameExtractor
 import java.time.Duration
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 private object StreamCounter {
@@ -52,7 +53,7 @@ fun process(
             StreamCounter.ok(steg)
             TopicEntry(
                     metadata = entry.metadata.copy(
-                            opprettet = ZonedDateTime.now(),
+                            utført = ZonedDateTime.now(ZoneId.of("UTC")),
                             utførtSteg = steg
                     ),
                     data = processed

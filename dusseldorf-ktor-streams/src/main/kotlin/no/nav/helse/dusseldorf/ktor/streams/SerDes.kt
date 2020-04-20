@@ -6,12 +6,15 @@ import org.apache.kafka.common.serialization.Serializer
 import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.Produced
 import org.json.JSONObject
+import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class TopicEntrySerDes : Serializer<TopicEntry>, Deserializer<TopicEntry> {
     companion object {
         private val keySerde = Serdes.String()
         private val valueSerde = Serdes.serdeFrom(TopicEntrySerDes(), TopicEntrySerDes())
+        internal val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
         val produced = Produced.with(keySerde, valueSerde)
         val consumed = Consumed.with(keySerde, valueSerde)
     }
@@ -25,7 +28,7 @@ data class TopicEntry(val rawJson: String) {
     constructor(metadata: Metadata, data: Data) : this(
             JSONObject(mapOf(
                     "metadata" to JSONObject(mapOf(
-                            "opprettet" to metadata.opprettet.toString(),
+                            "utført" to TopicEntrySerDes.dateTimeFormatter.format(metadata.utført),
                             "utførtSteg" to metadata.utførtSteg,
                             "versjon" to metadata.versjon,
                             "correlationId" to metadata.correlationId,
@@ -38,7 +41,7 @@ data class TopicEntry(val rawJson: String) {
     private val metadataJson = requireNotNull(entityJson.getJSONObject("metadata"))
     private val dataJson = requireNotNull(entityJson.getJSONObject("data"))
     val metadata = Metadata(
-            opprettet = ZonedDateTime.parse(requireNotNull(metadataJson.getString("opprettet"))),
+            utført = ZonedDateTime.parse(requireNotNull(metadataJson.getString("utført"))),
             utførtSteg = requireNotNull(metadataJson.getString("utførtSteg")),
             versjon = requireNotNull(metadataJson.getInt("versjon")),
             correlationId = requireNotNull(metadataJson.getString("correlationId")),
@@ -50,7 +53,7 @@ data class Data(val rawJson: String) {
 
 }
 data class Metadata(
-        val opprettet: ZonedDateTime,
+        val utført: ZonedDateTime = ZonedDateTime.now(ZoneId.of("UTC")),
         val utførtSteg: String,
         val versjon : Int,
         val correlationId : String,

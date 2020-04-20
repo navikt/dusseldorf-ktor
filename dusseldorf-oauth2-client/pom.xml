@@ -53,6 +53,7 @@
             <groupId>no.nav.helse</groupId>
             <artifactId>dusseldorf-test-support</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
