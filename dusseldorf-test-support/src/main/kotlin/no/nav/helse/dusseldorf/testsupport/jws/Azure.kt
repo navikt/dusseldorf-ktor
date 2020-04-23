@@ -1,5 +1,7 @@
 package no.nav.helse.dusseldorf.testsupport.jws
 
+import java.util.*
+
 object Azure {
     enum class ClientAuthenticationMode(val claimValue: String) {
         PUBLIC("0"),
@@ -41,14 +43,15 @@ object Azure {
                 overridingClaims: Map<String, Any> = emptyMap()
         ) = jwsFunctions.generateJwt(
                 claims = overridingClaims.toMutableMap().apply {
-                    if (!containsKey("ver")) put("ver", version)
-                    if (!containsKey("aud")) put("aud", audience)
-                    if (!containsKey("iss")) put("iss", issuer)
-                    if (!containsKey("appid")) put("appid", clientId)
-                    if (!containsKey("appidacr")) put("appidacr", clientAuthenticationMode.claimValue)
-                    if (!containsKey("groups")) put("groups", groups)
-                    if (!containsKey("roles")) put("roles", roles)
-                    if (!containsKey("scp")) put("scp", scopes.joinToString(" "))
+                    putIfAbsent("ver", version)
+                    putIfAbsent("aud", audience)
+                    putIfAbsent("iss", issuer)
+                    putIfAbsent("appid", clientId)
+                    putIfAbsent("appidacr", clientAuthenticationMode.claimValue)
+                    putIfAbsent("groups", groups)
+                    putIfAbsent("roles", roles)
+                    putIfAbsent("scp", scopes.joinToString(" "))
+                    putIfAbsent("sub", UUID.randomUUID().toString())
                 }.toMap()
         )
     }
@@ -87,14 +90,15 @@ object Azure {
                 overridingClaims: Map<String, Any> = emptyMap()
         ) = jwsFunctions.generateJwt(
                 claims = overridingClaims.toMutableMap().apply {
-                    if (!containsKey("ver")) put("ver", version)
-                    if (!containsKey("aud")) put("aud", audience)
-                    if (!containsKey("iss")) put("iss", issuer)
-                    if (!containsKey("azp")) put("azp", clientId)
-                    if (!containsKey("azpacr")) put("azpacr", clientAuthenticationMode.claimValue)
-                    if (!containsKey("groups")) put("groups", groups)
-                    if (!containsKey("roles")) put("roles", roles)
-                    if (!containsKey("scp")) put("scp", scopes.joinToString(" "))
+                    putIfAbsent("ver", version)
+                    putIfAbsent("aud", audience)
+                    putIfAbsent("iss", issuer)
+                    putIfAbsent("azp", clientId)
+                    putIfAbsent("azpacr", clientAuthenticationMode.claimValue)
+                    putIfAbsent("groups", groups)
+                    putIfAbsent("roles", roles)
+                    putIfAbsent("scp", scopes.joinToString(" "))
+                    putIfAbsent("sub", UUID.randomUUID().toString())
                 }.toMap()
         )
     }
