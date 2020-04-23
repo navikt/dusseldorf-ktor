@@ -35,13 +35,13 @@ object LoginService {
                 overridingClaims: Map<String, Any> = emptyMap()
         ) = jwsFunctions.generateJwt(
                 claims = overridingClaims.toMutableMap().apply {
-                    if (!containsKey("acr")) put("acr","Level$level")
-                    if (!containsKey("sub")) put("sub", fnr)
-                    if (!containsKey("aud")) put("aud", audience)
-                    if (!containsKey("iss")) put("iss", issuer)
-                    if (!containsKey("auth_time")) put("auth_time", LocalDateTime.now().toDate())
-                    if (!containsKey("ver")) put("ver", version)
-                    if (!containsKey("nonce")) put("nonce", UUID.randomUUID().toString())
+                    putIfAbsent("acr","Level$level")
+                    putIfAbsent("sub", fnr)
+                    putIfAbsent("aud", audience)
+                    putIfAbsent("iss", issuer)
+                    putIfAbsent("auth_time", LocalDateTime.now().toDate())
+                    putIfAbsent("ver", version)
+                    putIfAbsent("nonce", UUID.randomUUID().toString())
                 }.toMap()
         )
     }

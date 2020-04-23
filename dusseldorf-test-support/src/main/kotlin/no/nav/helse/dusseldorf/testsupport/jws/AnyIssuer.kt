@@ -1,5 +1,7 @@
 package no.nav.helse.dusseldorf.testsupport.jws
 
+import java.util.*
+
 class AnyIssuer(
         private val issuer: String,
         privateKeyJwk: String = defaultPrivateKeyJwk
@@ -33,7 +35,8 @@ class AnyIssuer(
     ) = jwsFunctions.generateJwt(
             headers = headers,
             claims = claims.toMutableMap().apply {
-                if (!containsKey("iss")) put("iss", issuer)
+                putIfAbsent("iss", issuer)
+                putIfAbsent("sub", UUID.randomUUID().toString())
             }.toMap()
     )
 }
