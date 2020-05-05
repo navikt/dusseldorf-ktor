@@ -53,4 +53,4 @@ Om det mot formodning blir generert et aktivt fødselsnummer er ikke fødselsnum
 ## Henvendelser
 Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på GitHub.
 
-Interne henvendelser kan sendes via Slack i kanalen #team-düsseldorf.
+Interne henvendelser kan sendes via Slack i kanalen #sif-brukerdialog
