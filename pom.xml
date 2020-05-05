@@ -46,7 +46,7 @@
         <kafka.embedded.env.version>2.4.0</kafka.embedded.env.version>
 
         <!-- Interne versjoner -->
-        <oauth2-oidc-sdk.version>8.1</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>8.2</oauth2-oidc-sdk.version>
         <orgjson.version>20190722</orgjson.version>
         <wiremock.version>2.26.3</wiremock.version>
     </properties>
