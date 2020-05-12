@@ -3,6 +3,8 @@ package no.nav.helse.dusseldorf.ktor.core
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
+import io.ktor.util.AttributeKey
+import org.json.JSONObject
 import org.slf4j.Logger
 import java.net.URI
 
@@ -69,6 +71,7 @@ suspend fun ApplicationCall.respondProblemDetails(
 ) {
     val map = problemDetails.asMap()
     logger?.info("ProblemDetails='$map'")
+    attributes.put(AttributeKey("problem-details"), JSONObject(problemDetails.asMap()).toString())
     respond(
             status = HttpStatusCode.fromValue(problemDetails.status),
             message = map
