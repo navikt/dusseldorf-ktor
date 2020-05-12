@@ -17,13 +17,11 @@ private val UNHANDLED_PROBLEM_MESSAGE = DefaultProblemDetails(
 fun StatusPages.Configuration.DefaultStatusPages() {
 
     exception<Throwblem> { cause ->
-        call.response.header("invalid-parameters", cause.getProblemDetails().invalidParametersSomString())
         call.respondProblemDetails(cause.getProblemDetails(), logger)
     }
 
     exception<Throwable> { cause ->
         if (cause is Problem) {
-            call.response.header("invalid-parameters", cause.getProblemDetails().invalidParametersSomString())
             call.respondProblemDetails(cause.getProblemDetails(), logger)
         } else {
             logger.error("Uhåndtert feil", cause)
@@ -31,5 +29,3 @@ fun StatusPages.Configuration.DefaultStatusPages() {
         }
     }
 }
-
-private fun ProblemDetails.invalidParametersSomString(): String = asMap()["invalid_parameters"].toString()
