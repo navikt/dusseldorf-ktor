@@ -22,6 +22,7 @@ fun MicrometerMetrics.Configuration.init(
                     else -> "failure"
                 }
         )
+        tag("invalid_parameters", call.response.headers["invalid-parameters"] ?: "n/a")
     }
 }
 

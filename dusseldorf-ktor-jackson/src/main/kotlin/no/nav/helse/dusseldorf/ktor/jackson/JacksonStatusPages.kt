@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonMappingException
 import io.ktor.application.call
 import io.ktor.features.StatusPages
+import io.ktor.response.header
 import no.nav.helse.dusseldorf.ktor.core.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -29,7 +30,7 @@ fun StatusPages.Configuration.JacksonStatusPages() {
         val problemDetails = ValidationProblemDetails(violations)
 
         logger.debug("Feil ved mapping av JSON", cause)
-
+        call.response.header("invalid-parameters", problemDetails.invalidParametersSomString())
         call.respondProblemDetails(problemDetails, logger)
     }
 
@@ -42,6 +43,8 @@ fun StatusPages.Configuration.JacksonStatusPages() {
         )
         logger.debug("Feil ved prosessering av JSON", cause)
 
+        call.response.header("invalid-parameters", problemDetails.invalidParametersSomString())
         call.respondProblemDetails(problemDetails, logger)
     }
 }
+private fun ProblemDetails.invalidParametersSomString(): String = asMap()["invalid_parameters"].toString()

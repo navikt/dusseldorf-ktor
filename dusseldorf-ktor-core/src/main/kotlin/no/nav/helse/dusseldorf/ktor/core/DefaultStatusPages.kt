@@ -2,6 +2,7 @@ package no.nav.helse.dusseldorf.ktor.core
 
 import io.ktor.application.call
 import io.ktor.features.StatusPages
+import io.ktor.response.header
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -16,11 +17,13 @@ private val UNHANDLED_PROBLEM_MESSAGE = DefaultProblemDetails(
 fun StatusPages.Configuration.DefaultStatusPages() {
 
     exception<Throwblem> { cause ->
-        call.respondProblemDetails(cause.getProblemDetails() , logger)
+        call.response.header("invalid-parameters", cause.getProblemDetails().invalidParametersSomString())
+        call.respondProblemDetails(cause.getProblemDetails(), logger)
     }
 
     exception<Throwable> { cause ->
         if (cause is Problem) {
+            call.response.header("invalid-parameters", cause.getProblemDetails().invalidParametersSomString())
             call.respondProblemDetails(cause.getProblemDetails(), logger)
         } else {
             logger.error("Uhåndtert feil", cause)
@@ -28,3 +31,5 @@ fun StatusPages.Configuration.DefaultStatusPages() {
         }
     }
 }
+
+private fun ProblemDetails.invalidParametersSomString(): String = asMap()["invalid_parameters"].toString()
