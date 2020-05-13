@@ -59,7 +59,7 @@ class ManagedStream(
     }
 
     private val log = LoggerFactory.getLogger("no.nav.$name.stream")
-    private var kafkaStreams = managed(KafkaStreams(topology, properties))
+    val kafkaStreams = managed(KafkaStreams(topology, properties))
     private var stopped : LocalDateTime? = null
 
     init {
