@@ -23,7 +23,7 @@ abstract class NimbusAccessTokenClient {
 
         if (response.indicatesSuccess()) {
             val successResponse = response.toSuccessResponse()
-            logger.trace("Mottok nytt access token = '$successResponse'")
+            logger.trace("Mottok nytt access token = '${successResponse.toJSONObject()}'")
             return AccessTokenResponse(
                     accessToken = successResponse.tokens.accessToken.value,
                     expiresIn = successResponse.tokens.accessToken.lifetime,
