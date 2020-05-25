@@ -42,8 +42,8 @@ class ClaimEnforcerTest {
             "ver" : "1.0"
         }""".trimIndent())
         val outcomes = getOutcomes(enforcer, claims).first()
-        val failure = outcomes.filter { it is Failure }
-        val successful = outcomes.filter { it is Successful }
+        val failure = outcomes.filterIsInstance<Failure>()
+        val successful = outcomes.filterIsInstance<Successful>()
 
         assertEquals(5, failure.size)
         assertEquals(0, successful.size)
@@ -60,15 +60,15 @@ class ClaimEnforcerTest {
             "groups": ["feilgruppeA", "feilgruppeB"]
         }""".trimIndent())
         val outcomes = getOutcomes(enforcer, claims).first()
-        val failure = outcomes.filter { it is Failure }
-        val successful = outcomes.filter { it is Successful }
+        val failure = outcomes.filterIsInstance<Failure>()
+        val successful = outcomes.filterIsInstance<Successful>()
 
         assertEquals(1, failure.size)
         assertEquals(4, successful.size)
 
-        assertEquals("groups", (failure.first() as Failure).claimName)
-        assertEquals("[feilgruppeA, feilgruppeB]", (failure.first() as Failure).actual)
-        assertEquals("[groupA, groupB, groupC]", (failure.first() as Failure).expected)
+        assertEquals("groups", failure.first().claimName)
+        assertEquals("[feilgruppeA, feilgruppeB]", failure.first().actual)
+        assertEquals("[groupA, groupB, groupC]", failure.first().expected)
     }
 
     @Test
@@ -82,8 +82,8 @@ class ClaimEnforcerTest {
             "groups": ["groupA", "groupB", "groupC"]
         }""".trimIndent())
         val outcomes = getOutcomes(enforcer, claims).first()
-        val failure = outcomes.filter { it is Failure }
-        val successful = outcomes.filter { it is Successful }
+        val failure = outcomes.filterIsInstance<Failure>()
+        val successful = outcomes.filterIsInstance<Successful>()
 
         assertEquals(0, failure.size)
         assertEquals(5, successful.size)
@@ -100,8 +100,8 @@ class ClaimEnforcerTest {
             "groups": ["groupA", "groupB", "groupC"]
         }""".trimIndent())
         val outcomes = getOutcomes(enforcer, claims).first()
-        val failure = outcomes.filter { it is Failure }
-        val successful = outcomes.filter { it is Successful }
+        val failure = outcomes.filterIsInstance<Failure>()
+        val successful = outcomes.filterIsInstance<Successful>()
 
         assertEquals(2, failure.size)
         assertEquals(3, successful.size)
@@ -118,8 +118,8 @@ class ClaimEnforcerTest {
             "groups": ["groupA", "groupB", "groupC"]
         }""".trimIndent())
         val outcomes = getOutcomes(enforcer, claims).first()
-        val failure = outcomes.filter { it is Failure }
-        val successful = outcomes.filter { it is Successful }
+        val failure = outcomes.filterIsInstance<Failure>()
+        val successful = outcomes.filterIsInstance<Successful>()
 
         assertEquals(0, failure.size)
         assertEquals(5, successful.size)
@@ -143,8 +143,8 @@ class ClaimEnforcerTest {
     }
 
     private fun assertOutcome(outcomes: Set<EnforcementOutcome>, expectedSuccess: Int, expectedFailure: Int) {
-        val successful = outcomes.filter { it is Successful }
-        val failure = outcomes.filter { it is Failure }
+        val successful = outcomes.filterIsInstance<Successful>()
+        val failure = outcomes.filterIsInstance<Failure>()
         assertEquals(expectedSuccess, successful.size)
         assertEquals(expectedFailure, failure.size)
     }

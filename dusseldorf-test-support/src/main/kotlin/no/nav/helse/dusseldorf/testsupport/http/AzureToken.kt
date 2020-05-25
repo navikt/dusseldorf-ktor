@@ -68,7 +68,8 @@ object AzureToken {
                 audience = audience,
                 overridingClaims = mapOf(
                         "name" to name
-                )
+                ),
+                accessAsApplication = false
         ) else {
             Azure.V1_0.generateJwt(
                 issuer = issuer,
@@ -78,7 +79,8 @@ object AzureToken {
                 audience = audience,
                 overridingClaims = mapOf(
                         "name" to name
-                )
+                ),
+                accessAsApplication = false
             )
         }
 
@@ -90,6 +92,7 @@ object AzureToken {
             }
         """.trimIndent()
     }
+
     private fun authorizationCode(
             request: TokenRequest,
             issuer: String) : String {
@@ -107,7 +110,8 @@ object AzureToken {
                 audience = audience,
                 overridingClaims = mapOf(
                         "name" to code.name
-                )
+                ),
+                accessAsApplication = false
         ) else {
             Azure.V1_0.generateJwt(
                 issuer = issuer,
@@ -117,7 +121,8 @@ object AzureToken {
                 audience = audience,
                 overridingClaims = mapOf(
                         "name" to code.name
-                )
+                ),
+                accessAsApplication = false
             )
         }
 
@@ -130,7 +135,8 @@ object AzureToken {
                         "name" to code.name,
                         "nonce" to code.nonce,
                         "sub" to code.userId
-                )
+                ),
+                accessAsApplication = false
         ) else {
             Azure.V1_0.generateJwt(
                 issuer = issuer,
@@ -141,7 +147,8 @@ object AzureToken {
                         "name" to code.name,
                         "nonce" to code.nonce,
                         "sub" to code.userId
-                )
+                ),
+                accessAsApplication = false
             )
         }
 

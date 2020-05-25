@@ -3,6 +3,8 @@ package no.nav.helse.dusseldorf.testsupport.jws
 import java.util.*
 
 object Azure {
+    private const val accessAsApplicationRole = "access_as_application"
+
     enum class ClientAuthenticationMode(val claimValue: String) {
         PUBLIC("0"),
         CLIENT_SECRET("1"),
@@ -40,8 +42,9 @@ object Azure {
                 roles: Set<String> = emptySet(),
                 scopes: Set<String> = emptySet(),
                 issuer: String = actualIssuer,
-                overridingClaims: Map<String, Any> = emptyMap()
-        ) = jwsFunctions.generateJwt(
+                overridingClaims: Map<String, Any> = emptyMap(),
+                accessAsApplication: Boolean = true
+                ) = jwsFunctions.generateJwt(
                 claims = overridingClaims.toMutableMap().apply {
                     putIfAbsent("ver", version)
                     putIfAbsent("aud", audience)
@@ -49,7 +52,10 @@ object Azure {
                     putIfAbsent("appid", clientId)
                     putIfAbsent("appidacr", clientAuthenticationMode.claimValue)
                     putIfAbsent("groups", groups)
-                    putIfAbsent("roles", roles)
+                    putIfAbsent("roles", when (accessAsApplication) {
+                        true -> roles.plus(accessAsApplicationRole)
+                        false -> roles
+                    })
                     putIfAbsent("scp", scopes.joinToString(" "))
                     putIfAbsent("sub", UUID.randomUUID().toString())
                 }.toMap()
@@ -87,7 +93,8 @@ object Azure {
                 roles: Set<String> = emptySet(),
                 scopes: Set<String> = emptySet(),
                 issuer: String = actualIssuer,
-                overridingClaims: Map<String, Any> = emptyMap()
+                overridingClaims: Map<String, Any> = emptyMap(),
+                accessAsApplication: Boolean = true
         ) = jwsFunctions.generateJwt(
                 claims = overridingClaims.toMutableMap().apply {
                     putIfAbsent("ver", version)
@@ -96,7 +103,10 @@ object Azure {
                     putIfAbsent("azp", clientId)
                     putIfAbsent("azpacr", clientAuthenticationMode.claimValue)
                     putIfAbsent("groups", groups)
-                    putIfAbsent("roles", roles)
+                    putIfAbsent("roles", when (accessAsApplication) {
+                        true -> roles.plus(accessAsApplicationRole)
+                        false -> roles
+                    })
                     putIfAbsent("scp", scopes.joinToString(" "))
                     putIfAbsent("sub", UUID.randomUUID().toString())
                 }.toMap()
