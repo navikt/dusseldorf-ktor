@@ -78,6 +78,12 @@ kafkaEmbeddedEnvVersion() {
     echo $version
 }
 
+orgjsonVersion() {
+    line=$(grep '<orgjson\.version>' pom.xml)
+    version=$(echo $line | sed 's/<orgjson.version>\(.*\)<\/orgjson.version>/\1/g')
+    echo $version
+}
+
 filename="gradle/dusseldorf-ktor.gradle.kts"
 
 rm -rf ${filename}
@@ -97,5 +103,6 @@ echo "val micrometerVersion by extra(\""$(micrometerVersion)\"")" >> "${filename
 echo "val fuelVersion by extra(\""$(fuelVersion)\"")" >> "${filename}"
 echo "val kafkaVersion by extra(\""$(kafkaVersion)\"")" >> "${filename}"
 echo "val kafkaEmbeddedEnvVersion by extra(\""$(kafkaEmbeddedEnvVersion)\"")" >> "${filename}"
+echo "val orgjsonVersion by extra(\""$(orgjsonVersion)\"")" >> "${filename}"
 
 cat ${filename}
