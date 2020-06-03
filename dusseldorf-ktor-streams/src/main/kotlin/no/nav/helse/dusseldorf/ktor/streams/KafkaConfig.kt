@@ -27,7 +27,6 @@ class KafkaConfig(
         credentials: Pair<String, String>,
         trustStore: Pair<String, String>?,
         autoOffsetReset: String,
-        exactlyOnceProcessing: Boolean,
         val unreadyAfterStreamStoppedIn: Duration
 
 ) {
@@ -37,15 +36,12 @@ class KafkaConfig(
                 .filterNot { it.isBlank() }
                 .size
         logger.info("Starter opp med $antallBoostrapServers bootstarp servers.")
-        logger.info("ExactlyOnceProcessing=$exactlyOnceProcessing")
         put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
         put(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, LogAndFailExceptionHandler::class.java)
         put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset)
         medCredentials(credentials)
         medTrustStore(trustStore)
-        if (exactlyOnceProcessing) {
-            medExacltyOnceProcessing(antallBoostrapServers)
-        }
+        medExactlyOnceProcessing(antallBoostrapServers)
     }
 
     private val producers = Properties().apply {
@@ -63,12 +59,20 @@ class KafkaConfig(
     }
 }
 
-private fun Properties.medExacltyOnceProcessing(antallBootstrapServers: Int) {
+private fun Properties.medExactlyOnceProcessing(antallBootstrapServers: Int) {
     val replicationFactor = if (antallBootstrapServers < 3) antallBootstrapServers else 3
     logger.info("$REPLICATION_FACTOR_CONFIG=$replicationFactor")
     put(PROCESSING_GUARANTEE_CONFIG, EXACTLY_ONCE)
     put(REPLICATION_FACTOR_CONFIG, "3")
 }
+
+fun Properties.utenExactlyOnceProcessing() = also {
+    it.remove(PROCESSING_GUARANTEE_CONFIG)
+    it.remove(REPLICATION_FACTOR_CONFIG)
+    require(!it.containsKey(PROCESSING_GUARANTEE_CONFIG))
+    require(!it.containsKey(REPLICATION_FACTOR_CONFIG))
+}
+
 private fun Properties.medTrustStore(trustStore: Pair<String, String>?) {
     trustStore?.let {
         try {
@@ -117,7 +121,6 @@ fun ApplicationConfig.kafkaConfig() : KafkaConfig {
                     getRequiredString("nav.kafka.password", secret = true)),
             trustStore = trustStore,
             unreadyAfterStreamStoppedIn = unreadyAfterStreamStoppedIn,
-            exactlyOnceProcessing = (getOptionalString("nav.kafka.exactly_once_processing", false)?:"true").equals("true", ignoreCase = true),
             autoOffsetReset = getOptionalString("nav.kafka.auto_offset_reset", false)?:"earliest"
     )
 }
