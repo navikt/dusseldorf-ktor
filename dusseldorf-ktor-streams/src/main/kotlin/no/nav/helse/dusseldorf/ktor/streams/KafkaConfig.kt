@@ -27,7 +27,9 @@ class KafkaConfig(
         credentials: Pair<String, String>,
         trustStore: Pair<String, String>?,
         autoOffsetReset: String,
+        exactlyOnceProcessing: Boolean,
         val unreadyAfterStreamStoppedIn: Duration
+
 ) {
     private val streams = Properties().apply {
         val antallBoostrapServers = bootstrapServers
@@ -35,12 +37,15 @@ class KafkaConfig(
                 .filterNot { it.isBlank() }
                 .size
         logger.info("Starter opp med $antallBoostrapServers bootstarp servers.")
+        logger.info("ExactlyOnceProcessing=$exactlyOnceProcessing")
         put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
         put(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, LogAndFailExceptionHandler::class.java)
         put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset)
         medCredentials(credentials)
         medTrustStore(trustStore)
-        medProcessingGuarantee(antallBoostrapServers)
+        if (exactlyOnceProcessing) {
+            medExacltyOnceProcessing(antallBoostrapServers)
+        }
     }
 
     private val producers = Properties().apply {
@@ -58,7 +63,7 @@ class KafkaConfig(
     }
 }
 
-private fun Properties.medProcessingGuarantee(antallBootstrapServers: Int) {
+private fun Properties.medExacltyOnceProcessing(antallBootstrapServers: Int) {
     val replicationFactor = if (antallBootstrapServers < 3) antallBootstrapServers else 3
     logger.info("$REPLICATION_FACTOR_CONFIG=$replicationFactor")
     put(PROCESSING_GUARANTEE_CONFIG, EXACTLY_ONCE)
@@ -112,6 +117,7 @@ fun ApplicationConfig.kafkaConfig() : KafkaConfig {
                     getRequiredString("nav.kafka.password", secret = true)),
             trustStore = trustStore,
             unreadyAfterStreamStoppedIn = unreadyAfterStreamStoppedIn,
+            exactlyOnceProcessing = (getOptionalString("nav.kafka.exactly_once_processing", false)?:"true").equals("true", ignoreCase = true),
             autoOffsetReset = getOptionalString("nav.kafka.auto_offset_reset", false)?:"earliest"
     )
 }
