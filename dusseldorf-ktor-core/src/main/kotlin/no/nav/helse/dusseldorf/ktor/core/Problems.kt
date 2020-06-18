@@ -1,8 +1,9 @@
 package no.nav.helse.dusseldorf.ktor.core
 
 import io.ktor.application.ApplicationCall
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
+import io.ktor.response.respondText
 import io.ktor.util.AttributeKey
 import org.json.JSONObject
 import org.slf4j.Logger
@@ -69,12 +70,13 @@ suspend fun ApplicationCall.respondProblemDetails(
         problemDetails: ProblemDetails,
         logger: Logger? = null
 ) {
-    val map = problemDetails.asMap()
-    logger?.info("ProblemDetails='$map'")
-    attributes.put(AttributeKey("problem-details"), JSONObject(problemDetails.asMap()).toString())
-    respond(
-            status = HttpStatusCode.fromValue(problemDetails.status),
-            message = map
+    val json = JSONObject(problemDetails.asMap()).toString()
+    logger?.info("ProblemDetails='$json'")
+    attributes.put(AttributeKey("problem-details"), json)
+    respondText(
+            text = json,
+            contentType = ContentType.Application.ProblemJson,
+            status = HttpStatusCode.fromValue(problemDetails.status)
     )
 }
 
@@ -116,7 +118,7 @@ data class ValidationProblemDetails(
 ) {
     override fun asMap() : Map<String, Any> {
         val invalidParametersList : MutableList<Map<String, Any?>> = mutableListOf()
-        violations.forEach{ it ->
+        violations.forEach{
             invalidParametersList.add(mapOf(
                     Pair("type", it.parameterType.name.toLowerCase()),
                     Pair("name", it.parameterName),
