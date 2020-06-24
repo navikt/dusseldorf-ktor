@@ -6,19 +6,31 @@ import io.ktor.application.ApplicationFeature
 import io.ktor.features.CallId
 import io.ktor.features.callId
 import io.ktor.http.HttpHeaders
+import io.ktor.http.encodeURLParameter
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
+
+internal object IdVerifier {
+    private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.IdVerifier")
+    private val idRegex  = "[a-zA-Z0-9_\\-]{5,100}".toRegex()
+    internal fun verifyId(type: String, id:String) = idRegex.matches(id).also { valid ->
+        if (!valid) logger.warn("Ugyldig $type=[${id.encodeURLParameter()}] (url-encoded)")
+    }
+    internal fun generate() = UUID.randomUUID().toString()
+}
 
 // Henter fra CorrelationID (backend tjenester)
 fun CallId.Configuration.fromXCorrelationIdHeader() {
     retrieveFromHeader(HttpHeaders.XCorrelationId)
+    verify { IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = it) }
 }
 
 // Genererer CorrelationID (frontend tjeneste)
 fun CallId.Configuration.generated() {
-    generate { UUID.randomUUID().toString() }
+    generate { IdVerifier.generate() }
 }
 
 class Configuration
