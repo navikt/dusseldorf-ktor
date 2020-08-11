@@ -15,7 +15,7 @@ import java.util.*
 
 internal object IdVerifier {
     private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.IdVerifier")
-    private val idRegex  = "[a-zA-Z0-9_\\-]{5,100}".toRegex()
+    private val idRegex  = "[a-zA-Z0-9_.\\-]{5,200}".toRegex()
     internal fun verifyId(type: String, id:String) = idRegex.matches(id).also { valid ->
         if (!valid) logger.warn("Ugyldig $type=[${id.encodeURLParameter()}] (url-encoded)")
     }
