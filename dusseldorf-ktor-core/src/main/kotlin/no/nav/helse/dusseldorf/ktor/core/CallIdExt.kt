@@ -7,6 +7,7 @@ import io.ktor.features.CallId
 import io.ktor.features.callId
 import io.ktor.http.HttpHeaders
 import io.ktor.http.encodeURLParameter
+import io.ktor.request.header
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
 import org.slf4j.Logger
@@ -15,7 +16,7 @@ import java.util.*
 
 internal object IdVerifier {
     private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.IdVerifier")
-    private val norskeBokstaver = "æÃ¦øÃ¸åÃ¥ÆØÅ"
+    private val norskeBokstaver = "æøåÆØÅ"
     private val idRegex  = "[a-zA-Z0-9_.\\-${norskeBokstaver}]{5,200}".toRegex()
     internal fun verifyId(type: String, id:String) = idRegex.matches(id).also { valid ->
         if (!valid) logger.warn("Ugyldig $type=[${id.encodeURLParameter()}] (url-encoded)")
@@ -25,7 +26,14 @@ internal object IdVerifier {
 
 // Henter fra CorrelationID (backend tjenester)
 fun CallId.Configuration.fromXCorrelationIdHeader() {
-    retrieveFromHeader(HttpHeaders.XCorrelationId)
+    retrieve { call ->
+        call.request.header(HttpHeaders.XCorrelationId)?.let {
+            when (IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = it)) {
+                true -> it
+                false -> IdVerifier.generate()
+            }
+        }
+    }
     verify { IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = it) }
 }
 
