@@ -16,24 +16,35 @@ import java.util.*
 
 internal object IdVerifier {
     private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.IdVerifier")
-    private val norskeBokstaver = "æøåÆØÅ"
-    private val idRegex  = "[a-zA-Z0-9_.\\-${norskeBokstaver}]{5,200}".toRegex()
+    private const val NorskeBokstaver = "æøåÆØÅ"
+    private const val GeneratedIdPrefix = "generated-"
+
+    private val idRegex  = "[a-zA-Z0-9_.\\-${NorskeBokstaver}]{5,200}".toRegex()
     internal fun verifyId(type: String, id:String) = idRegex.matches(id).also { valid ->
         if (!valid) logger.warn("Ugyldig $type=[${id.encodeURLParameter()}] (url-encoded)")
     }
-    internal fun generate() = UUID.randomUUID().toString()
+    internal fun generate() = "$GeneratedIdPrefix-${UUID.randomUUID()}"
+    internal fun String.trimId() = removePrefix(GeneratedIdPrefix)
 }
 
 // Henter fra CorrelationID (backend tjenester)
-fun CallId.Configuration.fromXCorrelationIdHeader() {
-    retrieve { call ->
-        call.request.header(HttpHeaders.XCorrelationId)?.let {
-            when (IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = it)) {
-                true -> it
-                false -> IdVerifier.generate()
+fun CallId.Configuration.fromXCorrelationIdHeader(generateOnInvalid: Boolean = false) {
+    when (generateOnInvalid) {
+        true -> {
+            retrieve { call ->
+                call.request.header(HttpHeaders.XCorrelationId)?.let {
+                    when (IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = it)) {
+                        true -> it
+                        false -> IdVerifier.generate()
+                    }
+                }
             }
         }
+        false -> {
+            retrieveFromHeader(headerName = HttpHeaders.XCorrelationId)
+        }
     }
+
     verify { IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = it) }
 }
 

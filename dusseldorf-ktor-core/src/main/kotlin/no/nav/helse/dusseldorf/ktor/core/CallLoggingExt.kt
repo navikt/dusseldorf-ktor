@@ -5,22 +5,21 @@ import io.ktor.features.callIdMdc
 import io.ktor.http.HttpHeaders
 import io.ktor.request.*
 import io.ktor.response.header
+import no.nav.helse.dusseldorf.ktor.core.IdVerifier.trimId
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 
 private val LOG: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.CallLoggingExt")
 
-private const val GENERATED_REQUEST_ID_PREFIX = "generated-"
-
 fun CallLogging.Configuration.correlationIdAndRequestIdInMdc() {
     callIdMdc("correlation_id")
     mdc("request_id") { call ->
-        val requestId = when (val fraHeader = call.request.header(HttpHeaders.XRequestId)?.removePrefix(GENERATED_REQUEST_ID_PREFIX)) {
-            null -> "$GENERATED_REQUEST_ID_PREFIX${IdVerifier.generate()}"
+        val requestId = when (val fraHeader = call.request.header(HttpHeaders.XRequestId)?.trimId()) {
+            null -> IdVerifier.generate()
             else -> when (IdVerifier.verifyId(type = HttpHeaders.XRequestId, id = fraHeader)) {
                 true -> fraHeader
-                false -> "$GENERATED_REQUEST_ID_PREFIX${IdVerifier.generate()}"
+                false -> IdVerifier.generate()
             }
         }
         call.response.header(HttpHeaders.XRequestId, requestId)
