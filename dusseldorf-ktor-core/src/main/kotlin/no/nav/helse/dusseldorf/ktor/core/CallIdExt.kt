@@ -23,7 +23,7 @@ internal object IdVerifier {
     internal fun verifyId(type: String, id:String) = idRegex.matches(id).also { valid ->
         if (!valid) logger.warn("Ugyldig $type=[${id.encodeURLParameter()}] (url-encoded)")
     }
-    internal fun generate() = "$GeneratedIdPrefix-${UUID.randomUUID()}"
+    internal fun generate() = "$GeneratedIdPrefix${UUID.randomUUID()}"
     internal fun String.trimId() = removePrefix(GeneratedIdPrefix)
 }
 
