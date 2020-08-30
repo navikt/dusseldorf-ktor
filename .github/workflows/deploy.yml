@@ -7,6 +7,7 @@ on:
       - '.gitignore'
       - 'LICENCE'
       - 'CODEOWNERS'
+      - '.github/dependabot.yml'
     branches:
       - master
 
