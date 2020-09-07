@@ -42,12 +42,12 @@
         <prometheus.version>0.9.0</prometheus.version>
         <caffeine.version>2.8.5</caffeine.version>
         <fuel.version>2.2.3</fuel.version>
-        <kafka.version>2.4.0</kafka.version>
-        <kafka.embedded.env.version>2.4.0</kafka.embedded.env.version>
+        <kafka.version>2.5.0</kafka.version>
+        <kafka.embedded.env.version>2.5.0</kafka.embedded.env.version>
         <orgjson.version>20200518</orgjson.version>
 
         <!-- Interne versjoner -->
-        <oauth2-oidc-sdk.version>8.19</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>8.19.1</oauth2-oidc-sdk.version>
         <wiremock.version>2.27.1</wiremock.version>
     </properties>
 
