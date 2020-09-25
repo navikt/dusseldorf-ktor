@@ -31,7 +31,7 @@
         <maven.compiler.target>11</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
-        <ktor.version>1.4.0</ktor.version>
+        <ktor.version>1.4.1</ktor.version>
         <kotlin.version>1.4.10</kotlin.version>
         <kotlinx.coroutines.version>1.3.9</kotlinx.coroutines.version>
         <micrometer.version>1.5.4</micrometer.version>
