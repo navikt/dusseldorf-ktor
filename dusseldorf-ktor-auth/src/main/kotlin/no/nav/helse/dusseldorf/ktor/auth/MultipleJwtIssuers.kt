@@ -67,7 +67,7 @@ fun Authentication.Configuration.multipleJwtIssuers(
                 val token = httpAuthHeader?.decodeJwtOrNull()
                 if (token != null) logger.error("Request med token utstedt av '${token.issuer}' stoppes da issuer ikke er konfigurert. Token uten signatur = '${token.header}.${token.payload}'")
                 else {
-                    val authorizationHeader = call.request.header(HttpHeaders.Authorization)
+                    val authorizationHeader = httpAuthHeader?.render()
                     if (authorizationHeader != null) logger.error("Request med ugylidig format på Authorization header stoppes. Authorization header = '$authorizationHeader'")
                     else logger.error("Request uten Authorization header satt stoppes.")
                 }
