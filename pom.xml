@@ -47,7 +47,7 @@
         <orgjson.version>20200518</orgjson.version>
 
         <!-- Interne versjoner -->
-        <oauth2-oidc-sdk.version>8.23</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>8.23.1</oauth2-oidc-sdk.version>
         <wiremock.version>2.27.2</wiremock.version>
     </properties>
 
