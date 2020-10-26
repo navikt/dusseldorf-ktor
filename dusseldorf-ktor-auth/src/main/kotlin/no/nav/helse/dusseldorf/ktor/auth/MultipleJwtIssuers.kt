@@ -77,7 +77,7 @@ fun Authentication.Configuration.multipleJwtIssuers(
 }
 
 private fun tokenIsAbsentOrNotIssuedBy(httpAuthHeader: HttpAuthHeader?, issuer: String) =
-    httpAuthHeader?.decodeJwtOrNull()?.issuer == issuer
+    httpAuthHeader?.decodeJwtOrNull()?.issuer != issuer
 
 private fun tokenIsSetAndIssuerIsOneOf(httpAuthHeader: HttpAuthHeader?, otherIssuers: List<String>) =
     httpAuthHeader?.decodeJwtOrNull()?.issuer?.let { otherIssuers.contains(it) } ?: false
