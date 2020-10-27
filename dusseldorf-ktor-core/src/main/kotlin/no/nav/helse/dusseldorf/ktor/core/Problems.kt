@@ -3,7 +3,7 @@ package no.nav.helse.dusseldorf.ktor.core
 import io.ktor.application.ApplicationCall
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.response.respondText
+import io.ktor.response.*
 import io.ktor.util.AttributeKey
 import org.json.JSONObject
 import org.slf4j.Logger
@@ -73,11 +73,21 @@ suspend fun ApplicationCall.respondProblemDetails(
     val json = JSONObject(problemDetails.asMap()).toString()
     logger?.info("ProblemDetails='$json'")
     attributes.put(AttributeKey("problem-details"), json)
-    respondText(
+
+    val serializeProblemDetailsWithContentNegotiation =
+        System.getProperty("dusseldorf.ktor.serializeProblemDetailsWithContentNegotiation") == "true"
+
+    when (serializeProblemDetailsWithContentNegotiation) {
+        true -> respond(
+            message = problemDetails.asMap(),
+            status = HttpStatusCode.fromValue(problemDetails.status)
+        )
+        false -> respondText(
             text = json,
             contentType = ContentType.Application.ProblemJson,
             status = HttpStatusCode.fromValue(problemDetails.status)
-    )
+        )
+    }
 }
 
 open class DefaultProblemDetails(
