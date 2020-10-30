@@ -126,6 +126,7 @@ class WireMockBuilder {
 
     private fun addNaisStsStubs(server: WireMockServer) {
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.NAIS_STS_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(NAIS_STS_TRANSFORMER)))
+        WireMock.stubFor(WireMock.post(WireMock.urlPathMatching(".*${Paths.NAIS_STS_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(NAIS_STS_TRANSFORMER)))
         WireMockStubs.stubJwks(path = Paths.NAIS_STS_JWKS_PATH, jwkSet = NaisSts.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.NAIS_STS_WELL_KNOWN_PATH,
