@@ -114,13 +114,17 @@ fun ApplicationConfig.kafkaConfig() : KafkaConfig {
     )
 
     return KafkaConfig(
-            appId = id(),
-            bootstrapServers = bootstrapServers,
-            credentials = Pair(
-                    getRequiredString("nav.kafka.username", secret = false),
-                    getRequiredString("nav.kafka.password", secret = true)),
-            trustStore = trustStore,
-            unreadyAfterStreamStoppedIn = unreadyAfterStreamStoppedIn,
-            autoOffsetReset = getOptionalString("nav.kafka.auto_offset_reset", false)?:"earliest"
+        appId = id(),
+        bootstrapServers = bootstrapServers,
+        credentials = Pair(
+            getRequiredString("nav.kafka.username", secret = false),
+            getRequiredString("nav.kafka.password", secret = true)),
+        trustStore = trustStore,
+        unreadyAfterStreamStoppedIn = unreadyAfterStreamStoppedIn,
+        autoOffsetReset = getRequiredString("nav.kafka.auto_offset_reset", false).toLowerCase().also { autoOffsetReset ->
+            if (autoOffsetReset != "none") {
+                logger.warn("'nav.kafka.auto_offset_reset' bør alltid være 'none' så fremt det ikke er første gang appen deployes.")
+            }
+        }
     )
 }
