@@ -29,7 +29,7 @@ fun MicrometerMetrics.Configuration.init(
 }
 
 private fun ApplicationCall.resolveProblemDetailsTag(): String =
-        when (val problemDetailsKey = attributes.allKeys.filter { it.name == "problem-details" }.firstOrNull()) {
+        when (val problemDetailsKey = attributes.allKeys.firstOrNull { it.name == "problem-details" }) {
             null -> "n/a"
             else -> {
                 @Suppress("UNCHECKED_CAST")
