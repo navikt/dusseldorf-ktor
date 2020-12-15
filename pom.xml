@@ -42,7 +42,7 @@
         <prometheus.version>0.9.0</prometheus.version>
         <caffeine.version>2.8.8</caffeine.version>
         <fuel.version>2.3.1</fuel.version>
-        <kafka.version>2.5.0</kafka.version>
+        <kafka.version>6.0.1-ce</kafka.version>
         <kafka.embedded.env.version>2.5.0</kafka.embedded.env.version>
         <orgjson.version>20201115</orgjson.version>
 
