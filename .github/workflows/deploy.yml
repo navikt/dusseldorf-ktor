@@ -27,7 +27,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Kjøre tester i testapp
         run: |
-          ./mvnw install --quiet
+          ./mvnw install --quiet -DskipTests
           cd dusseldorf-ktor-testapp
           ./gradlew test
           cd ..
