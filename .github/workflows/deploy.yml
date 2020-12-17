@@ -21,6 +21,7 @@ jobs:
           java-version: '11.x'
       - name: Kjøre tester i testapp
         run: |
+          ./mvnw install
           cd dusseldorf-ktor-testapp
           ./gradlew test
           cd ..
