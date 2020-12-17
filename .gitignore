@@ -41,6 +41,8 @@ gradle-app.setting
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle/wrapper/gradle-wrapper.jar
+!dusseldorf-ktor-testapp/gradle/wrapper/gradle-wrapper.jar
+
 
 # IntelliJ project files
 *.iml
