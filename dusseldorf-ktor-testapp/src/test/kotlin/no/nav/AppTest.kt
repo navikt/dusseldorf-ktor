@@ -4,10 +4,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.readTextOrThrow
 import org.junit.jupiter.api.Assertions.*
@@ -56,6 +53,16 @@ import org.junit.jupiter.api.TestMethodOrder
         val job = GlobalScope.launch {
             server.start(wait = true)
         }
+
+        runBlocking {
+            for (i in 1..20) {
+                delay(i * 1000L)
+                if ("http://localhost:$appPort/isready".httpGet().second.isSuccess) {
+                    break
+                }
+            }
+        }
+
         try {
             runBlocking { block() }
         } finally {
