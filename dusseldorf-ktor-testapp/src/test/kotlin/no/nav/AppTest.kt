@@ -15,7 +15,6 @@ import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
-import java.io.EOFException
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
     internal class AppTest {
@@ -36,19 +35,17 @@ import java.io.EOFException
     fun `UnsafeBlockingTrampoline test`() {
         withNettyEngine(appPort = 1338) {
             "http://localhost:1338/failing-metrics".let {
-                val exception = doUntillFailure { it.httpGet().second }
-                assertNotNull(exception)
-                assertTrue(exception is EOFException)
+                doUntilFailure { it.httpGet().second }
             }
         }
     }
 
-    private suspend fun doUntillFailure(block: suspend () -> Result<HttpResponse>) : Throwable? {
+    private suspend fun doUntilFailure(block: suspend () -> Result<HttpResponse>) {
         for (i in 1..20) {
             val result = block()
-            if (result.isFailure) return result.exceptionOrNull()
+            if (result.isFailure) return
         }
-        throw IllegalStateException("Ble ingen feil etter 20 forsøk")
+        throw IllegalStateException("Feilet ikke på 20 forsøk")
     }
 
     private fun withNettyEngine(appPort: Int, block: suspend () -> Unit) {
