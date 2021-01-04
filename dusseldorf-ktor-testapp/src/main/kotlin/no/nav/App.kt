@@ -38,12 +38,5 @@ fun Application.app() {
             require(metricsA.contains("# HELP") && metricsB.contains("# HELP"))
             call.respond(metricsB)
         }
-
-        get("/failing-metrics") {
-            val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: emptySet()
-            call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
-                TextFormat.write004(this, CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(names))
-            }
-        }
     }
 }

@@ -10,10 +10,8 @@ import io.prometheus.client.exporter.common.TextFormat
 import no.nav.helse.dusseldorf.ktor.core.Paths
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.CharArrayWriter
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute")
-private val metricsContentType = ContentType.parse(TextFormat.CONTENT_TYPE_004)
 
 fun Route.MetricsRoute(
         collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry,
@@ -27,14 +25,9 @@ fun Route.MetricsRoute(
         logger.debug("Metrics hentes")
         val names = call.names()
         val metrics = collectorRegistry.filteredMetricFamilySamples(names)
-        val formatted = CharArrayWriter(1024)
-            .also { TextFormat.write004(it, metrics) }
-            .use { it.toString() }
 
-        call.respondText(
-            status = HttpStatusCode.OK,
-            contentType = metricsContentType,
-            text = formatted
-        )
+        call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
+            TextFormat.write004(this, metrics)
+        }
     }
 }
