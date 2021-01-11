@@ -35,7 +35,7 @@
         <kotlin.version>1.4.21</kotlin.version>
         <kotlinx.coroutines.version>1.4.2</kotlinx.coroutines.version>
         <micrometer.version>1.6.2</micrometer.version>
-        <jackson.version>2.12.0</jackson.version>
+        <jackson.version>2.12.1</jackson.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logstash.logback.version>6.6</logstash.logback.version>
@@ -47,7 +47,7 @@
         <orgjson.version>20201115</orgjson.version>
 
         <!-- Interne versjoner -->
-        <oauth2-oidc-sdk.version>8.30</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>8.32</oauth2-oidc-sdk.version>
         <wiremock.version>2.27.2</wiremock.version>
     </properties>
 
