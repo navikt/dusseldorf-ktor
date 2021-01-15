@@ -197,7 +197,10 @@ interface TokenRequest {
 }
 
 private fun String.asScopes() = split(" ").toSet()
-private fun Set<String>.extractAudience() = first { it.endsWith("/.default") }.substringBefore("/.default")
+
+internal fun Set<String>.extractAudience() = first {
+    it.startsWith("api://") || it.endsWith("/.default")
+}.removePrefix("api://").removeSuffix("/.default")
 
 private fun String.getOptionalParameter(parameterName: String) : String? {
     if (!contains("$parameterName=")) return null
