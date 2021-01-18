@@ -32,7 +32,7 @@
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
         <ktor.version>1.5.0</ktor.version>
-        <kotlin.version>1.4.21</kotlin.version>
+        <kotlin.version>1.4.21-2</kotlin.version>
         <kotlinx.coroutines.version>1.4.2</kotlinx.coroutines.version>
         <micrometer.version>1.6.3</micrometer.version>
         <jackson.version>2.12.1</jackson.version>
