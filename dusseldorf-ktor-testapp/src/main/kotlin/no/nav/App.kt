@@ -3,12 +3,9 @@ package no.nav
 import com.github.kittinunf.fuel.coroutines.awaitString
 import com.github.kittinunf.fuel.httpGet as fuelHttpGet
 import io.ktor.application.*
-import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.*
-import io.prometheus.client.CollectorRegistry
-import io.prometheus.client.exporter.common.TextFormat
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet as ktorHttpGet
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.readTextOrThrow
