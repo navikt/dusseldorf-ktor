@@ -19,6 +19,7 @@ private const val FALLBACK_ALIAS = "fallback"
 
 fun Authentication.Configuration.multipleJwtIssuers(
     issuers : Map<Issuer, Set<ClaimRule>>,
+    logJwtPayloadOnUnsupportedIssuer: Boolean = false,
     extractHttpAuthHeader: (ApplicationCall) -> HttpAuthHeader? = { call ->
         call.request.parseAuthorizationHeaderOrNull()
     }) {
@@ -63,7 +64,14 @@ fun Authentication.Configuration.multipleJwtIssuers(
             val skipping = tokenIsSetAndIssuerIsOneOf(httpAuthHeader, configuredIssuers)
             if (!skipping) {
                 val token = httpAuthHeader?.decodeJwtOrNull()
-                if (token != null) logger.error("Request med token utstedt av '${token.issuer}' stoppes da issuer ikke er konfigurert. Token uten signatur = '${token.header}.${token.payload}'")
+
+                if (token != null) {
+                    val logSuffix = when (logJwtPayloadOnUnsupportedIssuer) {
+                        true -> "Token uten signatur = '${token.header}.${token.payload}'"
+                        false -> "Token header = '${token.header}'"
+                    }
+                    logger.error("Request med token utstedt av '${token.issuer}' stoppes da issuer ikke er konfigurert. $logSuffix")
+                }
                 else {
                     val authorizationHeader = httpAuthHeader?.render()
                     if (authorizationHeader != null) logger.error("Request med ugylidig format på Authorization header stoppes. Authorization header = '$authorizationHeader'")
