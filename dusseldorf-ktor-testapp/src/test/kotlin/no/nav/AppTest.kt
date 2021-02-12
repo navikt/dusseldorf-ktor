@@ -1,5 +1,6 @@
 package no.nav
 
+import io.ktor.client.features.*
 import io.ktor.http.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -12,13 +13,19 @@ import org.junit.jupiter.api.Test
 internal class AppTest {
 
     @Test
-    fun `hente metrics`() {
+    fun `hente metrics & pre-stop`() {
         withNettyEngine(appPort = 1337) {
             "http://localhost:1337/".let {
+                doNTimes(n=2) { GlobalScope.launch(Dispatchers.IO) { "${it}treg-request".httpGet{ builder ->
+                    builder.timeout { requestTimeoutMillis = 10000 }
+                }.second.getOrThrow() } }
                 doNTimes {
                     assertEquals(HttpStatusCode.OK, "${it}metrics".httpGet().readTextOrThrow().first)
                     assertEquals(HttpStatusCode.OK, "${it}proxied-metrics".httpGet().readTextOrThrow().first)
                 }
+                assertEquals(HttpStatusCode.OK, "${it}internal/pre-stop".httpGet { builder ->
+                    builder.timeout { requestTimeoutMillis = 10000 }
+                }.second.getOrThrow().status)
             }
         }
     }
