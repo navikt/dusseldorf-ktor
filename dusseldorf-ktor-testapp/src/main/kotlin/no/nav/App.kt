@@ -14,6 +14,7 @@ import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.readTextOrThrow
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.FullførAktiveRequester
 import no.nav.helse.dusseldorf.ktor.core.PreStopRoute
+import no.nav.helse.dusseldorf.ktor.core.preStopOnApplicationStopPreparing
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -27,14 +28,13 @@ private val logger: Logger = LoggerFactory.getLogger("no.nav.App")
 fun Application.app() {
     DefaultExports.initialize()
 
-    val fullførAktiveRequester = FullførAktiveRequester(application = this)
+    val preStopActions = listOf(FullførAktiveRequester(application = this))
+    preStopOnApplicationStopPreparing(preStopActions)
 
     routing {
         DefaultProbeRoutes()
         MetricsRoute()
-        PreStopRoute(
-            preStopActions = listOf(fullførAktiveRequester)
-        )
+        PreStopRoute(preStopActions)
 
         get("/treg-request") {
             logger.info("treg request starter")

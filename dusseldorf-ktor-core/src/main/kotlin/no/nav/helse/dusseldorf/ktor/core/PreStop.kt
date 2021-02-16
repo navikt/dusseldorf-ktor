@@ -5,24 +5,39 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import no.nav.helse.dusseldorf.ktor.core.PreStop.performPreStop
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicInteger
 
-private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.PreStopRoute")
-private val EtMinutt = 60000L
+private object PreStop {
+    private const val EtMinutt = 60000L
+    private val logger: Logger = LoggerFactory.getLogger(PreStop::class.java)
 
-fun Route.PreStopRoute(
-    preStopActions: List<PreStopAction>) {
-    get(Paths.PRE_STOP_PATH) {
+    suspend fun List<PreStopAction>.performPreStop() {
         logger.info("Starter pre-stop")
         withTimeout(EtMinutt) {
-            preStopActions.forEach { preStopAction -> runCatching {
+            forEach { preStopAction -> runCatching {
                 preStopAction.preStop()
             }.onFailure { logger.warn("Feil ved pre-stop ${preStopAction.javaClass.simpleName}", it) }}
         }
         logger.info("Ferdig med pre-stop")
+    }
+}
+
+fun Application.preStopOnApplicationStopPreparing(
+    preStopActions: List<PreStopAction>) {
+    environment.monitor.subscribe(ApplicationStopPreparing) {
+        runBlocking { preStopActions.performPreStop() }
+    }
+}
+
+fun Route.PreStopRoute(
+    preStopActions: List<PreStopAction>) {
+    get(Paths.PRE_STOP_PATH) {
+        preStopActions.performPreStop()
         call.respondText("STOPPED")
     }
 }
