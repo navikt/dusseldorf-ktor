@@ -32,7 +32,7 @@
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
         <ktor.version>1.5.1</ktor.version>
-        <kotlin.version>1.4.30</kotlin.version>
+        <kotlin.version>1.4.31</kotlin.version>
         <kotlinx.coroutines.version>1.4.2</kotlinx.coroutines.version>
         <micrometer.version>1.6.4</micrometer.version>
         <jackson.version>2.12.1</jackson.version>
@@ -47,7 +47,7 @@
         <orgjson.version>20201115</orgjson.version>
 
         <!-- Interne versjoner -->
-        <oauth2-oidc-sdk.version>9.2</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>9.2.1</oauth2-oidc-sdk.version>
         <wiremock.version>2.27.2</wiremock.version>
     </properties>
 
