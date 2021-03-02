@@ -1,4 +1,4 @@
-val ktorVersion by extra("1.5.1")
+val ktorVersion by extra("1.5.2")
 val kotlinVersion by extra("1.4.31")
 val logbackVersion by extra("1.2.3")
 val logstashLogbackVersion by extra("6.6")
