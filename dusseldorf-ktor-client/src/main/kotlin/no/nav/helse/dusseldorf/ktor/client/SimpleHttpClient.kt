@@ -6,8 +6,12 @@ import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.utils.io.charsets.Charsets
 import okhttp3.internal.closeQuietly
+import org.json.JSONObject
 import java.net.ProxySelector
+import java.nio.charset.Charset
 
 object SimpleHttpClient {
     private val httpClient = HttpClient(OkHttp) {
@@ -27,25 +31,31 @@ object SimpleHttpClient {
         })
     }
 
-    suspend fun String.httpGet(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        httpRequest(HttpMethod.Get, block)
-    suspend fun String.httpPost(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        httpRequest(HttpMethod.Post, block)
-    suspend fun String.httpPut(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        httpRequest(HttpMethod.Put, block)
-    suspend fun String.httpPatch(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        httpRequest(HttpMethod.Patch, block)
-    suspend fun String.httpDelete(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        httpRequest(HttpMethod.Delete, block)
-    suspend fun String.httpOptions(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        httpRequest(HttpMethod.Options, block)
-    suspend fun String.httpHead(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        httpRequest(HttpMethod.Head, block)
+    suspend fun Any.httpGet(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(HttpMethod.Get, block)
+    suspend fun Any.httpPost(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(HttpMethod.Post, block)
+    suspend fun Any.httpPut(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(HttpMethod.Put, block)
+    suspend fun Any.httpPatch(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(HttpMethod.Patch, block)
+    suspend fun Any.httpDelete(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(HttpMethod.Delete, block)
+    suspend fun Any.httpOptions(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(HttpMethod.Options, block)
+    suspend fun Any.httpHead(block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(HttpMethod.Head, block)
 
     suspend fun Result<HttpResponse>.readTextOrThrow() =
         getOrThrow().let { it.status to it.readText() }
     suspend fun Pair<HttpRequestData, Result<HttpResponse>>.readTextOrThrow() =
         second.readTextOrThrow()
+
+    fun HttpRequestBuilder.stringBody(string: String, charset: Charset = Charsets.UTF_8, contentType: ContentType) {
+        body = ByteArrayContent(bytes = string.toByteArray(charset), contentType = contentType)
+    }
+    fun HttpRequestBuilder.jsonBody(json: String) =
+        stringBody(string = JSONObject(json).toString(), contentType = ContentType.Application.Json)
 
     private suspend fun String.httpRequest(
         httpMethod: HttpMethod,
