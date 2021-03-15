@@ -27,12 +27,11 @@ internal object IdVerifier {
     internal fun String.trimId() = removePrefix(GeneratedIdPrefix)
 }
 
-// Henter fra CorrelationID (backend tjenester)
-fun CallId.Configuration.fromXCorrelationIdHeader(generateOnInvalid: Boolean = false) {
+fun CallId.Configuration.fromFirstNonNullHeader(headers: List<String>, generateOnInvalid: Boolean = false) {
     when (generateOnInvalid) {
         true -> {
             retrieve { call ->
-                call.request.header(HttpHeaders.XCorrelationId)?.let {
+                headers.mapNotNull { call.request.header(it) }.firstOrNull()?.let {
                     when (IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = it)) {
                         true -> it
                         false -> IdVerifier.generate()
@@ -47,6 +46,11 @@ fun CallId.Configuration.fromXCorrelationIdHeader(generateOnInvalid: Boolean = f
 
     verify { IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = it) }
 }
+
+// Henter fra CorrelationID (backend tjenester)
+fun CallId.Configuration.fromXCorrelationIdHeader(generateOnInvalid: Boolean = false) = fromFirstNonNullHeader(
+    headers = listOf(HttpHeaders.XCorrelationId), generateOnInvalid = generateOnInvalid
+)
 
 // Genererer CorrelationID (frontend tjeneste)
 fun CallId.Configuration.generated() {
