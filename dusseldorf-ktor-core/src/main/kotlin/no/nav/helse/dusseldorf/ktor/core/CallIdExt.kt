@@ -27,20 +27,20 @@ internal object IdVerifier {
     internal fun String.trimId() = removePrefix(GeneratedIdPrefix)
 }
 
-fun CallId.Configuration.fromFirstNonNullHeader(headers: List<String>, generateOnInvalid: Boolean = false) {
-    when (generateOnInvalid) {
-        true -> {
-            retrieve { call ->
-                headers.mapNotNull { call.request.header(it) }.firstOrNull()?.let {
-                    when (IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = it)) {
-                        true -> it
-                        false -> IdVerifier.generate()
-                    }
+fun CallId.Configuration.fromFirstNonNullHeader(headers: List<String>, generateOnInvalid: Boolean = false, generateOnNotSet: Boolean = false) {
+    retrieve { call ->
+        when (val fromHeaders = headers.mapNotNull { call.request.header(it) }.firstOrNull()) {
+            null -> when (generateOnNotSet) {
+                true -> IdVerifier.generate()
+                false -> fromHeaders
+            }
+            else -> when (IdVerifier.verifyId(type = HttpHeaders.XCorrelationId, id = fromHeaders)) {
+                true -> fromHeaders
+                false -> when (generateOnInvalid) {
+                    true -> IdVerifier.generate()
+                    false -> fromHeaders
                 }
             }
-        }
-        false -> {
-            retrieveFromHeader(headerName = HttpHeaders.XCorrelationId)
         }
     }
 
@@ -48,8 +48,8 @@ fun CallId.Configuration.fromFirstNonNullHeader(headers: List<String>, generateO
 }
 
 // Henter fra CorrelationID (backend tjenester)
-fun CallId.Configuration.fromXCorrelationIdHeader(generateOnInvalid: Boolean = false) = fromFirstNonNullHeader(
-    headers = listOf(HttpHeaders.XCorrelationId), generateOnInvalid = generateOnInvalid
+fun CallId.Configuration.fromXCorrelationIdHeader(generateOnInvalid: Boolean = false, generateOnNotSet: Boolean = false) = fromFirstNonNullHeader(
+    headers = listOf(HttpHeaders.XCorrelationId), generateOnInvalid = generateOnInvalid, generateOnNotSet = false
 )
 
 // Genererer CorrelationID (frontend tjeneste)
