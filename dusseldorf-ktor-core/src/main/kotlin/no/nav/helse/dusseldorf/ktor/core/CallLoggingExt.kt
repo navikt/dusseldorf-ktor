@@ -29,21 +29,21 @@ fun CallLogging.Configuration.correlationIdAndRequestIdInMdc() {
 
 fun CallLogging.Configuration.logRequests(
         excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS,
-        urlTemplate: Boolean = false
+        templateQueryParameters: Boolean = false
 ) {
     logger = LOG
     level = Level.INFO
     filter { call -> !excludePaths.contains(call.request.path()) }
-    if(urlTemplate) format { applicationCall -> applicationCall.request.uri.toUrlTemplate() }
+    if(templateQueryParameters) format { applicationCall -> applicationCall.request.uri.templateQueryParameters() }
 }
 
 fun ApplicationRequest.log(
         verbose : Boolean = false,
         excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS,
-        urlTemplate: Boolean = false
+        templateQueryParameters: Boolean = false
 ) {
     if (!excludePaths.contains(call.request.path())) {
-        val uri = if(urlTemplate) this.uri.toUrlTemplate() else this.uri
+        val uri = if(templateQueryParameters) this.uri.templateQueryParameters() else this.uri
         LOG.info("Request ${httpMethod.value} $uri (HTTP Version $httpVersion)")
         if (verbose) {
             LOG.info("Origin ${header(HttpHeaders.Origin)} (User Agent ${userAgent()})")
@@ -51,8 +51,9 @@ fun ApplicationRequest.log(
     }
 }
 
-fun String.toUrlTemplate(): String {
+fun String.templateQueryParameters(): String {
     val urlParts = split("?")
+    if(urlParts.size <2) return this
 
     val query = urlParts[1].split("&").joinToString("&") {
         it.replaceAfter("=", "{${it.substringBefore("=")}}")
