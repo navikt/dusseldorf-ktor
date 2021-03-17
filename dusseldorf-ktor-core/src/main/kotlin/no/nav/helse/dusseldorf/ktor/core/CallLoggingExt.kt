@@ -28,21 +28,35 @@ fun CallLogging.Configuration.correlationIdAndRequestIdInMdc() {
 }
 
 fun CallLogging.Configuration.logRequests(
-        excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS
+        excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS,
+        urlTemplate: Boolean = false
 ) {
     logger = LOG
     level = Level.INFO
     filter { call -> !excludePaths.contains(call.request.path()) }
+    if(urlTemplate) format { applicationCall -> applicationCall.request.uri.toUrlTemplate() }
 }
 
 fun ApplicationRequest.log(
         verbose : Boolean = false,
-        excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS
+        excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS,
+        urlTemplate: Boolean = false
 ) {
     if (!excludePaths.contains(call.request.path())) {
+        val uri = if(urlTemplate) this.uri.toUrlTemplate() else this.uri
         LOG.info("Request ${httpMethod.value} $uri (HTTP Version $httpVersion)")
         if (verbose) {
             LOG.info("Origin ${header(HttpHeaders.Origin)} (User Agent ${userAgent()})")
         }
     }
+}
+
+private fun String.toUrlTemplate(): String {
+    val urlParts = split("?")
+
+    val query = urlParts[1].split("&").joinToString("&") {
+        it.replaceAfter("=", "{${it.substringBefore("=")}}")
+    }
+
+    return urlParts[0]+"?"+query
 }
