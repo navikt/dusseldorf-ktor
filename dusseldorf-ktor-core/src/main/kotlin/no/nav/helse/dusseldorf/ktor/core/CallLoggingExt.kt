@@ -51,7 +51,7 @@ fun ApplicationRequest.log(
     }
 }
 
-private fun String.toUrlTemplate(): String {
+fun String.toUrlTemplate(): String {
     val urlParts = split("?")
 
     val query = urlParts[1].split("&").joinToString("&") {
