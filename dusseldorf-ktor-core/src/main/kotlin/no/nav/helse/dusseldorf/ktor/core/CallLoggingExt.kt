@@ -53,6 +53,7 @@ fun ApplicationRequest.log(
 
 fun String.toUrlTemplate(): String {
     val urlParts = split("?")
+    if(urlParts.size <2) return this
 
     val query = urlParts[1].split("&").joinToString("&") {
         it.replaceAfter("=", "{${it.substringBefore("=")}}")
