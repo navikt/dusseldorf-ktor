@@ -1,6 +1,8 @@
 package no.nav
 
 import com.github.kittinunf.fuel.coroutines.awaitString
+import com.sun.org.slf4j.internal.Logger
+import com.sun.org.slf4j.internal.LoggerFactory
 import com.github.kittinunf.fuel.httpGet as fuelHttpGet
 import io.ktor.application.*
 import io.ktor.response.*
@@ -30,6 +32,8 @@ fun Application.app() {
 
     val preStopActions = listOf(FullførAktiveRequester(application = this))
     preStopOnApplicationStopPreparing(preStopActions)
+
+
 
     routing {
         DefaultProbeRoutes()
