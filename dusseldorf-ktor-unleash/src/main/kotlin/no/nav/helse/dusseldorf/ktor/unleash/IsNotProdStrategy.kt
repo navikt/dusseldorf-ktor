@@ -6,8 +6,7 @@ class IsNotProdStrategy : Strategy {
     private val isProd: Boolean
 
     constructor() {
-        isProd = DEFAULT_PROD_ENVIRONMENTS.contains(System.getenv("NAIS_CLUSTER_NAME")) ||
-                DEFAULT_PROD_ENVIRONMENTS.contains(System.getenv("FASIT_ENVIRONMENT_NAME"))
+        isProd = DEFAULT_PROD_ENVIRONMENTS.contains(System.getenv("NAIS_CLUSTER_NAME"))
     }
 
     constructor(currentEnvironment: String, prodEnvironment: String?) {
