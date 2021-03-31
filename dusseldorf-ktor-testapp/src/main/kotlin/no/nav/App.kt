@@ -1,8 +1,6 @@
 package no.nav
 
 import com.github.kittinunf.fuel.coroutines.awaitString
-import com.sun.org.slf4j.internal.Logger
-import com.sun.org.slf4j.internal.LoggerFactory
 import com.github.kittinunf.fuel.httpGet as fuelHttpGet
 import io.ktor.application.*
 import io.ktor.response.*
@@ -12,7 +10,6 @@ import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.delay
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet as ktorHttpGet
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.readTextOrThrow
-
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.FullførAktiveRequester
 import no.nav.helse.dusseldorf.ktor.core.PreStopRoute
