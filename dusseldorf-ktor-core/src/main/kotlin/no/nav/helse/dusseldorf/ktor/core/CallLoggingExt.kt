@@ -4,7 +4,6 @@ import io.ktor.features.CallLogging
 import io.ktor.features.callIdMdc
 import io.ktor.http.HttpHeaders
 import io.ktor.request.*
-import io.ktor.response.header
 import no.nav.helse.dusseldorf.ktor.core.IdVerifier.trimId
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,7 +21,6 @@ fun CallLogging.Configuration.correlationIdAndRequestIdInMdc() {
                 false -> IdVerifier.generate()
             }
         }
-        call.response.header(HttpHeaders.XRequestId, requestId)
         requestId
     }
 }
