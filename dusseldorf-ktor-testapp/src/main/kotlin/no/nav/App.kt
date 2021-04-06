@@ -10,7 +10,6 @@ import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.delay
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet as ktorHttpGet
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.readTextOrThrow
-
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.FullførAktiveRequester
 import no.nav.helse.dusseldorf.ktor.core.PreStopRoute
@@ -30,6 +29,8 @@ fun Application.app() {
 
     val preStopActions = listOf(FullførAktiveRequester(application = this))
     preStopOnApplicationStopPreparing(preStopActions)
+
+
 
     routing {
         DefaultProbeRoutes()
