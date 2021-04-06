@@ -8,6 +8,7 @@ import no.finn.unleash.repository.FeatureToggleResponse
 import no.finn.unleash.repository.ToggleCollection
 import no.finn.unleash.strategy.Strategy
 import no.finn.unleash.util.UnleashConfig
+import no.nav.common.featuretoggle.ByClusterStrategy
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -59,5 +60,5 @@ fun ApplicationConfig.unleashConfig(
         .subscriber(subscriber)
         .build()
 
-    return DefaultUnleash(config, *strategies)
+    return DefaultUnleash(config, ByClusterStrategy(), *strategies)
 }

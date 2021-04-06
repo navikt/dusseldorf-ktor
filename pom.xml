@@ -46,6 +46,7 @@
         <kafka.version>2.7.0</kafka.version>
         <kafka.embedded.env.version>2.7.0</kafka.embedded.env.version>
         <orgjson.version>20210307</orgjson.version>
+        <navcommon.version>2.2021.04.06_09.19-2dc0e89416a6</navcommon.version>
 
         <!-- Interne versjoner -->
         <unleash.version>4.2.1</unleash.version>
@@ -55,9 +56,8 @@
 
     <repositories>
         <repository>
-            <name>jcenter</name>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
         <repository>
             <name>confluent</name>

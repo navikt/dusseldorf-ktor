@@ -30,6 +30,11 @@
             <version>${unleash.version}</version>
         </dependency>
         <dependency>
+            <groupId>no.nav.common</groupId>
+            <artifactId>feature-toggle</artifactId>
+            <version>${navcommon.version}</version>
+        </dependency>
+        <dependency>
             <groupId>no.nav.helse</groupId>
             <artifactId>dusseldorf-test-support</artifactId>
             <version>${project.version}</version>
