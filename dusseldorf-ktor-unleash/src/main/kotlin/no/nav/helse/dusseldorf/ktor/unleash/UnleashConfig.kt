@@ -1,14 +1,13 @@
 package no.nav.helse.dusseldorf.ktor.unleash
 
-import com.silvercar.unleash.*
-import com.silvercar.unleash.event.UnleashReady
-import com.silvercar.unleash.event.UnleashSubscriber
-import com.silvercar.unleash.repository.FeatureToggleResponse
-import com.silvercar.unleash.repository.ToggleCollection
-import com.silvercar.unleash.strategy.Strategy
-import com.silvercar.unleash.util.UnleashConfig
-import com.silvercar.unleash.util.unleashConfig
 import io.ktor.config.*
+import no.finn.unleash.*
+import no.finn.unleash.event.UnleashReady
+import no.finn.unleash.event.UnleashSubscriber
+import no.finn.unleash.repository.FeatureToggleResponse
+import no.finn.unleash.repository.ToggleCollection
+import no.finn.unleash.strategy.Strategy
+import no.finn.unleash.util.UnleashConfig
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -49,25 +48,16 @@ fun ApplicationConfig.unleashConfig(
     val instanceId = getOptionalString("${path}.instance_id", false) ?: System.getenv("HOSTNAME")
     val apiUrl = URI(getOptionalString("${path}.api_url", false) ?: "https://unleash.nais.io/api/")
 
-    val config: UnleashConfig = unleashConfig {
-        appName(appName)
-        instanceId(instanceId)
-        unleashAPI(apiUrl)
-        synchronousFetchOnInitialisation(synchronousFetchOnInitialisation)
-        fetchTogglesInterval(fetchTogglesInterval)
-        sendMetricsInterval(sendMetricsInterval)
-        subscriber(subscriber)
-        unleashContextProvider(object : UnleashContextProvider {
-            override fun getContext(): UnleashContext {
-                return unleashContext {
-                    appName(appName)
-                }.build()
-            }
-        })
-    }.build()
+    val config = UnleashConfig.builder()
+        .appName(appName)
+        .instanceId(instanceId)
+        .unleashAPI(apiUrl)
+        .synchronousFetchOnInitialisation(synchronousFetchOnInitialisation)
+        .fetchTogglesInterval(fetchTogglesInterval)
+        .sendMetricsInterval(sendMetricsInterval)
+        .unleashContextProvider { UnleashContext.builder().appName(appName).build() }
+        .subscriber(subscriber)
+        .build()
 
-    return DefaultUnleash(
-        unleashConfig = config,
-        strategies = strategies
-    )
+    return DefaultUnleash(config, *strategies)
 }

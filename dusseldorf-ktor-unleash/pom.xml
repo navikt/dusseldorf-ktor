@@ -32,11 +32,9 @@
             <version>2.14.1</version>
         </dependency>
 
-
-        <!-- https://mvnrepository.com/artifact/com.silvercar.unleash-client-kotlin/unleash-client-kotlin -->
         <dependency>
-            <groupId>com.silvercar.unleash-client-kotlin</groupId>
-            <artifactId>unleash-client-kotlin</artifactId>
+            <groupId>no.finn.unleash</groupId>
+            <artifactId>unleash-client-java</artifactId>
             <version>${unleash.version}</version>
         </dependency>
 

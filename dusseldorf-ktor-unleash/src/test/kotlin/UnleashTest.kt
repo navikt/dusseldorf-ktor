@@ -2,10 +2,10 @@ import assertk.assertThat
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotNull
 import assertk.assertions.isTrue
-import com.silvercar.unleash.DefaultUnleash
-import com.silvercar.unleash.FakeUnleash
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
+import no.finn.unleash.DefaultUnleash
+import no.finn.unleash.FakeUnleash
 import no.nav.helse.dusseldorf.ktor.unleash.unleashConfig
 import org.junit.jupiter.api.Test
 import org.slf4j.Logger
@@ -40,7 +40,7 @@ class UnleashTest {
     internal fun `gitt at cluster er dev-gcp, forvent at feature flag eksisterer og er enabled`() {
         val unleash = getConfig(TestConfiguration.asMap(cluster = "dev-gcp")).unleashConfig()
         assertThat(unleash).isInstanceOf(DefaultUnleash::class.java)
-        assertThat(unleash.featureToggleNames.first { it == FEATURE_FLAG }).isNotNull()
+        assertThat(unleash.more().featureToggleNames.first { it == FEATURE_FLAG }).isNotNull()
         assertThat(unleash.isEnabled(FEATURE_FLAG)).isTrue()
     }
 }

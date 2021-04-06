@@ -1,6 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.unleash
 
-import com.silvercar.unleash.strategy.Strategy
+import no.finn.unleash.strategy.Strategy
 
 class IsNotProdStrategy : Strategy {
     private val isProd: Boolean
@@ -13,8 +13,7 @@ class IsNotProdStrategy : Strategy {
         isProd = currentEnvironment.equals(prodEnvironment, ignoreCase = true)
     }
 
-    override val name: String
-        get() = "isNotProd"
+    override fun getName(): String = "isNotProd"
 
     override fun isEnabled(parameters: Map<String, String>): Boolean {
         return !isProd

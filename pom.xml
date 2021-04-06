@@ -46,7 +46,7 @@
         <kafka.version>2.7.0</kafka.version>
         <kafka.embedded.env.version>2.7.0</kafka.embedded.env.version>
         <orgjson.version>20210307</orgjson.version>
-        <unleash.version>1.0.0</unleash.version>
+        <unleash.version>4.2.1</unleash.version>
 
         <!-- Interne versjoner -->
         <oauth2-oidc-sdk.version>9.3</oauth2-oidc-sdk.version>
