@@ -78,7 +78,7 @@ class UnleashServiceTest {
     }
 
     @Test
-    internal fun `gitt at unleashConfigBuilder, forvent at UnleashService bruker FakeUnleash`() {
+    internal fun `gitt at unleashConfigBuilder er null, forvent at UnleashService bruker FakeUnleash`() {
 
         val unleashService = UnleashService()
         assertDoesNotThrow { unleashService.fakeUnleash() }
