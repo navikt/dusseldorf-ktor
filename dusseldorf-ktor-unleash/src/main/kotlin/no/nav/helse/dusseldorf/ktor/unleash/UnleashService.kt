@@ -36,12 +36,12 @@ data class UnleashService(
         )
     }
 
-    fun isEnabled(toggleName: String): Boolean {
-        return unleash.isEnabled(toggleName)
+    fun isEnabled(toggleName: UnleashFeature, default: Boolean): Boolean {
+        return unleash.isEnabled(toggleName.featureName(), default)
     }
 
-    fun isEnabled(toggleName: String, unleashContext: UnleashContext): Boolean {
-        return unleash.isEnabled(toggleName, unleashContext)
+    fun isEnabled(toggleName: UnleashFeature, unleashContext: UnleashContext, default: Boolean): Boolean {
+        return unleash.isEnabled(toggleName.featureName(), unleashContext, default)
     }
 
     fun more(): MoreOperations {

@@ -12,6 +12,7 @@ import no.nav.helse.dusseldorf.ktor.core.EnvironmentUtils.NAIS_CLUSTER_NAME_PROP
 import no.nav.helse.dusseldorf.ktor.core.EnvironmentUtils.Type.PUBLIC
 import no.nav.helse.dusseldorf.ktor.health.Result
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
+import no.nav.helse.dusseldorf.ktor.unleash.UnleashFeature
 import no.nav.helse.dusseldorf.ktor.unleash.UnleashService
 import no.nav.helse.dusseldorf.ktor.unleash.unleashConfigBuilder
 import org.junit.jupiter.api.Test
@@ -23,10 +24,19 @@ import kotlin.test.assertFailsWith
 
 class UnleashServiceTest {
 
-    private companion object {
+    private enum class Feature: UnleashFeature {
         // https://unleash.nais.io/#/features/view/dusseldorf-ktor-unleash-test-toggle
-        private const val FEATURE_FLAG = "dusseldorf-ktor-unleash-test-toggle"
+        DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE {
+            override fun featureName(): String = "dusseldorf-ktor-unleash-test-toggle"
+        },
 
+        SOME_FLAG {
+            override fun featureName(): String = "some.toggle"
+
+        }
+    }
+
+    private companion object {
         private val logger: Logger = LoggerFactory.getLogger(UnleashServiceTest::class.java)
 
         fun getConfig(config: Map<String, Any?> = TestConfiguration.asMap()): ApplicationConfig {
@@ -46,22 +56,22 @@ class UnleashServiceTest {
         EnvironmentUtils.setProperty(NAIS_CLUSTER_NAME_PROPERTY_NAME, "dev-gcp", PUBLIC)
         val unleashService = UnleashService(unleashConfigBuilder)
 
-        assertThat(unleashService.more().featureToggleNames.first { it == FEATURE_FLAG }).isNotNull()
-        assertThat(unleashService.isEnabled(FEATURE_FLAG)).isTrue()
+        assertThat(unleashService.more().featureToggleNames.first { it == Feature.DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE.featureName() }).isNotNull()
+        assertThat(unleashService.isEnabled(Feature.DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE, false)).isTrue()
     }
 
     @Test
     internal fun `gitt at feature_flag ikke aktivert for gyldig cluster, forvent at flagg er deaktivert`() {
         EnvironmentUtils.setProperty(NAIS_CLUSTER_NAME_PROPERTY_NAME, "ugyldig-cluster", PUBLIC)
         val unleashService = UnleashService(unleashConfigBuilder)
-        assertThat(unleashService.isEnabled(FEATURE_FLAG)).isFalse()
+        assertThat(unleashService.isEnabled(Feature.DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE, true)).isFalse()
     }
 
     @Test
     internal fun `gitt at unleash server ikke er tilgjengelig, forvent unhealthy status`() {
 
         val unleashService = UnleashService(unleashConfigBuilder.unleashAPI("http://localhost:8081/api/"))
-        unleashService.isEnabled("some.toggle")
+        unleashService.isEnabled(Feature.SOME_FLAG, true)
 
         val result: Result = runBlocking { unleashService.check() }
         assertThat(result).isInstanceOf(UnHealthy::class.java)
