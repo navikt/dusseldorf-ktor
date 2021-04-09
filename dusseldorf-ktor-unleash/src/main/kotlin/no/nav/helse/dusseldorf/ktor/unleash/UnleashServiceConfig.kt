@@ -3,41 +3,27 @@ package no.nav.helse.dusseldorf.ktor.unleash
 import io.ktor.config.*
 import no.finn.unleash.UnleashContext
 import no.finn.unleash.util.UnleashConfig
-import no.nav.helse.dusseldorf.ktor.core.EnvironmentUtils
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import no.nav.helse.dusseldorf.ktor.core.getRequiredString
 import java.net.URI
 
-private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.unleash.UnleashConfig")
-
 fun ApplicationConfig.unleashConfigBuilder(
-    path: String = "nav.unleash",
-    synchronousFetchOnInitialisation: Boolean = true,
-    fetchTogglesInterval: Long = 1,
-    sendMetricsInterval: Long = 1
+    path: String = "nav.unleash"
 ): UnleashConfig.Builder {
 
-    val appName: String =
-        EnvironmentUtils.applicationName ?: getOptionalString("${path}.app_name", false) ?: throw IllegalStateException(
-            "unleashConfig appName må være satt."
-        )
-
-    val instanceId: String = EnvironmentUtils.podId ?: getOptionalString("${path}.instance_id", false) ?: throw IllegalStateException(
-        "unleashConfig instanceId må være satt."
-    )
-
-    val environment: String = EnvironmentUtils.clusterName ?: getOptionalString("${path}.cluster", false) ?: throw IllegalStateException(
-        "unleashConfig environment må være satt."
-    )
-
-    val apiUrl = URI(getOptionalString("${path}.api_url", false) ?: "https://unleash.nais.io/api/")
+    val appName = getOptionalString("$path.appName", false) ?: getRequiredString("NAIS_APP_NAME", false)
+    val instanceId = getOptionalString("$path.instanceId", false) ?: getRequiredString("HOSTNAME", false)
+    val environment = getOptionalString("$path.environment", false) ?: getRequiredString("NAIS_CLUSTER_NAME", false)
+    val synchronousFetchOnInitialisation = getOptionalString("$path.synchronousFetchOnInitialisation", false)?.toBoolean() ?: true
+    val fetchTogglesInterval = getOptionalString("$path.fetchTogglesInterval", false)?.toLong() ?: 1
+    val sendMetricsInterval = getOptionalString("$path.sendMetricsInterval", false)?.toLong() ?: 1
+    val unleashAPI = URI(getOptionalString("$path.unleashAPI", false) ?: "https://unleash.nais.io/api/")
 
     return UnleashConfig.builder()
         .appName(appName)
         .instanceId(instanceId)
         .environment(environment)
-        .unleashAPI(apiUrl)
+        .unleashAPI(unleashAPI)
         .synchronousFetchOnInitialisation(synchronousFetchOnInitialisation)
         .fetchTogglesInterval(fetchTogglesInterval)
         .sendMetricsInterval(sendMetricsInterval)

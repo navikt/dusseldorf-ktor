@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory
  * @constructor strategies: En liste med strategier å bruke. Default brukes [ByClusterStrategy]
  */
 data class UnleashService(
-    val unleashBuilder: UnleashConfig.Builder? = null,
-    val strategies: List<Strategy> = listOf(ByClusterStrategy())
+    val unleashConfigBuilder: UnleashConfig.Builder? = null,
+    val strategies: List<Strategy> = emptyList()
 ) : HealthCheck, UnleashSubscriber {
 
     private companion object {
@@ -28,12 +28,15 @@ data class UnleashService(
     }
 
     private var lastTogglesFetchedStatus: FeatureToggleResponse.Status? = null
-    private val unleash: Unleash = when (unleashBuilder) {
+    private val unleash: Unleash = when (unleashConfigBuilder) {
         null -> FakeUnleash()
-        else -> DefaultUnleash(
-            unleashBuilder.subscriber(this).build(),
-            *strategies.toTypedArray()
-        )
+        else -> {
+            val unleashConfig = unleashConfigBuilder.subscriber(this).build()
+            DefaultUnleash(
+                unleashConfigBuilder.subscriber(this).build(),
+                *strategies.plus(ByClusterStrategy(clusterName = unleashConfig.environment)).toTypedArray()
+            )
+        }
     }
 
     fun isEnabled(toggleName: UnleashFeature, default: Boolean): Boolean {

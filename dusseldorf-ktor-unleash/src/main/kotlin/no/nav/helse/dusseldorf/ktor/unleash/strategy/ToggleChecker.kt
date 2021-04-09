@@ -4,8 +4,8 @@ import java.util.*
 import java.util.function.Predicate
 import java.util.stream.Stream
 
-object ToggleChecker {
-    fun isToggleEnabled(
+internal object ToggleChecker {
+    internal fun isToggleEnabled(
         parameterName: String, parameters: Map<String, String>,
         checkIsEnabled: Predicate<String>
     ): Boolean {
