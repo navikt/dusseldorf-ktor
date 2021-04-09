@@ -67,10 +67,10 @@ data class UnleashService(
     override suspend fun check(): Result {
         return when (lastTogglesFetchedStatus) {
             FeatureToggleResponse.Status.CHANGED, FeatureToggleResponse.Status.NOT_CHANGED -> {
-                Healthy("Henting av feature toggles, OK", lastTogglesFetchedStatus!!)
+                Healthy(name = "UnleashService", result = "Henting av feature toggles OK: $lastTogglesFetchedStatus")
             }
             else -> {
-                UnHealthy("Feil ved henting av feature toggles.", "null")
+                UnHealthy(name = "UnleashService", result = "Henting av feature toggles feilet: $$lastTogglesFetchedStatus")
             }
         }
     }
