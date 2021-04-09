@@ -13,17 +13,30 @@ private val VaultPath = "/var/run/secrets/nais.io/vault"
 internal class ApplicationConfigExt(
         private val config : ApplicationConfig
 ) {
-    private fun getString(key: String,
-                          secret: Boolean,
-                          optional: Boolean) : String? {
-        val configValue = config.propertyOrNull(key) ?: return if (optional) null else throw IllegalArgumentException("$key må settes.")
-        val stringValue = configValue.getString()
-        if (stringValue.isBlank()) {
-            return if (optional) null else throw IllegalArgumentException("$key må settes.")
-        }
-        logger.info("{}={}", key, if (secret) "***" else stringValue)
-        return stringValue
+    private fun kildeOgVerdiOrNull(key: String) : Pair<String, String>? {
+        val fromApplicationConfig = config.propertyOrNull(key)?.getString()
+        if (!fromApplicationConfig.isNullOrBlank()) return "ApplicationConfig" to fromApplicationConfig
+
+        val fromEnv = System.getenv(key)
+        if (!fromEnv.isNullOrBlank()) return "EnvironmentVariable" to fromEnv
+
+        val fromProperty = System.getProperty(key)
+        if (!fromProperty.isNullOrBlank()) return "SystemProperty" to fromProperty
+
+        return null
     }
+
+    private fun getString(key: String, secret: Boolean, optional: Boolean) : String? {
+        val (kilde, verdi) = kildeOgVerdiOrNull(key) ?: return when (optional) {
+            true -> null
+            false -> throw IllegalArgumentException("$key må settes.")
+        }
+
+        logger.info("{}={} ($kilde)", key, if (secret) "***" else verdi)
+
+        return verdi
+    }
+
     internal fun getRequiredString(key: String, secret: Boolean = false) : String = getString(key, secret, false)!!
     internal fun getOptionalString(key: String, secret: Boolean = false) : String? = getString(key, secret, true)
     internal fun <T>getListFromCsv(csv: String, builder: (value: String) -> T) : List<T> = csv.replace(" ", "").split(",").map(builder)

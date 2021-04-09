@@ -55,9 +55,8 @@
 
     <repositories>
         <repository>
-            <name>jcenter</name>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
         <repository>
             <name>confluent</name>
