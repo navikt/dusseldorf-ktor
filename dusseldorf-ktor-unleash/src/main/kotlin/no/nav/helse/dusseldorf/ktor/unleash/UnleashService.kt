@@ -27,7 +27,6 @@ data class UnleashService(
         private val logger = LoggerFactory.getLogger(UnleashService::class.java)
     }
 
-    private var lastTogglesFetchedStatus: FeatureToggleResponse.Status? = null
     private val unleash: Unleash = when (unleashConfigBuilder) {
         null -> FakeUnleash()
         else -> {
@@ -38,6 +37,8 @@ data class UnleashService(
             )
         }
     }
+
+    private var lastTogglesFetchedStatus: FeatureToggleResponse.Status? = FeatureToggleResponse.Status.NOT_CHANGED
 
     fun isEnabled(toggleName: UnleashFeature, default: Boolean): Boolean {
         return unleash.isEnabled(toggleName.featureName(), default)

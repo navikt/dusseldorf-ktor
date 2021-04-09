@@ -6,6 +6,7 @@ import assertk.assertions.isNotNull
 import assertk.assertions.isTrue
 import kotlinx.coroutines.runBlocking
 import no.finn.unleash.FakeUnleash
+import no.finn.unleash.repository.FeatureToggleResponse
 import no.nav.helse.dusseldorf.ktor.health.Result
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.ktor.unleash.UnleashFeature
@@ -70,7 +71,8 @@ class UnleashServiceTest {
     internal fun `gitt at unleash server ikke er tilgjengelig, forvent unhealthy status`() {
         val unleashConfigBuilder = applicationConfig(cluster = "dev-gcp", unleashAPI = "http://localhost:8081/api/").unleashConfigBuilder()
         val unleashService = UnleashService(unleashConfigBuilder)
-        unleashService.isEnabled(Feature.SOME_FLAG, true)
+        unleashService.togglesFetched(FeatureToggleResponse(FeatureToggleResponse.Status.UNAVAILABLE, 503))
+        unleashService.isEnabled(Feature.SOME_FLAG, false)
 
         val result: Result = runBlocking { unleashService.check() }
         assertThat(result).isInstanceOf(UnHealthy::class.java)
