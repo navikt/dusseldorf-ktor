@@ -25,7 +25,7 @@ internal class AppTest {
                 }
                 assertEquals(HttpStatusCode.OK, "${it}internal/pre-stop".httpGet { builder ->
                     builder.timeout { requestTimeoutMillis = 10000 }
-                }.second.getOrThrow().status)
+                }.readTextOrThrow().first)
             }
         }
     }

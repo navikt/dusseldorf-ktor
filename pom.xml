@@ -32,8 +32,8 @@
         <maven.compiler.target>11</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
-        <ktor.version>1.5.3</ktor.version>
-        <kotlin.version>1.4.32</kotlin.version>
+        <ktor.version>1.5.4</ktor.version>
+        <kotlin.version>1.5.0</kotlin.version>
         <kotlinx.coroutines.version>1.4.3</kotlinx.coroutines.version>
         <micrometer.version>1.6.6</micrometer.version>
         <jackson.version>2.12.3</jackson.version>
@@ -41,7 +41,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <logstash.logback.version>6.6</logstash.logback.version>
         <prometheus.version>0.10.0</prometheus.version>
-        <caffeine.version>3.0.1</caffeine.version>
+        <caffeine.version>3.0.2</caffeine.version>
         <fuel.version>2.3.1</fuel.version>
         <kafka.version>2.7.0</kafka.version>
         <kafka.embedded.env.version>2.7.0</kafka.embedded.env.version>
@@ -50,7 +50,7 @@
 
         <!-- Interne versjoner -->
         <unleash.version>4.2.1</unleash.version>
-        <oauth2-oidc-sdk.version>9.3.3</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>9.5</oauth2-oidc-sdk.version>
         <wiremock.version>2.27.2</wiremock.version>
     </properties>
 
@@ -108,6 +108,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
