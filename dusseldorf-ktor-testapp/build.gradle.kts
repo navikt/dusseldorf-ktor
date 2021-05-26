@@ -2,12 +2,12 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val dusseldorfKtorVersion = "PLACEHOLDER"
 val ktorVersion = ext.get("ktorVersion").toString()
-val junitJupiterVersion = "5.7.1"
+val junitJupiterVersion = "5.7.2"
 
 val mainClass = "no.nav.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm") version "1.5.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
@@ -52,5 +52,5 @@ tasks.withType<Test> {
 
 
 tasks.withType<Wrapper> {
-    gradleVersion = "7.0"
+    gradleVersion = "7.0.2"
 }
