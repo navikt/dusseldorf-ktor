@@ -80,6 +80,18 @@ class Oauth2ServerWireMock {
                                         .withBody(response(accessToken, expiresIn))
                         )
         )
+        WireMock.stubFor(
+            WireMock.post(tokenEndpoint)
+                .withRequestBody(WireMock.containing("grant_type=${grantType.encodeURLParameter()}"))
+                .withRequestBody(WireMock.containing("client_id=$clientId"))
+                .withRequestBody(WireMock.containing("client_secret=$clientSecret"))
+                .willReturn(
+                    WireMock.aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(response(accessToken, expiresIn))
+                )
+        )
     }
 
     private fun stubGetTokenSignedJwt(

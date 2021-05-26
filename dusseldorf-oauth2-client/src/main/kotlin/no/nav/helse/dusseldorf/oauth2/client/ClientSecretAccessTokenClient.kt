@@ -5,6 +5,7 @@ import com.nimbusds.oauth2.sdk.ClientCredentialsGrant
 import com.nimbusds.oauth2.sdk.JWTBearerGrant
 import com.nimbusds.oauth2.sdk.TokenRequest
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
+import com.nimbusds.oauth2.sdk.auth.ClientSecretPost
 import com.nimbusds.oauth2.sdk.auth.Secret
 import com.nimbusds.oauth2.sdk.id.ClientID
 import java.net.URI
@@ -12,13 +13,20 @@ import java.net.URI
 class ClientSecretAccessTokenClient(
         clientId : String,
         clientSecret: String,
+        authenticationMode: AuthenticationMode = AuthenticationMode.POST,
         private val tokenEndpoint : URI
 ) : AccessTokenClient, NimbusAccessTokenClient() {
 
-    private val clientAuthentication = ClientSecretBasic(
+    private val clientAuthentication = when (authenticationMode) {
+        AuthenticationMode.POST ->  ClientSecretPost(
             ClientID(clientId),
             Secret(clientSecret)
-    )
+        )
+        AuthenticationMode.BASIC -> ClientSecretBasic(
+            ClientID(clientId),
+            Secret(clientSecret)
+        )
+    }
 
     override fun getAccessToken(
             scopes: Set<String>,
@@ -51,4 +59,9 @@ class ClientSecretAccessTokenClient(
             null,
             onBehalfOfParameters
     )
+
+    enum class AuthenticationMode(private val rfc: String) {
+        BASIC("client_secret_basic"),
+        POST("client_secret_post")
+    }
 }
