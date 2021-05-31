@@ -10,6 +10,7 @@ on:
       - '.github/dependabot.yml'
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,7 +21,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
-      - uses: actions/cache@v2.1.5
+      - uses: actions/cache@v2.1.6
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
