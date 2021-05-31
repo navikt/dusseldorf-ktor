@@ -1,5 +1,5 @@
 #!/bin/bash
-majorVersion="1"
+majorVersion="2"
 ktorVersionLine=$(grep '<ktor\.version>' pom.xml)
 ktorVersion=$(echo $ktorVersionLine | sed 's/<ktor.version>\(.*\)<\/ktor.version>/\1/g')
 gitShortHash=$(git rev-parse --short HEAD)

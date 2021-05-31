@@ -1,13 +1,14 @@
 package no.nav.helse.dusseldorf.ktor.client
 
-import com.github.kittinunf.fuel.core.ResponseResultOf
-import com.github.kittinunf.fuel.coroutines.awaitStringResponseResult
-import com.github.kittinunf.fuel.httpGet
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.Result
@@ -18,7 +19,6 @@ import org.json.JSONObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
-import java.time.Duration
 
 data class HttpRequestHealthConfig(
         internal val expectedStatus: HttpStatusCode,
@@ -31,7 +31,7 @@ class HttpRequestHealthCheck(
 ) : HealthCheck {
 
     private companion object {
-        private val timeout = Duration.ofSeconds(2).toMillisPart()
+        private val timeoutMillis = 2000L
         private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthCheck")
     }
 
@@ -43,16 +43,19 @@ class HttpRequestHealthCheck(
 
     override suspend fun check(): Result {
         val triplets = coroutineScope {
-            val futures = mutableListOf<Deferred<ResponseResultOf<String>>>()
-            urlConfigMap.forEach { url, config ->
+            val futures = mutableListOf<Deferred<Pair<HttpRequestData, kotlin.Result<HttpResponse>>>>()
+            urlConfigMap.forEach { (url, config) ->
                 futures.add(async {
-                    url.toString()
-                            .httpGet()
-                            .header(config.httpHeaders)
-                            .timeout(timeout)
-                            .timeoutRead(timeout)
-                            .awaitStringResponseResult()
-
+                    url.httpGet { builder ->
+                        config.httpHeaders.forEach { (key, value) ->
+                            builder.header(key, value)
+                        }
+                        builder.timeout {
+                            requestTimeoutMillis = timeoutMillis
+                            connectTimeoutMillis = timeoutMillis
+                            socketTimeoutMillis = timeoutMillis
+                        }
+                    }
                 })
             }
             futures.awaitAll()
@@ -61,35 +64,23 @@ class HttpRequestHealthCheck(
         val success = JSONObject()
         val failure = JSONObject()
 
-        triplets.forEach { (request,response,result) ->
+        triplets.forEach { (httpRequest, httpResponseResult) ->
             val json = JSONObject()
-            val key = request.url.toString()
-            val config = urlConfigMap.getValue(request.url.toURI())
+            val requestUri = httpRequest.url.toURI()
+            val key = requestUri.toString()
+            val config = urlConfigMap.getValue(requestUri)
             val expected = config.expectedStatus.value
-            val actual : Int? = if (response.statusCode == -1) null else response.statusCode
+            val httpResponse = httpResponseResult.getOrNull()
+            val actual = httpResponse?.status?.value
             val isExpected = expected == actual
 
-            val message = result.fold(
-                    { success ->
-                        if (isExpected) {
-                            if (config.includeExpectedStatusEntity) {
-                                success.jsonOrString()
-                            } else "Healthy!"
-                        } else success.jsonOrString()
-                    },
-                    { error ->
-                        if (error.cause != null) {
-                            logger.error(error.toString())
-                            error.cause!!.message?: error.message?: "Ukjent feil."
-                        } else {
-                            if (isExpected) {
-                                if (config.includeExpectedStatusEntity) {
-                                    (String(error.response.data).jsonOrString())
-                                } else "Healthy!"
-                            } else (String(error.response.data).jsonOrString())
-                        }
-                    }
-            )
+            val message = when {
+                httpResponse == null -> httpResponseResult.exceptionOrNull()?.cause?.message ?: httpResponseResult.exceptionOrNull()?.message ?: "Ukjent feil.".also {
+                    logger.error(it)
+                }
+                !isExpected || (isExpected && config.includeExpectedStatusEntity) -> httpResponse.readText().jsonOrString()
+                else -> "Healthy!"
+            }
 
             json.put("message", message)
             json.put("expected_http_status_code", expected)

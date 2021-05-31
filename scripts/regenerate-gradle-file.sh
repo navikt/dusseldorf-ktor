@@ -60,12 +60,6 @@ micrometerVersion() {
     echo $version
 }
 
-fuelVersion() {
-    line=$(grep '<fuel\.version>' pom.xml)
-    version=$(echo $line | sed 's/<fuel.version>\(.*\)<\/fuel.version>/\1/g')
-    echo $version
-}
-
 kafkaVersion() {
     line=$(grep '<kafka\.version>' pom.xml)
     version=$(echo $line | sed 's/<kafka.version>\(.*\)<\/kafka.version>/\1/g')
@@ -100,7 +94,6 @@ echo "val caffeineVersion by extra(\""$(caffeineVersion)\"")" >> "${filename}"
 echo "val slf4jVersion by extra(\""$(slf4jVersion)\"")" >> "${filename}"
 echo "val kotlinxCoroutinesVersion by extra(\""$(kotlinxCoroutinesVersion)\"")" >> "${filename}"
 echo "val micrometerVersion by extra(\""$(micrometerVersion)\"")" >> "${filename}"
-echo "val fuelVersion by extra(\""$(fuelVersion)\"")" >> "${filename}"
 echo "val kafkaVersion by extra(\""$(kafkaVersion)\"")" >> "${filename}"
 echo "val kafkaEmbeddedEnvVersion by extra(\""$(kafkaEmbeddedEnvVersion)\"")" >> "${filename}"
 echo "val orgjsonVersion by extra(\""$(orgjsonVersion)\"")" >> "${filename}"
