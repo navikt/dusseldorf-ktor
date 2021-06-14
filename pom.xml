@@ -48,8 +48,8 @@
         <junit.version>5.7.2</junit.version>
 
         <!-- Interne versjoner -->
-        <unleash.version>4.3.0</unleash.version>
-        <oauth2-oidc-sdk.version>9.7</oauth2-oidc-sdk.version>
+        <unleash.version>4.4.0</unleash.version>
+        <oauth2-oidc-sdk.version>9.9</oauth2-oidc-sdk.version>
         <wiremock.version>2.27.2</wiremock.version>
     </properties>
 
