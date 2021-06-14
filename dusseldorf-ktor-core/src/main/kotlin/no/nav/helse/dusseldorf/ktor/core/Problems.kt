@@ -71,7 +71,7 @@ suspend fun ApplicationCall.respondProblemDetails(
         logger: Logger? = null
 ) {
     val json = JSONObject(problemDetails.asMap()).toString()
-    logger?.info("ProblemDetails='$json'")
+    logger?.error("ProblemDetails='$json'")
     attributes.put(AttributeKey("problem-details"), json)
 
     val serializeProblemDetailsWithContentNegotiation =
