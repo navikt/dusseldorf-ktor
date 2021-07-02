@@ -41,7 +41,7 @@
         <slf4j.version>1.7.31</slf4j.version>
         <logstash.logback.version>6.6</logstash.logback.version>
         <prometheus.version>0.11.0</prometheus.version>
-        <caffeine.version>3.0.2</caffeine.version>
+        <caffeine.version>3.0.3</caffeine.version>
         <kafka.version>2.7.0</kafka.version>
         <kafka.embedded.env.version>2.7.0</kafka.embedded.env.version>
         <orgjson.version>20210307</orgjson.version>
