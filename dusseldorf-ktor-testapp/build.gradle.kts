@@ -7,7 +7,7 @@ val junitJupiterVersion = "5.7.2"
 val mainClass = "no.nav.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.5.21"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
