@@ -1,6 +1,8 @@
 package no.nav.helse.dusseldorf.ktor.client
 
 import io.ktor.client.*
+import io.ktor.client.engine.*
+import io.ktor.client.engine.java.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -8,20 +10,25 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.utils.io.charsets.Charsets
-import okhttp3.OkHttpClient
 import okhttp3.internal.closeQuietly
 import org.json.JSONObject
-import java.net.Proxy
 import java.net.ProxySelector
 import java.nio.charset.Charset
 
 object SimpleHttpClient {
-    private fun newHttpClient(block: (builder: OkHttpClient.Builder) -> Unit) = HttpClient(OkHttp) {
+    data class Config(
+        val engine: HttpClientEngineFactory<HttpClientEngineConfig>) {
+        internal companion object {
+            internal val defaultConfig = Config(engine = OkHttp)
+        }
+    }
+
+    private val okHttpClient = HttpClient(OkHttp) {
         install(HttpTimeout)
-        this.expectSuccess = false
+        expectSuccess = false
         engine {
             config {
-                block(this)
+                proxySelector(ProxySelector.getDefault())
                 retryOnConnectionFailure(true)
             }
         }
@@ -29,33 +36,39 @@ object SimpleHttpClient {
         Runtime.getRuntime().addShutdownHook(Thread { it.closeQuietly() })
     }
 
-    private val httpClientProxySelector = newHttpClient {
-        it.proxySelector(ProxySelector.getDefault())
+    private val javaHttpClient = HttpClient(Java) {
+        install(HttpTimeout)
+        expectSuccess = false
+        engine {
+            pipelining
+            config {
+                proxy(ProxySelector.getDefault())
+            }
+        }
+    }.also {
+        Runtime.getRuntime().addShutdownHook(Thread { it.closeQuietly() })
     }
 
-    private val httpClientNoProxy = newHttpClient {
-        it.proxy(Proxy.NO_PROXY)
+    private fun Config.httpClient() = when (engine) {
+        OkHttp -> okHttpClient
+        Java -> javaHttpClient
+        else -> throw IllegalStateException("Ikke støttet http engine ${engine.javaClass.simpleName}")
     }
 
-    private fun Boolean.httpClient() = when (this) {
-        true -> httpClientNoProxy
-        false -> httpClientProxySelector
-    }
-
-    suspend fun Any.httpGet(noProxy: Boolean = false, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        toString().httpRequest(noProxy, HttpMethod.Get, block)
-    suspend fun Any.httpPost(noProxy: Boolean = false, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        toString().httpRequest(noProxy, HttpMethod.Post, block)
-    suspend fun Any.httpPut(noProxy: Boolean = false, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        toString().httpRequest(noProxy, HttpMethod.Put, block)
-    suspend fun Any.httpPatch(noProxy: Boolean = false, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        toString().httpRequest(noProxy, HttpMethod.Patch, block)
-    suspend fun Any.httpDelete(noProxy: Boolean = false, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        toString().httpRequest(noProxy, HttpMethod.Delete, block)
-    suspend fun Any.httpOptions(noProxy: Boolean = false, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        toString().httpRequest(noProxy, HttpMethod.Options, block)
-    suspend fun Any.httpHead(noProxy: Boolean = false, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
-        toString().httpRequest(noProxy, HttpMethod.Head, block)
+    suspend fun Any.httpGet(config: Config = Config.defaultConfig, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(config, HttpMethod.Get, block)
+    suspend fun Any.httpPost(config: Config = Config.defaultConfig, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(config, HttpMethod.Post, block)
+    suspend fun Any.httpPut(config: Config = Config.defaultConfig, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(config, HttpMethod.Put, block)
+    suspend fun Any.httpPatch(config: Config = Config.defaultConfig, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(config, HttpMethod.Patch, block)
+    suspend fun Any.httpDelete(config: Config = Config.defaultConfig, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(config, HttpMethod.Delete, block)
+    suspend fun Any.httpOptions(config: Config = Config.defaultConfig, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(config, HttpMethod.Options, block)
+    suspend fun Any.httpHead(config: Config = Config.defaultConfig, block: (httpRequestBuilder: HttpRequestBuilder) -> Unit = {}) =
+        toString().httpRequest(config, HttpMethod.Head, block)
 
     suspend fun Result<HttpResponse>.readTextOrThrow() =
         getOrThrow().let { it.status to it.readText() }
@@ -69,14 +82,14 @@ object SimpleHttpClient {
         stringBody(string = JSONObject(json).toString(), contentType = ContentType.Application.Json)
 
     private suspend fun String.httpRequest(
-        noProxy: Boolean,
+        config: Config,
         httpMethod: HttpMethod,
         block: (httpRequestBuilder: HttpRequestBuilder) -> Unit
     ) : Pair<HttpRequestData, Result<HttpResponse>> {
 
         lateinit var httpRequestData : HttpRequestData
 
-        val httpStatement = this.let { url -> noProxy.httpClient().request<HttpStatement> {
+        val httpStatement = this.let { url -> config.httpClient().request<HttpStatement> {
             this.url(url)
             this.method = httpMethod
             block(this)
