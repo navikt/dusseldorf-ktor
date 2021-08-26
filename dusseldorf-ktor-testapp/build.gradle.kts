@@ -7,7 +7,7 @@ val junitJupiterVersion = "5.7.2"
 val mainClass = "no.nav.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.5.21"
+    kotlin("jvm") version "1.5.30"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
@@ -53,5 +53,5 @@ tasks.withType<Test> {
 
 
 tasks.withType<Wrapper> {
-    gradleVersion = "7.0.2"
+    gradleVersion = "7.2"
 }
