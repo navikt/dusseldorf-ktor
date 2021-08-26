@@ -40,7 +40,6 @@ object SimpleHttpClient {
         install(HttpTimeout)
         expectSuccess = false
         engine {
-            pipelining
             config {
                 proxy(ProxySelector.getDefault())
             }
