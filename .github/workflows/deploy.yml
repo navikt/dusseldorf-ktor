@@ -27,6 +27,12 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Kjøre tester i testapp
+        run: |
+          ./mvnw install --quiet -DskipTests
+          cd dusseldorf-ktor-testapp
+          ./gradlew test
+          cd ..
       - name: Set version
         run: ./scripts/set-maven-version.sh
       - name: Deploy artifacts
