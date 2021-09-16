@@ -34,18 +34,18 @@
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
         <ktor.version>1.6.3</ktor.version>
         <kotlin.version>1.5.30</kotlin.version>
-        <kotlinx.coroutines.version>1.5.1</kotlinx.coroutines.version>
+        <kotlinx.coroutines.version>1.5.2</kotlinx.coroutines.version>
         <micrometer.version>1.7.3</micrometer.version>
         <jackson.version>2.12.5</jackson.version>
-        <logback.version>1.2.5</logback.version>
+        <logback.version>1.2.6</logback.version>
         <slf4j.version>1.7.32</slf4j.version>
         <logstash.logback.version>6.6</logstash.logback.version>
-        <prometheus.version>0.11.0</prometheus.version>
-        <caffeine.version>3.0.3</caffeine.version>
+        <prometheus.version>0.12.0</prometheus.version>
+        <caffeine.version>3.0.4</caffeine.version>
         <kafka.version>2.7.0</kafka.version>
         <kafka.embedded.env.version>2.7.0</kafka.embedded.env.version>
         <orgjson.version>20210307</orgjson.version>
-        <junit.version>5.7.2</junit.version>
+        <junit.version>5.8.0</junit.version>
 
         <!-- Interne versjoner -->
         <unleash.version>4.4.0</unleash.version>
