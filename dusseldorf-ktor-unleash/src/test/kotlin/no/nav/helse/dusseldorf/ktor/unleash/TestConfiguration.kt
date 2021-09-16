@@ -1,3 +1,5 @@
+package no.nav.helse.dusseldorf.ktor.unleash
+
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
 
@@ -25,8 +27,10 @@ internal object TestConfiguration {
     internal fun applicationConfig(
         cluster: String = "test",
         unleashAPI: String = "http://localhost:8080/unleash/api/"
-    ) : ApplicationConfig = HoconApplicationConfig(ConfigFactory.parseMap(configMap(
+    ) : ApplicationConfig = HoconApplicationConfig(ConfigFactory.parseMap(
+        configMap(
         cluster = cluster,
         unleashAPI = unleashAPI
-    )))
+    )
+    ))
 }

@@ -1,26 +1,20 @@
-import TestConfiguration.applicationConfig
-import assertk.assertThat
-import assertk.assertions.isFalse
-import assertk.assertions.isInstanceOf
-import assertk.assertions.isNotNull
-import assertk.assertions.isTrue
+package no.nav.helse.dusseldorf.ktor.unleash
+
+import no.nav.helse.dusseldorf.ktor.unleash.TestConfiguration.applicationConfig
 import kotlinx.coroutines.runBlocking
 import no.finn.unleash.FakeUnleash
 import no.finn.unleash.repository.FeatureToggleResponse
 import no.nav.helse.dusseldorf.ktor.health.Result
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
-import no.nav.helse.dusseldorf.ktor.unleash.UnleashFeature
-import no.nav.helse.dusseldorf.ktor.unleash.UnleashService
-import no.nav.helse.dusseldorf.ktor.unleash.unleashConfigBuilder
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.lang.IllegalStateException
-import kotlin.test.Ignore
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
+import org.junit.jupiter.api.assertThrows
+import kotlin.IllegalStateException
+import kotlin.test.assertTrue
 
-class UnleashServiceTest {
+internal class UnleashServiceTest {
 
     private enum class Feature: UnleashFeature {
         // https://unleash.nais.io/#/features/view/dusseldorf-ktor-unleash-test-toggle
@@ -35,7 +29,7 @@ class UnleashServiceTest {
     }
 
     @Test
-    internal fun `henter fra application config`() {
+    fun `henter fra application config`() {
         val unleashConfig = applicationConfig(
             cluster = "mitt-cluster",
             unleashAPI = "http://localhost:8081/api/"
@@ -50,46 +44,48 @@ class UnleashServiceTest {
     }
 
     @Test
-    @Ignore
-    internal fun `gitt at unleash klient er aktivert for dev-gcp, forvent at feature flag eksisterer og er enabled`() {
+    @Disabled
+    fun `gitt at unleash klient er aktivert for dev-gcp, forvent at feature flag eksisterer og er enabled`() {
         val unleashConfigBuilder = applicationConfig(cluster = "dev-gcp", unleashAPI = "https://unleash.nais.io/").unleashConfigBuilder()
         val unleashService = UnleashService(unleashConfigBuilder)
 
-        assertThat(unleashService.more().featureToggleNames.first { it == Feature.DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE.featureName() }).isNotNull()
-        assertThat(unleashService.isEnabled(Feature.DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE, false)).isTrue()
+        assertNotNull(unleashService.more().featureToggleNames.first { it == Feature.DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE.featureName() })
+        assertTrue(unleashService.isEnabled(Feature.DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE, false))
     }
 
     @Test
-    @Ignore
-    internal fun `gitt at feature_flag ikke aktivert for gyldig cluster, forvent at flagg er deaktivert`() {
+    @Disabled
+    fun `gitt at feature_flag ikke aktivert for gyldig cluster, forvent at flagg er deaktivert`() {
         val unleashConfigBuilder = applicationConfig(cluster = "ugyldig-cluster", unleashAPI = "https://unleash.nais.io/").unleashConfigBuilder()
         val unleashService = UnleashService(unleashConfigBuilder)
-        assertThat(unleashService.isEnabled(Feature.DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE, true)).isFalse()
+        assertFalse(unleashService.isEnabled(Feature.DUSSELDORF_KTOR_UNLEASH_TEST_TOGGLE, true))
     }
 
     @Test
-    internal fun `gitt at unleash server ikke er tilgjengelig, forvent unhealthy status`() {
+    fun `gitt at unleash server ikke er tilgjengelig, forvent unhealthy status`() {
         val unleashConfigBuilder = applicationConfig(cluster = "dev-gcp", unleashAPI = "http://localhost:8081/api/").unleashConfigBuilder()
         val unleashService = UnleashService(unleashConfigBuilder)
         unleashService.togglesFetched(FeatureToggleResponse(FeatureToggleResponse.Status.UNAVAILABLE, 503))
         unleashService.isEnabled(Feature.SOME_FLAG, false)
 
         val result: Result = runBlocking { unleashService.check() }
-        assertThat(result).isInstanceOf(UnHealthy::class.java)
+        assertInstanceOf(UnHealthy::class.java, result)
     }
 
     @Test
-    internal fun `gitt at unleashConfigBuilder er null, forvent at UnleashService bruker FakeUnleash`() {
+    fun `gitt at unleashConfigBuilder er null, forvent at UnleashService bruker FakeUnleash`() {
 
         val unleashService = UnleashService()
         assertDoesNotThrow { unleashService.fakeUnleash() }
-        assertThat(unleashService.fakeUnleash()).isInstanceOf(FakeUnleash::class.java)
+        assertInstanceOf(FakeUnleash::class.java, unleashService.fakeUnleash())
     }
 
     @Test
-    internal fun `gitt gyldig unleashConfigBuilder, forvent IllegalStateException ved kall på fakeUnleash()`() {
+    fun `gitt gyldig unleashConfigBuilder, forvent IllegalStateException ved kall på fakeUnleash()`() {
         val unleashConfigBuilder = applicationConfig().unleashConfigBuilder()
         val unleashService = UnleashService(unleashConfigBuilder)
-        assertFailsWith(IllegalStateException::class) {unleashService.fakeUnleash()}
+        assertThrows<IllegalStateException> {
+            unleashService.fakeUnleash()
+        }
     }
 }
