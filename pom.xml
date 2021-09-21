@@ -50,7 +50,7 @@
         <!-- Interne versjoner -->
         <unleash.version>4.4.0</unleash.version>
         <oauth2-oidc-sdk.version>9.15</oauth2-oidc-sdk.version>
-        <wiremock.version>2.27.2</wiremock.version>
+        <wiremock.version>2.31.0</wiremock.version>
     </properties>
 
     <repositories>
@@ -62,11 +62,6 @@
             <name>confluent</name>
             <id>confluent</id>
             <url>https://packages.confluent.io/maven/</url>
-        </repository>
-        <repository>
-            <name>ktor</name>
-            <id>ktor</id>
-            <url>https://dl.bintray.com/kotlin/ktor</url>
         </repository>
     </repositories>
 
