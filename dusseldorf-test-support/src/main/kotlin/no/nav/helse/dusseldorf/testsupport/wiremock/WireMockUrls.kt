@@ -14,6 +14,9 @@ import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.LOGIN_SERVICE_V1_WELL_
 import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.NAIS_STS_JWKS_PATH
 import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.NAIS_STS_TOKEN_PATH
 import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.NAIS_STS_WELL_KNOWN_PATH
+import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.TOKENDINGS_JWKS_PATH
+import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.TOKENDINGS_TOKEN_PATH
+import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.TOKENDINGS_WELL_KNOWN_PATH
 
 internal object Paths {
     private const val AZURE_V1_PATH = "/azure/v1.0"
@@ -38,6 +41,11 @@ internal object Paths {
     internal const val NAIS_STS_TOKEN_PATH = "$NAIS_STS_PATH/token"
     internal const val NAIS_STS_WELL_KNOWN_PATH = "$NAIS_STS_PATH/.well-known"
     internal const val NAIS_STS_JWKS_PATH = "$NAIS_STS_PATH/jwks"
+
+    private const val TOKENDINGS_PATH = "/tokendings"
+    internal const val TOKENDINGS_TOKEN_PATH = "$TOKENDINGS_PATH/token"
+    internal const val TOKENDINGS_WELL_KNOWN_PATH = "$TOKENDINGS_PATH/.well-known"
+    internal const val TOKENDINGS_JWKS_PATH = "$TOKENDINGS_PATH/jwks"
 }
 
 fun WireMockServer.getAzureV1WellKnownUrl() = baseUrl() + AZURE_V1_WELL_KNOWN_PATH
@@ -55,6 +63,10 @@ fun WireMockServer.getAzureV2AuthorizationUrl() = baseUrl() + AZURE_V2_AUTHORIZA
 fun WireMockServer.getNaisStsWellKnownUrl() = baseUrl() + NAIS_STS_WELL_KNOWN_PATH
 fun WireMockServer.getNaisStsTokenUrl() = baseUrl() + NAIS_STS_TOKEN_PATH
 fun WireMockServer.getNaisStsJwksUrl() = baseUrl() + NAIS_STS_JWKS_PATH
+
+fun WireMockServer.getTokendingsWellKnownUrl() = baseUrl() + TOKENDINGS_WELL_KNOWN_PATH
+fun WireMockServer.getTokendingsTokenUrl() = baseUrl() + TOKENDINGS_TOKEN_PATH
+fun WireMockServer.getTokendingsJwksUrl() = baseUrl() + TOKENDINGS_JWKS_PATH
 
 fun WireMockServer.getLoginServiceV1WellKnownUrl() = baseUrl() + LOGIN_SERVICE_V1_WELL_KNOWN_PATH
 fun WireMockServer.getLoginServiceV1JwksUrl() = baseUrl() + LOGIN_SERVICE_V1_JWKS_PATH

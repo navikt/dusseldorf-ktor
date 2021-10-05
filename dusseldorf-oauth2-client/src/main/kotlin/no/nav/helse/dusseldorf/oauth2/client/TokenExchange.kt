@@ -22,7 +22,7 @@ internal class TokenExchange(
 
         val queryParameters = httpRequest.queryParameters.apply {
             put("grant_type", listOf("urn:ietf:params:oauth:grant-type:token-exchange"))
-            put("subject_token_type", listOf("urn:ietf:params:oauth:client-assertion-type:jwt-bearer"))
+            put("subject_token_type", listOf("urn:ietf:params:oauth:token-type:jwt"))
             put("subject_token", listOf(onBehalfOf.serialize()))
             put("audience", listOf("$scope"))
         }

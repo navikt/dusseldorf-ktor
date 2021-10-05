@@ -1,11 +1,15 @@
 package no.nav.helse.dusseldorf.oauth2.client
 
 import com.nimbusds.jwt.SignedJWT
+import no.nav.helse.dusseldorf.testsupport.jws.LoginService
+import no.nav.helse.dusseldorf.testsupport.jws.Tokendings
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2TokenUrl
+import no.nav.helse.dusseldorf.testsupport.wiremock.getTokendingsTokenUrl
 import java.net.URI
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class SignedJwtAccessTokenClientTest {
@@ -59,7 +63,7 @@ class SignedJwtAccessTokenClientTest {
     }
 
     @Test
-    fun `Hente access token med test support`() {
+    fun `Hente Azure access token med test support`() {
         val wireMock = WireMockBuilder()
                 .withAzureSupport()
                 .build()
@@ -74,6 +78,35 @@ class SignedJwtAccessTokenClientTest {
         val response = client.getAccessToken(setOf("fooscope/.default"))
 
         assertNotNull(response)
+        wireMock.stop()
+    }
+
+    @Test
+    fun `Hente Tokendings access token med test support`() {
+        val wireMock = WireMockBuilder()
+            .withTokendingsSupport()
+            .build()
+
+        val client = SignedJwtAccessTokenClient(
+            clientId = "min-test-app-a",
+            keyIdProvider = FromCertificateHexThumbprint(TestData.CERTIFICATE_THUMBPRINT_SHA1_HEX),
+            tokenEndpoint = URI(wireMock.getTokendingsTokenUrl()),
+            privateKeyProvider = FromJwk(TestData.PRIVATE_KEY_JWK)
+        )
+
+        val onBehalfOf = LoginService.V1_0.generateJwt(
+            fnr = "12345566"
+        )
+
+        val response = client.getAccessToken(setOf("min-test-app-b"), onBehalfOf)
+
+        val claims = SignedJWT.parse(response.accessToken).jwtClaimsSet
+
+        assertEquals("12345566", claims.subject)
+        assertEquals(Tokendings.getIssuer(), claims.issuer)
+        assertEquals("min-test-app-a", claims.getStringClaim("client_id"))
+        assertEquals("min-test-app-b", claims.audience.firstOrNull())
+
         wireMock.stop()
     }
 }

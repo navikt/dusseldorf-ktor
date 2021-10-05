@@ -22,7 +22,6 @@ object NaisStsToken {
             }
         """.trimIndent()
     }
-
 }
 
 interface NaisStsTokenRequest {

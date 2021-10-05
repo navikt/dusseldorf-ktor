@@ -6,9 +6,11 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.helse.dusseldorf.testsupport.http.AzureWellKnown
 import no.nav.helse.dusseldorf.testsupport.http.LoginServiceWellKnown
 import no.nav.helse.dusseldorf.testsupport.http.NaisStsWellKnown
+import no.nav.helse.dusseldorf.testsupport.http.TokendingsWellKnown
 import no.nav.helse.dusseldorf.testsupport.jws.Azure
 import no.nav.helse.dusseldorf.testsupport.jws.LoginService
 import no.nav.helse.dusseldorf.testsupport.jws.NaisSts
+import no.nav.helse.dusseldorf.testsupport.jws.Tokendings
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -21,6 +23,7 @@ class WireMockBuilder {
         private const val AZURE_V2_TOKEN_TRANSFORMER = "azure-v2-token"
         private const val LOGIN_SERVICE_V1_TRANSFORMER = "login-service-v1"
         private const val NAIS_STS_TRANSFORMER = "nais-sts"
+        private const val TOKENDINGS_TRANSFORMER = "tokendings"
     }
 
     private val config = WireMockConfiguration.options()
@@ -30,6 +33,7 @@ class WireMockBuilder {
     private var withAzureSupport = false
     private var withLoginServieSupport = false
     private var withNaisStsSupport = false
+    private var withTokendingsSupport = false
 
     fun withPort(port: Int) : WireMockBuilder {
         this.port = port
@@ -65,6 +69,13 @@ class WireMockBuilder {
         val naisSts = NaisStsTokenResponseTransformer(name = NAIS_STS_TRANSFORMER, issuer = NaisSts.getIssuer())
         config.extensions(naisSts)
         withNaisStsSupport = true
+        return this
+    }
+
+    fun withTokendingsSupport() : WireMockBuilder {
+        val tokedings = TokendingsResponseTransformer(name = TOKENDINGS_TRANSFORMER, issuer = Tokendings.getIssuer())
+        config.extensions(tokedings)
+        withTokendingsSupport = true
         return this
     }
 
@@ -141,6 +152,22 @@ class WireMockBuilder {
         logger.info("Nais STS Well-Known URL = ${server.getNaisStsWellKnownUrl()}")
     }
 
+    private fun addTokendingsStubs(server: WireMockServer) {
+        WireMock.stubFor(WireMock.post(WireMock.urlPathMatching(".*${Paths.TOKENDINGS_TOKEN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(TOKENDINGS_TRANSFORMER)))
+        WireMockStubs.stubJwks(path = Paths.TOKENDINGS_JWKS_PATH, jwkSet = Tokendings.getPublicJwk())
+        WireMockStubs.stubWellKnown(
+            path = Paths.TOKENDINGS_WELL_KNOWN_PATH,
+            response = TokendingsWellKnown.response(
+                issuer = Tokendings.getIssuer(),
+                jwksUri = server.getTokendingsJwksUrl(),
+                tokenEndpoint = server.getTokendingsTokenUrl()
+            )
+        )
+        logger.info("Tokendings Token URL = ${server.getTokendingsTokenUrl()}")
+        logger.info("Tokendings JWKS URL = ${server.getTokendingsJwksUrl()}")
+        logger.info("Tokendings Well-Known URL = ${server.getTokendingsWellKnownUrl()}")
+    }
+
     fun build() : WireMockServer {
         if (port == null) config.dynamicPort()
         else config.port(port!!)
@@ -155,6 +182,7 @@ class WireMockBuilder {
         if (withAzureSupport) addAzureStubs(server)
         if (withLoginServieSupport) addLoginServiceStubs(server)
         if (withNaisStsSupport) addNaisStsStubs(server)
+        if (withTokendingsSupport) addTokendingsStubs(server)
 
         logger.info("WireMock Base URL = ${server.baseUrl()}")
 
