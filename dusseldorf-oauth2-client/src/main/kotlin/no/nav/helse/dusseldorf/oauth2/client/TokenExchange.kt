@@ -20,14 +20,14 @@ internal class TokenExchange(
             privateKeyJWT.applyTo(this)
         }
 
-        val queryParameters = httpRequest.queryParameters.apply {
+        val parameters = httpRequest.queryParameters.apply {
             put("grant_type", listOf("urn:ietf:params:oauth:grant-type:token-exchange"))
             put("subject_token_type", listOf("urn:ietf:params:oauth:token-type:jwt"))
             put("subject_token", listOf(onBehalfOf.serialize()))
             put("audience", listOf("$scope"))
         }
 
-        httpRequest.query = URLUtils.serializeParameters(queryParameters)
+        httpRequest.query = URLUtils.serializeParameters(parameters)
 
         return httpRequest
     }
