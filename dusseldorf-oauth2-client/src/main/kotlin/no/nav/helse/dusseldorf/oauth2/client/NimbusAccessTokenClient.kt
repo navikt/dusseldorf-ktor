@@ -3,19 +3,22 @@ package no.nav.helse.dusseldorf.oauth2.client
 import com.nimbusds.oauth2.sdk.Scope
 import com.nimbusds.oauth2.sdk.TokenRequest
 import com.nimbusds.oauth2.sdk.TokenResponse
+import com.nimbusds.oauth2.sdk.http.HTTPRequest
 import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
 
 private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.oauth2.client.NimbusAccessTokenClient")
 internal val onBehalfOfParameters = mapOf("requested_token_use" to listOf("on_behalf_of"))
 
-
 abstract class NimbusAccessTokenClient {
 
     internal fun getAccessToken(
-            tokenRequest: TokenRequest
+        tokenRequest: TokenRequest
+    ) : AccessTokenResponse = getAccessToken(tokenRequest.toHTTPRequest())
+
+    internal fun getAccessToken(
+            httpRequest: HTTPRequest
     ) : AccessTokenResponse {
-        val httpRequest = tokenRequest.toHTTPRequest()
 
         logger.trace("Requester URL='${httpRequest.url}?${httpRequest.query}'")
 
@@ -37,5 +40,4 @@ abstract class NimbusAccessTokenClient {
     }
 
     internal fun getScope(scopes: Set<String>) = if (scopes.isEmpty()) null else Scope.parse(scopes)
-
 }

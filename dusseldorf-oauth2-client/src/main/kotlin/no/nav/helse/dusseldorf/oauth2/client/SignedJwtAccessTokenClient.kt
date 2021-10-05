@@ -8,6 +8,7 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.oauth2.sdk.*
 import com.nimbusds.oauth2.sdk.auth.PrivateKeyJWT
+import no.nav.helse.dusseldorf.oauth2.client.GrantType.Companion.grantType
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.*
@@ -16,17 +17,20 @@ import java.security.cert.CertificateFactory
 import java.security.MessageDigest
 import java.security.interfaces.RSAPrivateKey
 
-private val logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.oauth2.client.ClientAuthenticationPrivateKeyJwt")
-
 class SignedJwtAccessTokenClient(
         private val clientId: String,
         privateKeyProvider: PrivateKeyProvider,
         keyIdProvider: KeyIdProvider,
-        private val tokenEndpoint: URI
+        private val tokenEndpoint: URI,
+        private val onBehalfOfGrantType: GrantType = tokenEndpoint.grantType()
 ) : AccessTokenClient, NimbusAccessTokenClient() {
     private val jwsSigner: JWSSigner
     private val algorithm : JWSAlgorithm = JWSAlgorithm.RS256
     private val jwsHeader : JWSHeader
+
+    private companion object {
+        private val logger = LoggerFactory.getLogger(SignedJwtAccessTokenClient::class.java)
+    }
 
     init {
         jwsSigner = RSASSASigner(privateKeyProvider.getPrivateKey())
@@ -34,6 +38,7 @@ class SignedJwtAccessTokenClient(
                 .keyID(keyIdProvider.getKeyId())
                 .type(JOSEObjectType.JWT)
                 .build()
+        logger.info("OnBehalfOfGrantType=$onBehalfOfGrantType")
     }
 
 
@@ -42,7 +47,10 @@ class SignedJwtAccessTokenClient(
     }
 
     override fun getAccessToken(scopes: Set<String>, onBehalfOf: String) : AccessTokenResponse {
-        return getAccessToken(getOnBehalfOfTokenRequest(onBehalfOf, scopes))
+        return when (onBehalfOfGrantType) {
+            GrantType.JwtBearer -> getAccessToken(getOnBehalfOfJwtBearerTokenRequest(onBehalfOf, scopes))
+            GrantType.TokenExchange -> getAccessToken(getOnBehalfOfTokenExchangeTokenRequest(onBehalfOf, scopes))
+        }
     }
 
     // https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow#second-case-access-token-request-with-a-certificate
@@ -56,17 +64,27 @@ class SignedJwtAccessTokenClient(
     )
 
     // https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#second-case-access-token-request-with-a-certificate
-    private fun getOnBehalfOfTokenRequest(
-            onBehalfOf: String,
-            scopes: Set<String>
-    ) : TokenRequest = TokenRequest(
-            tokenEndpoint,
-            PrivateKeyJWT(getSignedJwt()),
-            JWTBearerGrant(SignedJWT.parse(onBehalfOf)),
-            getScope(scopes),
-            null,
-            onBehalfOfParameters
+    private fun getOnBehalfOfJwtBearerTokenRequest(
+        onBehalfOf: String,
+        scopes: Set<String>
+    ) = TokenRequest(
+        tokenEndpoint,
+        PrivateKeyJWT(getSignedJwt()),
+        JWTBearerGrant(SignedJWT.parse(onBehalfOf)),
+        getScope(scopes),
+        null,
+        onBehalfOfParameters
     )
+
+    // https://doc.nais.io/security/auth/tokenx/#exchanging-a-token
+    private fun getOnBehalfOfTokenExchangeTokenRequest(
+        onBehalfOf: String,
+        scopes: Set<String>) = TokenExchange(
+            tokenEndpoint = tokenEndpoint,
+            privateKeyJWT = PrivateKeyJWT(getSignedJwt()),
+            scope = checkNotNull(getScope(scopes)) { "Token Exchange kan ikke gjøres uten scope" },
+            onBehalfOf = SignedJWT.parse(onBehalfOf)
+        ).toHTTPRequest()
 
     private fun getSignedJwt() : SignedJWT {
         val jwtClaimSet = JWTClaimsSet.Builder()
