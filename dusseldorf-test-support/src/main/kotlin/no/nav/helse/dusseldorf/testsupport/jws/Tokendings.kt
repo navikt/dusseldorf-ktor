@@ -43,6 +43,7 @@ object Tokendings : Issuer {
     ) : String {
         val parameters = urlDecodedBody.urlDecodedBodyAsMap()
         val subjectTokenClaims = parameters.getValue("subject_token").extractClaims()
+        parameters.getValue("client_assertion").extractClaims().verifyClaims()
 
         val tokendingsClaims = overridingClaims.toMutableMap().apply {
             // https://doc.nais.io/security/auth/tokenx/#claims
@@ -57,6 +58,16 @@ object Tokendings : Issuer {
         return jwsFunctions.generateJwt(
             claims = subjectTokenClaims.plus(tokendingsClaims)
         )
+    }
+
+    private fun MutableMap<String, Any>.verifyClaims() = apply {
+        check(contains("iss"))
+        check(contains("aud"))
+        check(contains("sub"))
+        check(contains("iat"))
+        check(contains("nbf"))
+        check(contains("exp"))
+        check(contains("jti"))
     }
 
     private fun String.extractClaims() = SignedJWT.parse(this).jwtClaimsSet.claims
