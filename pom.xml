@@ -35,7 +35,7 @@
         <ktor.version>1.6.4</ktor.version>
         <kotlin.version>1.5.31</kotlin.version>
         <kotlinx.coroutines.version>1.5.2</kotlinx.coroutines.version>
-        <micrometer.version>1.7.4</micrometer.version>
+        <micrometer.version>1.7.5</micrometer.version>
         <jackson.version>2.13.0</jackson.version>
         <logback.version>1.2.6</logback.version>
         <slf4j.version>1.7.32</slf4j.version>
@@ -50,7 +50,7 @@
 
         <!-- Interne versjoner -->
         <unleash.version>4.4.0</unleash.version>
-        <oauth2-oidc-sdk.version>9.18</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>9.19</oauth2-oidc-sdk.version>
         <wiremock.version>2.31.0</wiremock.version>
     </properties>
 
