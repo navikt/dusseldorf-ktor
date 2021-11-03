@@ -2,7 +2,7 @@ package no.nav.helse.dusseldorf.ktor.core
 
 import io.ktor.features.CallLogging
 import io.ktor.features.callIdMdc
-import io.ktor.http.HttpHeaders
+import io.ktor.http.*
 import io.ktor.request.*
 import no.nav.helse.dusseldorf.ktor.core.IdVerifier.trimId
 import org.slf4j.Logger
@@ -26,13 +26,21 @@ fun CallLogging.Configuration.correlationIdAndRequestIdInMdc() {
 }
 
 fun CallLogging.Configuration.logRequests(
-        excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS,
-        templateQueryParameters: Boolean = false
+    excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS,
+    templateQueryParameters: Boolean = false
 ) {
     logger = LOG
     level = Level.INFO
     filter { call -> !excludePaths.contains(call.request.path()) }
-    if(templateQueryParameters) format { applicationCall -> applicationCall.request.uri.templateQueryParameters() }
+    format {
+        val path = if(templateQueryParameters) it.request.uri.templateQueryParameters() else it.request.path()
+
+        when (val status = it.response.status() ?: "Unhandled") {
+            HttpStatusCode.Found -> "${status as HttpStatusCode}: ${it.request.httpMethod.value} -> ${it.response.headers[HttpHeaders.Location]}"
+            "Unhandled" -> "$status: ${it.request.httpMethod.value} - $path"
+            else -> "${status as HttpStatusCode}: ${it.request.httpMethod.value} - $path"
+        }
+    }
 }
 
 fun ApplicationRequest.log(
