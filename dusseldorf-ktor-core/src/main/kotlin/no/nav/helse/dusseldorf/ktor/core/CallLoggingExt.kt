@@ -37,7 +37,7 @@ fun CallLogging.Configuration.logRequests(
 
         when (val status = it.response.status() ?: "Unhandled") {
             HttpStatusCode.Found -> "${status as HttpStatusCode}: ${it.request.httpMethod.value} -> ${it.response.headers[HttpHeaders.Location]}"
-            "Unhandled" -> "$status: ${it.request.httpMethod.value} - $path"
+            "Unhandled" -> "Unhandled: ${it.request.httpMethod.value} - $path"
             else -> "${status as HttpStatusCode}: ${it.request.httpMethod.value} - $path"
         }
     }
