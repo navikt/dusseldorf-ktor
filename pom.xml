@@ -20,10 +20,10 @@
         <module>dusseldorf-ktor-health</module>
         <module>dusseldorf-ktor-auth</module>
         <module>dusseldorf-ktor-streams</module>
+        <module>dusseldorf-ktor-unleash</module>
         <!-- ikke ktor spesefikke moduler -->
         <module>dusseldorf-oauth2-client</module>
         <module>dusseldorf-test-support</module>
-        <module>dusseldorf-ktor-unleash</module>
     </modules>
 
     <properties>
@@ -32,12 +32,12 @@
         <maven.compiler.target>16</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
-        <ktor.version>1.6.4</ktor.version>
+        <ktor.version>1.6.5</ktor.version>
         <kotlin.version>1.5.31</kotlin.version>
         <kotlinx.coroutines.version>1.5.2</kotlinx.coroutines.version>
-        <micrometer.version>1.7.5</micrometer.version>
+        <micrometer.version>1.8.0</micrometer.version>
         <jackson.version>2.13.0</jackson.version>
-        <logback.version>1.2.6</logback.version>
+        <logback.version>1.2.7</logback.version>
         <slf4j.version>1.7.32</slf4j.version>
         <logstash.logback.version>6.6</logstash.logback.version>
         <prometheus.version>0.12.0</prometheus.version>
