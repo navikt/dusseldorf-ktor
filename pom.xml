@@ -33,13 +33,13 @@
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
         <ktor.version>1.6.5</ktor.version>
-        <kotlin.version>1.5.31</kotlin.version>
+        <kotlin.version>1.6.0</kotlin.version>
         <kotlinx.coroutines.version>1.5.2</kotlinx.coroutines.version>
         <micrometer.version>1.8.0</micrometer.version>
         <jackson.version>2.13.0</jackson.version>
         <logback.version>1.2.7</logback.version>
         <slf4j.version>1.7.32</slf4j.version>
-        <logstash.logback.version>6.6</logstash.logback.version>
+        <logstash.logback.version>7.0</logstash.logback.version>
         <prometheus.version>0.12.0</prometheus.version>
         <caffeine.version>3.0.4</caffeine.version>
         <!-- må være samme som kafkaVersjon som i embedded -->
