@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfKtorVersion = "PLACEHOLDER"
 val ktorVersion = ext.get("ktorVersion").toString()
-val junitJupiterVersion = "5.8.1"
+val junitJupiterVersion = "5.8.2"
 
 val mainClass = "no.nav.AppKt"
 
@@ -35,11 +35,11 @@ repositories {
 
 tasks {
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "16"
+        kotlinOptions.jvmTarget = "17"
     }
 
     named<KotlinCompile>("compileTestKotlin") {
-        kotlinOptions.jvmTarget = "16"
+        kotlinOptions.jvmTarget = "17"
     }
     withType<ShadowJar> {
         archiveBaseName.set("app")
@@ -61,6 +61,6 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "7.2"
+        gradleVersion = "7.3.1"
     }
 }
