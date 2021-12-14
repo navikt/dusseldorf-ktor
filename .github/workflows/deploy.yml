@@ -8,6 +8,7 @@ on:
       - 'LICENCE'
       - 'CODEOWNERS'
       - '.github/dependabot.yml'
+      - '.github/snyk.yml'
     branches:
       - master
   workflow_dispatch:
