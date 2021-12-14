@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2.3.4
 
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven@master
+        uses: snyk/actions/maven-3-jdk-11@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           GITHUB_USERNAME: x-access-token
