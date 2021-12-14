@@ -20,4 +20,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           command: monitor
-          args: --org=dusseldorf --all-projects --configuration-attributes=usage:java-runtime --remote-repo-url=https://github.com/${{ github.repository }}.git -- -s .github/settings.xml
+          args: --org=dusseldorf --all-projects --exclude=dusseldorf-ktor-testapp --configuration-attributes=usage:java-runtime --remote-repo-url=https://github.com/${{ github.repository }}.git -- -s .github/settings.xml
