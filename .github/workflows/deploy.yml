@@ -7,8 +7,8 @@ on:
       - '.gitignore'
       - 'LICENCE'
       - 'CODEOWNERS'
-      - '.github/dependabot.yml'
-      - '.github/snyk.yml'
+      - '.github/workflows/dependabot.yml'
+      - '.github/workflows/snyk.yml'
     branches:
       - master
   workflow_dispatch:
