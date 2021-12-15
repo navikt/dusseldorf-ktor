@@ -35,10 +35,6 @@ data class UnleashService(
                 unleashConfig,
                 *strategies.plus(ByClusterStrategy(clusterName = unleashConfig.environment)).toTypedArray()
             )
-           /* DefaultUnleash(
-                unleashConfigBuilder.subscriber(this).build(),
-                *strategies.plus(ByClusterStrategy(clusterName = unleashConfig.environment)).toTypedArray()
-            )*/
         }
     }
 
