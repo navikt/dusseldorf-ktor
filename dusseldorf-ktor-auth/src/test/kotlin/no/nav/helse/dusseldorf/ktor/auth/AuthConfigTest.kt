@@ -7,7 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@KtorExperimentalAPI
+
 class AuthConfigTest {
 
     private companion object {

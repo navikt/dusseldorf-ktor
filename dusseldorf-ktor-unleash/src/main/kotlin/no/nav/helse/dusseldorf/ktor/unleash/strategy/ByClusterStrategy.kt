@@ -1,6 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.unleash.strategy
 
-import no.finn.unleash.strategy.Strategy
+import io.getunleash.strategy.Strategy
 
 class ByClusterStrategy(
     private val clusterName: String

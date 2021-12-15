@@ -1,10 +1,10 @@
 package no.nav.helse.dusseldorf.ktor.unleash
 
-import no.finn.unleash.*
-import no.finn.unleash.event.UnleashSubscriber
-import no.finn.unleash.repository.FeatureToggleResponse
-import no.finn.unleash.strategy.Strategy
-import no.finn.unleash.util.UnleashConfig
+import io.getunleash.*
+import io.getunleash.event.UnleashSubscriber
+import io.getunleash.repository.FeatureToggleResponse
+import io.getunleash.strategy.Strategy
+import io.getunleash.util.UnleashConfig
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.Result
@@ -32,7 +32,7 @@ data class UnleashService(
         else -> {
             val unleashConfig = unleashConfigBuilder.subscriber(this).build()
             DefaultUnleash(
-                unleashConfigBuilder.subscriber(this).build(),
+                unleashConfig,
                 *strategies.plus(ByClusterStrategy(clusterName = unleashConfig.environment)).toTypedArray()
             )
         }

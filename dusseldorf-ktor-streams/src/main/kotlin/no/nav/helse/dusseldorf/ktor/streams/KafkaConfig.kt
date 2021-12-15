@@ -97,8 +97,6 @@ private fun Properties.medCredentials(credentials: Pair<String, String>) {
     )
 }
 
-
-@KtorExperimentalAPI
 fun ApplicationConfig.kafkaConfig() : KafkaConfig {
     val bootstrapServers = getRequiredString("nav.kafka.bootstrap_servers", secret = false)
 

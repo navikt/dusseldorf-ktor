@@ -9,7 +9,6 @@ import java.io.File
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.ApplicationConfigExt")
 private val VaultPath = "/var/run/secrets/nais.io/vault"
 
-@KtorExperimentalAPI
 internal class ApplicationConfigExt(
         private val config : ApplicationConfig
 ) {
@@ -42,26 +41,24 @@ internal class ApplicationConfigExt(
     internal fun <T>getListFromCsv(csv: String, builder: (value: String) -> T) : List<T> = csv.replace(" ", "").split(",").map(builder)
 }
 
-@KtorExperimentalAPI
 fun ApplicationConfig.getRequiredString(key: String, secret: Boolean) : String = ApplicationConfigExt(this).getRequiredString(key, secret)
-@KtorExperimentalAPI
+
 fun ApplicationConfig.getOptionalString(key: String, secret: Boolean) : String? = ApplicationConfigExt(this).getOptionalString(key, secret)
-@KtorExperimentalAPI
+
 fun <T>ApplicationConfig.getRequiredList(key : String, secret: Boolean, builder: (value: String) -> T) : List<T> {
     val ext = ApplicationConfigExt(this)
     val csv= ext.getRequiredString(key, secret)
     return ext.getListFromCsv(csv = csv, builder = builder)
 }
-@KtorExperimentalAPI
+
 fun <T>ApplicationConfig.getOptionalList(key : String, secret: Boolean, builder: (value: String) -> T) : List<T> {
     val ext = ApplicationConfigExt(this)
     val csv = ext.getOptionalString(key, secret) ?: return emptyList()
     return ext.getListFromCsv(csv = csv, builder = builder)
 }
-@KtorExperimentalAPI
+
 fun ApplicationConfig.id() : String = ApplicationConfigExt(this).getRequiredString("ktor.application.id", secret = false)
 
-@KtorExperimentalAPI
 fun ApplicationConfig.getRequiredSecret(key: String) : String {
     val secret = getOptionalString(key, true)
     return if (secret != null) secret

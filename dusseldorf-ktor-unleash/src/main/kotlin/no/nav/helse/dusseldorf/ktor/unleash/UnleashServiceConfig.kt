@@ -1,8 +1,8 @@
 package no.nav.helse.dusseldorf.ktor.unleash
 
 import io.ktor.config.*
-import no.finn.unleash.UnleashContext
-import no.finn.unleash.util.UnleashConfig
+import io.getunleash.UnleashContext
+import io.getunleash.util.UnleashConfig
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
 import java.net.URI

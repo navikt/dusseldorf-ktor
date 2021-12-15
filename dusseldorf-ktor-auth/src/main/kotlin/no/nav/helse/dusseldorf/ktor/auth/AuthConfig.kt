@@ -21,7 +21,6 @@ private const val TOKEN_ENDPOINT = "token_endpoint"
 private val jsonParser = JSONParser()
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.auth.AuthConfig")
 
-@KtorExperimentalAPI
 fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, Issuer> {
     val issuersConfigList = configList(path)
     if (issuersConfigList.isNullOrEmpty()) return emptyMap()
@@ -78,7 +77,6 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
     return issuers.toMap()
 }
 
-@KtorExperimentalAPI
 fun ApplicationConfig.clients(path: String = "nav.auth.clients") : Map<String, Client> {
     val clientsConfigList = configList(path)
     if (clientsConfigList.isNullOrEmpty()) return emptyMap()
