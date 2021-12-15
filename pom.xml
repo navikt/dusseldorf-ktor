@@ -33,14 +33,14 @@
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
         <ktor.version>1.6.7</ktor.version>
-        <kotlin.version>1.6.0</kotlin.version>
+        <kotlin.version>1.6.10</kotlin.version>
         <kotlinx.coroutines.version>1.5.2</kotlinx.coroutines.version>
         <micrometer.version>1.8.1</micrometer.version>
         <jackson.version>2.13.0</jackson.version>
-        <logback.version>1.2.7</logback.version>
+        <logback.version>1.2.8</logback.version>
         <slf4j.version>1.7.32</slf4j.version>
         <logstash.logback.version>7.0.1</logstash.logback.version>
-        <prometheus.version>0.12.0</prometheus.version>
+        <prometheus.version>0.13.0</prometheus.version>
         <caffeine.version>3.0.5</caffeine.version>
         <!-- må være samme som kafkaVersjon som i embedded -->
         <kafka.version>2.8.1</kafka.version>
@@ -49,7 +49,7 @@
         <junit.version>5.8.2</junit.version>
 
         <!-- Interne versjoner -->
-        <unleash.version>4.4.1</unleash.version>
+        <unleash.version>5.0.2</unleash.version>
         <oauth2-oidc-sdk.version>9.20</oauth2-oidc-sdk.version>
         <wiremock.version>2.32.0</wiremock.version>
     </properties>

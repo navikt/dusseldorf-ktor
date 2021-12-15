@@ -2,8 +2,8 @@ package no.nav.helse.dusseldorf.ktor.unleash
 
 import no.nav.helse.dusseldorf.ktor.unleash.TestConfiguration.applicationConfig
 import kotlinx.coroutines.runBlocking
-import no.finn.unleash.FakeUnleash
-import no.finn.unleash.repository.FeatureToggleResponse
+import io.getunleash.repository.FeatureToggleResponse
+import io.getunleash.FakeUnleash
 import no.nav.helse.dusseldorf.ktor.health.Result
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import org.junit.jupiter.api.Assertions.*
