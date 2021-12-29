@@ -16,7 +16,7 @@ class WireMockBuilder {
         private const val AZURE_V1_TOKEN_TRANSFORMER = "azure-v1-token"
         private const val AZURE_V2_TOKEN_TRANSFORMER = "azure-v2-token"
         private const val LOGIN_SERVICE_V1_TRANSFORMER = "login-service-v1"
-        private const val ID_PORTEN_V2_TRANSFORMER = "id-porten"
+        private const val ID_PORTEN_TRANSFORMER = "id-porten"
         private const val NAIS_STS_TRANSFORMER = "nais-sts"
         private const val TOKENDINGS_TRANSFORMER = "tokendings"
     }
@@ -62,7 +62,7 @@ class WireMockBuilder {
     }
 
     fun withIDPortenSupport() : WireMockBuilder {
-        val idPorten = IDPortenLoginResponseTransformer(name = ID_PORTEN_V2_TRANSFORMER)
+        val idPorten = IDPortenLoginResponseTransformer(name = ID_PORTEN_TRANSFORMER)
         config.extensions(idPorten)
         withIDPortenSupport = true
         return this
@@ -99,7 +99,7 @@ class WireMockBuilder {
     }
 
     private fun addIDPortenStubs(server: WireMockServer) {
-        WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.ID_PORTEN_V2_LOGIN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(ID_PORTEN_V2_TRANSFORMER)))
+        WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.ID_PORTEN_V2_LOGIN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(ID_PORTEN_TRANSFORMER)))
         WireMockStubs.stubJwks(path = Paths.ID_PORTEN_JWKS_PATH, jwkSet = IDPorten.getPublicJwk())
         WireMockStubs.stubWellKnown(
                 path = Paths.ID_PORTEN_WELL_KNOWN_PATH,
