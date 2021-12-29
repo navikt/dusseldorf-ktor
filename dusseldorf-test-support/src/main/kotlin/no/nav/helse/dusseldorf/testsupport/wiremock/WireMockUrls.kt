@@ -9,6 +9,9 @@ import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.AZURE_V2_AUTHORIZATION
 import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.AZURE_V2_JWKS_PATH
 import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.AZURE_V2_TOKEN_PATH
 import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.AZURE_V2_WELL_KNOWN_PATH
+import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.ID_PORTEN_JWKS_PATH
+import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.ID_PORTEN_V2_TOKEN_PATH
+import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.ID_PORTEN_WELL_KNOWN_PATH
 import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.LOGIN_SERVICE_V1_JWKS_PATH
 import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.LOGIN_SERVICE_V1_WELL_KNOWN_PATH
 import no.nav.helse.dusseldorf.testsupport.wiremock.Paths.NAIS_STS_JWKS_PATH
@@ -36,6 +39,12 @@ internal object Paths {
     internal const val LOGIN_SERVICE_V1_LOGIN_PATH = "$LOGIN_SERVICE_V1_PATH/login"
     internal const val LOGIN_SERVICE_V1_WELL_KNOWN_PATH = "$LOGIN_SERVICE_V1_PATH/.well-known"
     internal const val LOGIN_SERVICE_V1_JWKS_PATH = "$LOGIN_SERVICE_V1_PATH/jwks"
+
+    private const val ID_PORTEN_PATH = "/id-porten"
+    internal const val ID_PORTEN_V2_LOGIN_PATH = "$ID_PORTEN_PATH/login"
+    internal const val ID_PORTEN_WELL_KNOWN_PATH = "$ID_PORTEN_PATH/.well-known"
+    internal const val ID_PORTEN_JWKS_PATH = "$ID_PORTEN_PATH/jwks"
+    internal const val ID_PORTEN_V2_TOKEN_PATH = "$ID_PORTEN_PATH/token"
 
     private const val NAIS_STS_PATH = "/nais-sts"
     internal const val NAIS_STS_TOKEN_PATH = "$NAIS_STS_PATH/token"
@@ -70,3 +79,7 @@ fun WireMockServer.getTokendingsJwksUrl() = baseUrl() + TOKENDINGS_JWKS_PATH
 
 fun WireMockServer.getLoginServiceV1WellKnownUrl() = baseUrl() + LOGIN_SERVICE_V1_WELL_KNOWN_PATH
 fun WireMockServer.getLoginServiceV1JwksUrl() = baseUrl() + LOGIN_SERVICE_V1_JWKS_PATH
+
+fun WireMockServer.getIdPortenWellKnownUrl() = baseUrl() + ID_PORTEN_WELL_KNOWN_PATH
+fun WireMockServer.getIDPortenJwksUrl() = baseUrl() + ID_PORTEN_JWKS_PATH
+fun WireMockServer.getIDPortenTokenUrl() = baseUrl() + ID_PORTEN_V2_TOKEN_PATH

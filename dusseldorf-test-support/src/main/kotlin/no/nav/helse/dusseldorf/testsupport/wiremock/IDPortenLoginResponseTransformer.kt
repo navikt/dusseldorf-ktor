@@ -4,11 +4,11 @@ import com.github.tomakehurst.wiremock.common.FileSource
 import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer
 import com.github.tomakehurst.wiremock.http.*
+import no.nav.helse.dusseldorf.testsupport.http.IDPortenLogin
 import no.nav.helse.dusseldorf.testsupport.http.LoginRequest
-import no.nav.helse.dusseldorf.testsupport.http.LoginServiceLogin
 import java.net.URI
 
-internal class LoginServiceLoginResponseTransformer(
+internal class IDPortenLoginResponseTransformer(
         private val name: String
 ) : ResponseTransformer() {
     override fun transform(
@@ -19,7 +19,7 @@ internal class LoginServiceLoginResponseTransformer(
     ): Response {
 
         val loginRequest = WiremockLoginRequest(request!!)
-        val loginResponse = LoginServiceLogin.login(loginRequest)
+        val loginResponse = IDPortenLogin.login(loginRequest)
 
         val cookie = Cookie(listOfNotNull(
                 "${loginResponse.cookie.name}=${loginResponse.cookie.value}",
