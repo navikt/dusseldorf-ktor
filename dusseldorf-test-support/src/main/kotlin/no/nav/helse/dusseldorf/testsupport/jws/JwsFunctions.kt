@@ -56,4 +56,4 @@ internal class JwsFunctions(
     }
 }
 
-internal fun LocalDateTime.toDate() = Date.from(this.atZone(ZoneId.systemDefault()).toInstant())
+fun LocalDateTime.toDate() = Date.from(this.atZone(ZoneId.systemDefault()).toInstant())
