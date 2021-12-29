@@ -3,14 +3,8 @@ package no.nav.helse.dusseldorf.testsupport.wiremock
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import no.nav.helse.dusseldorf.testsupport.http.AzureWellKnown
-import no.nav.helse.dusseldorf.testsupport.http.LoginServiceWellKnown
-import no.nav.helse.dusseldorf.testsupport.http.NaisStsWellKnown
-import no.nav.helse.dusseldorf.testsupport.http.TokendingsWellKnown
-import no.nav.helse.dusseldorf.testsupport.jws.Azure
-import no.nav.helse.dusseldorf.testsupport.jws.LoginService
-import no.nav.helse.dusseldorf.testsupport.jws.NaisSts
-import no.nav.helse.dusseldorf.testsupport.jws.Tokendings
+import no.nav.helse.dusseldorf.testsupport.http.*
+import no.nav.helse.dusseldorf.testsupport.jws.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -22,6 +16,7 @@ class WireMockBuilder {
         private const val AZURE_V1_TOKEN_TRANSFORMER = "azure-v1-token"
         private const val AZURE_V2_TOKEN_TRANSFORMER = "azure-v2-token"
         private const val LOGIN_SERVICE_V1_TRANSFORMER = "login-service-v1"
+        private const val ID_PORTEN_TRANSFORMER = "id-porten"
         private const val NAIS_STS_TRANSFORMER = "nais-sts"
         private const val TOKENDINGS_TRANSFORMER = "tokendings"
     }
@@ -32,6 +27,7 @@ class WireMockBuilder {
     private var configFunction : ((wireMockConfiguration: WireMockConfiguration) -> Unit)? = null
     private var withAzureSupport = false
     private var withLoginServieSupport = false
+    private var withIDPortenSupport = false
     private var withNaisStsSupport = false
     private var withTokendingsSupport = false
 
@@ -65,6 +61,13 @@ class WireMockBuilder {
         return this
     }
 
+    fun withIDPortenSupport() : WireMockBuilder {
+        val idPorten = IDPortenLoginResponseTransformer(name = ID_PORTEN_TRANSFORMER)
+        config.extensions(idPorten)
+        withIDPortenSupport = true
+        return this
+    }
+
     fun withNaisStsSupport() : WireMockBuilder {
         val naisSts = NaisStsTokenResponseTransformer(name = NAIS_STS_TRANSFORMER, issuer = NaisSts.getIssuer())
         config.extensions(naisSts)
@@ -93,6 +96,23 @@ class WireMockBuilder {
         logger.info("Login Service V1 JWKS URL = ${server.getLoginServiceV1JwksUrl()}")
         logger.info("Login Service V1 Well-Known URL = ${server.getLoginServiceV1WellKnownUrl()}")
         logger.info("Login Service V1 Login URL = ${server.baseUrl()}${Paths.LOGIN_SERVICE_V1_LOGIN_PATH}?redirect={REDIRECT_URL}&fnr={FNR}")
+    }
+
+    private fun addIDPortenStubs(server: WireMockServer) {
+        WireMock.stubFor(WireMock.get(WireMock.urlPathMatching(".*${Paths.ID_PORTEN_V2_LOGIN_PATH}.*")).willReturn(WireMock.aResponse().withTransformers(ID_PORTEN_TRANSFORMER)))
+        WireMockStubs.stubJwks(path = Paths.ID_PORTEN_JWKS_PATH, jwkSet = IDPorten.getPublicJwk())
+        WireMockStubs.stubWellKnown(
+                path = Paths.ID_PORTEN_WELL_KNOWN_PATH,
+                response = IDPortenWellKnown.response(
+                        issuer = IDPorten.getIssuer(),
+                        tokenEndpoint = server.getIDPortenTokenUrl(),
+                        jwksUri = server.getIDPortenJwksUrl()
+                )
+        )
+
+        logger.info("ID Porten V2 JWKS URL = ${server.getIDPortenJwksUrl()}")
+        logger.info("ID Porten V2 Well-Known URL = ${server.getIdPortenWellKnownUrl()}")
+        logger.info("ID Porten V2 Login URL = ${server.baseUrl()}${Paths.ID_PORTEN_V2_LOGIN_PATH}?redirect={REDIRECT_URL}&fnr={FNR}")
     }
 
     private fun addAzureStubs(server: WireMockServer) {
@@ -181,6 +201,7 @@ class WireMockBuilder {
 
         if (withAzureSupport) addAzureStubs(server)
         if (withLoginServieSupport) addLoginServiceStubs(server)
+        if (withIDPortenSupport) addIDPortenStubs(server)
         if (withNaisStsSupport) addNaisStsStubs(server)
         if (withTokendingsSupport) addTokendingsStubs(server)
 

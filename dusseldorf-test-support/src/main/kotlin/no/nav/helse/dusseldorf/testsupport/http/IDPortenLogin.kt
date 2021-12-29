@@ -1,11 +1,10 @@
 package no.nav.helse.dusseldorf.testsupport.http
 
-import no.nav.helse.dusseldorf.testsupport.jws.LoginService
-import java.net.URI
+import no.nav.helse.dusseldorf.testsupport.jws.IDPorten
 
-object LoginServiceLogin {
+object IDPortenLogin {
     fun login(request: LoginRequest) : LoginResponse {
-        val idToken = LoginService.V1_0.generateJwt(
+        val idToken = IDPorten.generateIdToken(
                 level = request.levelOrFallback(),
                 fnr = request.fnrOrFallback()
         )
