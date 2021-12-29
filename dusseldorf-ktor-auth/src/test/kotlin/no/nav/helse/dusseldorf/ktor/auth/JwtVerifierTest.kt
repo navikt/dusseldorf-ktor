@@ -1,8 +1,10 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
 import no.nav.helse.dusseldorf.testsupport.jws.Azure
+import no.nav.helse.dusseldorf.testsupport.jws.IDPorten
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2JwksUrl
+import no.nav.helse.dusseldorf.testsupport.wiremock.getIDPortenJwksUrl
 import org.junit.AfterClass
 import org.junit.Test
 import java.net.URI
@@ -14,64 +16,115 @@ internal class JwtVerifierTest {
 
     @Test
     fun `Ugyldig jwt`() {
-        assertFalse(jwtVerifier.verify("eyFoo.bar"))
+        assertFalse(azureJwtVerifier.verify("eyFoo.bar"))
     }
 
     @Test
     fun `Feil issuer`() {
-        assertFalse(jwtVerifier.verify(Azure.V1_0.generateJwt(
-            clientId = "foo",
-            audience = "bar"
-        )))
+        assertFalse(
+            azureJwtVerifier.verify(
+                Azure.V1_0.generateJwt(
+                    clientId = "foo",
+                    audience = "bar"
+                )
+            )
+        )
     }
 
     @Test
     fun `Expired token`() {
-        assertFalse(jwtVerifier.verify(Azure.V2_0.generateJwt(
-            clientId = "foo",
-            audience = "bar",
-            overridingClaims = mapOf(
-                "exp" to "${Instant.now().minusSeconds(60).epochSecond}"
+        assertFalse(
+            azureJwtVerifier.verify(
+                Azure.V2_0.generateJwt(
+                    clientId = "foo",
+                    audience = "bar",
+                    overridingClaims = mapOf(
+                        "exp" to "${Instant.now().minusSeconds(60).epochSecond}"
+                    )
+                )
             )
-        )))
+        )
     }
 
     @Test
     fun `Manglende claims`() {
-        assertFalse(jwtVerifier.verify(Azure.V2_0.generateJwt(
-            clientId = "foo",
-            audience = "bar"
-        )))
+        assertFalse(
+            azureJwtVerifier.verify(
+                Azure.V2_0.generateJwt(
+                    clientId = "foo",
+                    audience = "bar"
+                )
+            )
+        )
     }
 
     @Test
     fun `Token med riktig claims`() {
-        assertTrue(jwtVerifier.verify(Azure.V2_0.generateJwt(
-            clientId = "foo",
-            audience = "bar",
-            overridingClaims = mapOf(
-                "tokenName" to "id_token"
+        assertTrue(
+            azureJwtVerifier.verify(
+                Azure.V2_0.generateJwt(
+                    clientId = "foo",
+                    audience = "bar",
+                    overridingClaims = mapOf(
+                        "tokenName" to "id_token"
+                    )
+                )
             )
-        )))
+        )
+    }
+
+    @Test
+    fun `IDPorten idToken genereres som forventet`() {
+        assertTrue(
+            idPortenJwtVerifier.verify(
+                IDPorten.generateIdToken(
+                    fnr = "12345678910"
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `IDPorten accessToken genereres som forventet`() {
+        assertTrue(
+            idPortenJwtVerifier.verify(
+                IDPorten.generateAccessToken(
+                    fnr = "12345678910"
+                )
+            )
+        )
     }
 
     internal companion object {
-        private val wireMock = WireMockBuilder().withAzureSupport().build()
+        private val wireMock = WireMockBuilder()
+            .withIDPortenSupport()
+            .withAzureSupport().build()
 
-        private val jwtVerifier = JwtVerifier(
+        private val azureJwtVerifier = JwtVerifier(
             issuer = Issuer(
                 alias = "azure-v2",
                 issuer = Azure.V2_0.getIssuer(),
                 jwksUri = URI(wireMock.getAzureV2JwksUrl()),
                 audience = null
             ),
-            additionalClaimRules = setOf(EnforceEqualsOrContains(
-                defaultClaimName = "tokenName",
-                expected = "id_token"
-            ))
+            additionalClaimRules = setOf(
+                EnforceEqualsOrContains(
+                    defaultClaimName = "tokenName",
+                    expected = "id_token"
+                )
+            )
         )
 
-        @AfterClass @JvmStatic
+        private val idPortenJwtVerifier = JwtVerifier(
+            issuer = Issuer(
+                alias = "id-porten",
+                issuer = IDPorten.getIssuer(),
+                jwksUri = URI(wireMock.getIDPortenJwksUrl())
+            )
+        )
+
+        @AfterClass
+        @JvmStatic
         fun cleanup() {
             wireMock.stop()
         }

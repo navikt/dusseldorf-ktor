@@ -22,8 +22,8 @@ object IDPorten: Issuer {
         """.trimIndent()
     private val jwsFunctions = JwsFunctions(privateKeyJwk)
 
-    private const val audience = "http://localhost/id-porten/v2.0/audience"
-    private const val actualIssuer = "http://localhost/id-porten/v2.0/issuer"
+    private const val audience = "http://localhost/id-porten/audience"
+    private const val actualIssuer = "http://localhost/id-porten/issuer"
 
     override fun getIssuer() = actualIssuer
     fun getAudience() = audience

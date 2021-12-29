@@ -16,7 +16,7 @@ class WireMockBuilder {
         private const val AZURE_V1_TOKEN_TRANSFORMER = "azure-v1-token"
         private const val AZURE_V2_TOKEN_TRANSFORMER = "azure-v2-token"
         private const val LOGIN_SERVICE_V1_TRANSFORMER = "login-service-v1"
-        private const val ID_PORTEN_V2_TRANSFORMER = "id-porten-v2"
+        private const val ID_PORTEN_V2_TRANSFORMER = "id-porten"
         private const val NAIS_STS_TRANSFORMER = "nais-sts"
         private const val TOKENDINGS_TRANSFORMER = "tokendings"
     }
