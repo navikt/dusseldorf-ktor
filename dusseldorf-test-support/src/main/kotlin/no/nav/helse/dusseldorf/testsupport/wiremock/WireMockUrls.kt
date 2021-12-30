@@ -40,10 +40,10 @@ internal object Paths {
     internal const val LOGIN_SERVICE_V1_WELL_KNOWN_PATH = "$LOGIN_SERVICE_V1_PATH/.well-known"
     internal const val LOGIN_SERVICE_V1_JWKS_PATH = "$LOGIN_SERVICE_V1_PATH/jwks"
 
-    private const val ID_PORTEN_PATH = "/id-porten"
+    private const val ID_PORTEN_PATH = "/idporten-oidc-provider"
     internal const val ID_PORTEN_V2_LOGIN_PATH = "$ID_PORTEN_PATH/login"
-    internal const val ID_PORTEN_WELL_KNOWN_PATH = "$ID_PORTEN_PATH/.well-known"
-    internal const val ID_PORTEN_JWKS_PATH = "$ID_PORTEN_PATH/jwks"
+    internal const val ID_PORTEN_WELL_KNOWN_PATH = "$ID_PORTEN_PATH/.well-known/openid-configuration"
+    internal const val ID_PORTEN_JWKS_PATH = "$ID_PORTEN_PATH/jwk"
     internal const val ID_PORTEN_V2_TOKEN_PATH = "$ID_PORTEN_PATH/token"
 
     private const val NAIS_STS_PATH = "/nais-sts"
