@@ -11,10 +11,10 @@ data class IdToken(val value: String) {
         throw IdTokenInvalidFormatException(this, cause)
     }
 
-    internal fun somHttpAuthHeader(): HttpAuthHeader = HttpAuthHeader.Single("Bearer", value)
+    fun somHttpAuthHeader(): HttpAuthHeader = HttpAuthHeader.Single("Bearer", value)
 
-    internal fun getId(): String? = jwt.id
-    internal fun getNorskIdentifikasjonsnummer(): String {
+    fun getId(): String? = jwt.id
+    fun getNorskIdentifikasjonsnummer(): String {
         val issuer = jwt.issuer.lowercase()
         return when {
             issuer.contains("b2clogin") || issuer.contains("login-service") -> jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Token mangler 'sub' claim.")
