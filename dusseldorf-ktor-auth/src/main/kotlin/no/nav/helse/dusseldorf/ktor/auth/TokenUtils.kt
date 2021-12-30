@@ -2,6 +2,7 @@ package no.nav.helse.dusseldorf.ktor.auth
 
 import com.auth0.jwt.JWT
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.auth.*
 
 data class IdToken(val value: String) {
@@ -31,6 +32,11 @@ class IdTokenProvider(
         val cookie = call.request.cookies[cookieName] ?: throw CookieNotSetException(cookieName)
         return IdToken(value = cookie)
     }
+}
+
+fun ApplicationCall.idToken() : IdToken {
+    val jwt: String = request.parseAuthorizationHeader()?.render() ?: throw IllegalStateException("Token ikke satt")
+    return IdToken(jwt.substringAfter("Bearer "))
 }
 
 class CookieNotSetException(cookieName : String) : RuntimeException("Ingen cookie med navnet '$cookieName' satt.")
