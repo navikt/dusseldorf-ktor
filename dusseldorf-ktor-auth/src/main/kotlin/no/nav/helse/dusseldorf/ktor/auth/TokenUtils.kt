@@ -18,8 +18,9 @@ data class IdToken(val value: String) {
     fun getNorskIdentifikasjonsnummer(): String {
         val issuer = jwt.issuer.lowercase()
         return when {
-            issuer.contains("b2clogin") || issuer.contains("login-service") -> jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Token mangler 'sub' claim.")
-            issuer.contains("idporten") -> jwt.claims["pid"]?.asString() ?: throw IllegalStateException("Token mangler 'pid' claim.")
+            issuer.contains("b2clogin") || issuer.contains("login-service") -> jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Loginservice token mangler 'sub' claim.")
+            issuer.contains("idporten") -> jwt.claims["pid"]?.asString() ?: throw IllegalStateException("IDPorten token mangler 'pid' claim.")
+            issuer.contains("tokendings") -> jwt.claims["pid"]?.asString() ?: jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Tokendings token mangler 'pid/sub' claim.")
             else -> throw IllegalStateException("${jwt.issuer} er ukjent.")
         }
     }
