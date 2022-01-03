@@ -32,15 +32,8 @@ fun CallLogging.Configuration.logRequests(
     logger = LOG
     level = Level.INFO
     filter { call -> !excludePaths.contains(call.request.path()) }
-    format {
-        val path = if(templateQueryParameters) it.request.uri.templateQueryParameters() else it.request.path()
-
-        when (val status = it.response.status() ?: "Unhandled") {
-            HttpStatusCode.Found -> "${status as HttpStatusCode}: ${it.request.httpMethod.value} -> ${it.response.headers[HttpHeaders.Location]}"
-            "Unhandled" -> "Unhandled: ${it.request.httpMethod.value} - $path"
-            else -> "${status as HttpStatusCode}: ${it.request.httpMethod.value} - $path"
-        }
-    }
+    disableDefaultColors()
+    if(templateQueryParameters) format { applicationCall -> applicationCall.request.uri.templateQueryParameters() }
 }
 
 fun ApplicationRequest.log(
