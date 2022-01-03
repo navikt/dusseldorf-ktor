@@ -20,9 +20,11 @@ object Tokendings : Issuer {
     private val jwsFunctions = JwsFunctions(privateKeyJwk)
 
     private const val actualIssuer = "http://localhost/tokendings/issuer"
+    private const val audience = "http://localhost/tokendings/audience"
 
     override fun getPublicJwk() : String = jwsFunctions.getPublicJwk()
     override fun getIssuer() = actualIssuer
+    fun getAudience() = audience
 
     private fun String.urlDecodedBodyAsMap() = split("&").associate {
         it.split("=")[0] to it.split("=")[1]
@@ -57,6 +59,21 @@ object Tokendings : Issuer {
 
         return jwsFunctions.generateJwt(
             claims = subjectTokenClaims.plus(tokendingsClaims)
+        )
+    }
+
+    fun generateUrlDecodedBody(
+        grantType: String = "urn:ietf:params:oauth:grant-type:token-exchange",
+        clientAssertionType: String = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+        clientId: String = "dev-fss:dusseldorf:k9-selvbetjening-oppslag",
+        clientAssertion: String = generateAssertionJwt(mapOf("client_id" to clientId)),
+        subjectTokenType: String = "urn:ietf:params:oauth:token-type:jwt",
+        subjectToken: String
+    ): String = "grant_type=$grantType&client_assertion_type=$clientAssertionType&client_assertion=$clientAssertion&subject_token_type=$subjectTokenType&subject_token=$subjectToken&audience=${getAudience()}"
+
+    fun generateAssertionJwt(claims: Map<String, Any>): String {
+        return jwsFunctions.generateJwt(
+            claims = claims
         )
     }
 
