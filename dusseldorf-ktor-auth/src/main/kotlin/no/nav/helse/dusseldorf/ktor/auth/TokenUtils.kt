@@ -26,7 +26,7 @@ data class IdToken(val value: String) {
     fun issuerIsLoginservice() = issuer().contains("b2clogin") || issuer().contains("login-service")
     fun issuerIsIDPorten() = issuer().contains("idporten")
     fun issuerIsTokendings() = issuer().contains("tokendings")
-    fun issuerIsAzure() = issuer().contains("microsoftonline")
+    fun issuerIsAzure() = issuer().contains("microsoftonline") || issuer().contains("azure")
     fun somHttpAuthHeader(): HttpAuthHeader = HttpAuthHeader.Single("Bearer", value)
 }
 
