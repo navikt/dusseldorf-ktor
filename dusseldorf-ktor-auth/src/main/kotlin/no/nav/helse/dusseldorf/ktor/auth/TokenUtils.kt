@@ -12,18 +12,21 @@ data class IdToken(val value: String) {
         throw IdTokenInvalidFormatException(this, cause)
     }
 
-    fun somHttpAuthHeader(): HttpAuthHeader = HttpAuthHeader.Single("Bearer", value)
-
-    fun getId(): String? = jwt.id
     fun getNorskIdentifikasjonsnummer(): String {
-        val issuer = jwt.issuer.lowercase()
         return when {
-            issuer.contains("b2clogin") || issuer.contains("login-service") -> jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Loginservice token mangler 'sub' claim.")
-            issuer.contains("idporten") -> jwt.claims["pid"]?.asString() ?: throw IllegalStateException("IDPorten token mangler 'pid' claim.")
-            issuer.contains("tokendings") -> jwt.claims["pid"]?.asString() ?: jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Tokendings token mangler 'pid/sub' claim.")
+            issuerIsLoginservice() -> jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Loginservice token mangler 'sub' claim.")
+            issuerIsIDPorten() -> jwt.claims["pid"]?.asString() ?: throw IllegalStateException("IDPorten token mangler 'pid' claim.")
+            issuerIsTokendings() -> jwt.claims["pid"]?.asString() ?: jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Tokendings token mangler 'pid/sub' claim.")
             else -> throw IllegalStateException("${jwt.issuer} er ukjent.")
         }
     }
+
+    fun getId(): String? = jwt.id
+    fun issuer() = jwt.issuer.lowercase()
+    fun issuerIsLoginservice() = issuer().contains("b2clogin") || issuer().contains("login-service")
+    fun issuerIsIDPorten() = issuer().contains("idporten")
+    fun issuerIsTokendings() = issuer().contains("tokendings")
+    fun somHttpAuthHeader(): HttpAuthHeader = HttpAuthHeader.Single("Bearer", value)
 }
 
 class IdTokenProvider(
