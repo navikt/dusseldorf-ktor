@@ -35,10 +35,10 @@
         <ktor.version>1.6.7</ktor.version>
         <kotlin.version>1.6.10</kotlin.version>
         <kotlinx.coroutines.version>1.6.0</kotlinx.coroutines.version>
-        <micrometer.version>1.8.1</micrometer.version>
+        <micrometer.version>1.8.2</micrometer.version>
         <jackson.version>2.13.1</jackson.version>
         <logback.version>1.2.10</logback.version>
-        <slf4j.version>1.7.32</slf4j.version>
+        <slf4j.version>1.7.33</slf4j.version>
         <logstash.logback.version>7.0.1</logstash.logback.version>
         <prometheus.version>0.14.0</prometheus.version>
         <caffeine.version>3.0.5</caffeine.version>
@@ -50,7 +50,7 @@
 
         <!-- Interne versjoner -->
         <unleash.version>5.0.3</unleash.version>
-        <oauth2-oidc-sdk.version>9.20.1</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>9.22</oauth2-oidc-sdk.version>
         <wiremock.version>2.32.0</wiremock.version>
     </properties>
 
