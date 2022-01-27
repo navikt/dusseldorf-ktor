@@ -31,11 +31,20 @@ data class IdToken(val value: String) {
 }
 
 class IdTokenProvider(
-    private val cookieName : String
+    private val cookieName : String?,
+    private val støtteCookieOgAuthHeader: Boolean = false
 ) {
     fun getIdToken(call: ApplicationCall) : IdToken {
-        val cookie = call.request.cookies[cookieName] ?: throw CookieNotSetException(cookieName)
-        return IdToken(value = cookie)
+        if(cookieName != null) {
+            val cookie = call.request.cookies[cookieName]
+            if(cookie != null) return IdToken(cookie)
+            if(!støtteCookieOgAuthHeader) throw CookieNotSetException(cookieName)
+        }
+
+        val jwt = call.request.parseAuthorizationHeader()?.render()
+        if(jwt != null) return IdToken(jwt.substringAfter("Bearer "))
+
+        throw NoTokenSetException()
     }
 }
 
@@ -46,3 +55,4 @@ fun ApplicationCall.idToken() : IdToken {
 
 class CookieNotSetException(cookieName : String) : RuntimeException("Ingen cookie med navnet '$cookieName' satt.")
 class IdTokenInvalidFormatException(idToken: IdToken, cause: Throwable? = null) : RuntimeException("$idToken er på ugyldig format.", cause)
+class NoTokenSetException() : RuntimeException("Fant ikke token som cookie eller authorization header.")
