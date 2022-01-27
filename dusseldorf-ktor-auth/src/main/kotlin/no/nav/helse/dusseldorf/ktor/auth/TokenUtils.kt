@@ -40,7 +40,7 @@ class IdTokenProvider(
         if(cookieName != null) {
             val cookie = call.request.cookies[cookieName]
             if(cookie != null) return IdToken(cookie)
-            throw CookieNotSetException(cookieName)
+            else throw CookieNotSetException(cookieName)
         }
 
         throw UnAuthorizedException()
