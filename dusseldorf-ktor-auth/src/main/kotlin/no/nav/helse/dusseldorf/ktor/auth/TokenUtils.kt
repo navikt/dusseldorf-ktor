@@ -44,7 +44,7 @@ class IdTokenProvider(
         val jwt = call.request.parseAuthorizationHeader()?.render()
         if(jwt != null) return IdToken(jwt.substringAfter("Bearer "))
 
-        throw NoTokenSetException()
+        throw UnAuthorizedException()
     }
 }
 
@@ -55,4 +55,4 @@ fun ApplicationCall.idToken() : IdToken {
 
 class CookieNotSetException(cookieName : String) : RuntimeException("Ingen cookie med navnet '$cookieName' satt.")
 class IdTokenInvalidFormatException(idToken: IdToken, cause: Throwable? = null) : RuntimeException("$idToken er på ugyldig format.", cause)
-class NoTokenSetException() : RuntimeException("Fant ikke token som cookie eller authorization header.")
+class UnAuthorizedException() : RuntimeException("Fant ikke token som cookie eller authorization header.")
