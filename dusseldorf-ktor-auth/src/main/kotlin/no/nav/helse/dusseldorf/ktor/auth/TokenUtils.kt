@@ -31,18 +31,17 @@ data class IdToken(val value: String) {
 }
 
 class IdTokenProvider(
-    private val cookieName : String?,
-    private val støtteCookieOgAuthHeader: Boolean = false
+    private val cookieName : String?
 ) {
     fun getIdToken(call: ApplicationCall) : IdToken {
+        val jwt = call.request.parseAuthorizationHeader()?.render()
+        if(jwt != null) return IdToken(jwt.substringAfter("Bearer "))
+
         if(cookieName != null) {
             val cookie = call.request.cookies[cookieName]
             if(cookie != null) return IdToken(cookie)
-            if(!støtteCookieOgAuthHeader) throw CookieNotSetException(cookieName)
+            throw CookieNotSetException(cookieName)
         }
-
-        val jwt = call.request.parseAuthorizationHeader()?.render()
-        if(jwt != null) return IdToken(jwt.substringAfter("Bearer "))
 
         throw UnAuthorizedException()
     }
