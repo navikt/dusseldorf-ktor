@@ -14,7 +14,7 @@ data class IdToken(val value: String) {
 
     fun getNorskIdentifikasjonsnummer(): String {
         return when {
-            issuerIsLoginservice() -> jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Loginservice token mangler 'sub' claim.")
+            issuerIsLoginservice() -> jwt.claims["pid"]?.asString() ?: jwt.claims["sub"]?.asString()  ?: throw IllegalStateException("Loginservice token mangler 'pid/sub' claim.")
             issuerIsIDPorten() -> jwt.claims["pid"]?.asString() ?: throw IllegalStateException("IDPorten token mangler 'pid' claim.")
             issuerIsTokendings() -> jwt.claims["pid"]?.asString() ?: jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Tokendings token mangler 'pid/sub' claim.")
             else -> throw IllegalStateException("${jwt.issuer} er ukjent.")
