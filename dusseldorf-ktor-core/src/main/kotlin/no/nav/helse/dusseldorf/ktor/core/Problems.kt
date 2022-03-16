@@ -1,10 +1,9 @@
 package no.nav.helse.dusseldorf.ktor.core
 
-import io.ktor.application.ApplicationCall
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
+import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.response.*
-import io.ktor.util.AttributeKey
+import io.ktor.util.*
 import org.json.JSONObject
 import org.slf4j.Logger
 import java.net.URI

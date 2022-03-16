@@ -2,6 +2,9 @@ package no.nav.helse.dusseldorf.ktor.metrics
 
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpStatusCode.Companion.Forbidden
+import io.ktor.http.HttpStatusCode.Companion.NotFound
+import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import io.ktor.metrics.micrometer.MicrometerMetrics
 import io.ktor.util.AttributeKey
 import io.micrometer.core.instrument.Clock
@@ -24,7 +27,12 @@ fun MicrometerMetrics.Configuration.init(
                     else -> "failure"
                 }
         )
-        tag("problem_details", call.resolveProblemDetailsTag())
+        when(call.response.status()) {
+            Unauthorized, Forbidden, NotFound -> {}
+            else -> {
+                tag("problem_details", call.resolveProblemDetailsTag())
+            }
+        }
     }
 }
 
