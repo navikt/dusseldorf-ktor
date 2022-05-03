@@ -38,6 +38,7 @@ class StringExtTest {
                 "13085973295" to true,
                 "25107774818" to true,
                 "19108773351" to true,
+                "10915596784" to true, //TestNorge bruker med +8 på tredje siffer
                 "917755736" to false,
                 "29099012345" to false,
                 "011261702690" to false,
