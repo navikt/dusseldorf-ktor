@@ -19,9 +19,15 @@ private fun String.starterMedFodselsdato() : Boolean {
     // Kunne sett på individsifre (Tre første av personnummer) for å tolke århundre,
     // men virker unødvendig komplekst og sårbart for ev. endringer i fødselsnummeret.
     return try {
-        fnrDateFormat.parse(substring(0,6))
+        val siffer3 = substring(2,3).toInt()
+        if (siffer3 >= 8) { //Syntetisk bruker fra TestNorge som har tredje siffer + 8
+            val fnr = this.replaceRange(2,3, "${siffer3-8}")
+            fnrDateFormat.parse(fnr.substring(0, 6))
+        } else fnrDateFormat.parse(substring(0, 6))
         true
-    } catch (cause: Throwable) { false }
+    } catch (cause: Throwable) {
+        false
+    }
 }
 
 fun String.erGyldigFodselsnummer() : Boolean {
