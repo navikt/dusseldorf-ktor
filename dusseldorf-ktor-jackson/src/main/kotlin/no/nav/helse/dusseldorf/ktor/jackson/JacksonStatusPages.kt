@@ -14,23 +14,34 @@ private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.kt
 fun StatusPages.Configuration.JacksonStatusPages() {
 
     exception<JsonMappingException> { cause ->
-        val violations= mutableSetOf<Violation>()
-        cause.path.filter { it.fieldName != null }.forEach {
-            violations.add(
+        if (cause.cause is IllegalArgumentException) {
+            call.respondProblemDetails(
+                DefaultProblemDetails(
+                    title = "IllegalArgumentException",
+                    status = 400,
+                    detail = "${cause.cause as IllegalArgumentException} -> ${cause.path}"
+                ),
+                logger
+            )
+        } else {
+            val violations = mutableSetOf<Violation>()
+            cause.path.filter { it.fieldName != null }.forEach {
+                violations.add(
                     Violation(
-                            parameterType = ParameterType.ENTITY,
-                            parameterName = it.fieldName,
-                            reason = "Må være satt.",
-                            invalidValue = null
+                        parameterType = ParameterType.ENTITY,
+                        parameterName = it.fieldName,
+                        reason = "Må være satt.",
+                        invalidValue = null
 
                     )
-            )
+                )
+            }
+
+            val problemDetails = ValidationProblemDetails(violations)
+
+            logger.debug("Feil ved mapping av JSON", cause)
+            call.respondProblemDetails(problemDetails, logger)
         }
-
-        val problemDetails = ValidationProblemDetails(violations)
-
-        logger.debug("Feil ved mapping av JSON", cause)
-        call.respondProblemDetails(problemDetails, logger)
     }
 
     exception<JsonProcessingException> { cause ->
