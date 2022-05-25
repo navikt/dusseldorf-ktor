@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter
  *
  * Validering skjer ved instansiering. Ved valideringsfeil kastes det en IllegalArgumentException.
  *
+ * For mer info om fnr og dn
+ * @see <a href="http://www.fnrinfo.no/Info/Oppbygging.aspx">fnrinfo.no</a>
  */
 class Personidentifikator(private val ident: String) {
 
