@@ -7,8 +7,7 @@ import java.time.format.DateTimeFormatter
  * Klassen Personidentifikator respresenterer enten en FNR, DNR, TEST_NORGE_FNR eller TEST_NORGE_DNR.
  *
  * Validering skjer ved instansiering. Ved valideringsfeil kastes det en IllegalArgumentException.
- * Personidentifikator er cluster bevisst dersom det finnes et miljøvariabel NAIS_CLUSTER_NAME (dev-gcp, prod-gcp etc.).
- * Validering av TEST_NORGE identer er gyldige kun dersom appen er i en dev-miljø.
+ *
  */
 class Personidentifikator(private val ident: String) {
 
