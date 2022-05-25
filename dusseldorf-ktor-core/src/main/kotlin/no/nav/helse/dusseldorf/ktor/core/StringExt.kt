@@ -43,6 +43,7 @@ private fun String.starterMedFodselsdato() : Boolean {
     }
 }
 
+@Deprecated("Erstattes", ReplaceWith("Personidentifikator()", "no.nav.helse.dusseldorf.common.Personidentifikator"))
 fun String.erGyldigFodselsnummer() : Boolean {
     if (length != 11 || !erKunSiffer() || !starterMedFodselsdato()) return false
 
@@ -77,6 +78,7 @@ fun String.erGyldigOrganisasjonsnummer() : Boolean {
  * https://github.com/navikt/helse-sparkel/blob/2e79217ae00632efdd0d4e68655ada3d7938c4b6/src/main/kotlin/no/nav/helse/ws/organisasjon/Mod11.kt
  * https://www.miles.no/blogg/tema/teknisk/validering-av-norske-data
  */
+@Deprecated("Erstattes", ReplaceWith("Mod11", "no.nav.helse.dusseldorf.common.Mod11"))
 internal object Mod11 {
     private val defaultVekttallProvider: (Int) -> Int = { 2 + it % 6 }
 
