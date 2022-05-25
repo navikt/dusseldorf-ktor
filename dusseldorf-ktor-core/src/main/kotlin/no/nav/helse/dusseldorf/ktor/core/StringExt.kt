@@ -43,7 +43,7 @@ private fun String.starterMedFodselsdato() : Boolean {
     }
 }
 
-@Deprecated("Erstattes", ReplaceWith("Personidentifikator", "no.nav.helse.dusseldorf.common.Personidentifikator"))
+@Deprecated("Erstattes", ReplaceWith("Personidentifikator()", "no.nav.helse.dusseldorf.common.Personidentifikator"))
 fun String.erGyldigFodselsnummer() : Boolean {
     if (length != 11 || !erKunSiffer() || !starterMedFodselsdato()) return false
 

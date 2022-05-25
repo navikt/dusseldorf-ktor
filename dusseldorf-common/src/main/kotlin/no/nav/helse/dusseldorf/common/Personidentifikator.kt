@@ -49,7 +49,7 @@ class Personidentifikator(private val ident: String) {
         val forventetKontrollsifferTo = ident[10] // siffer nr. 10
 
         val kalkulertKontrollsifferTo = Mod11.kontrollsiffer(
-            number = ident.substring(0, 10),
+            number = ident.take(10),
             vekttallProvider = vekttallProviderFnr2
         )
 
@@ -65,7 +65,7 @@ class Personidentifikator(private val ident: String) {
         val forventetKontrollsifferEn = ident[9] // siffer nr. 9
 
         val kalkulertKontrollsifferEn = Mod11.kontrollsiffer(
-            number = ident.substring(0, 9),
+            number = ident.take(9),
             vekttallProvider = vekttallProviderFnr1
         )
 
