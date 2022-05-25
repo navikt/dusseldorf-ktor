@@ -4,6 +4,8 @@ import java.net.URL
 import java.time.format.DateTimeFormatter
 
 private val KUN_SIFFER = Regex("\\d+")
+private const val TEST_NORGE_GRENSEVERDI = 8 //Syntetisk bruker fra TestNorge som har tredje siffer + 8
+private const val D_NUMMER_GRENSEVERDI = 4 //D-nummer har første siffer + 4
 
 internal val vekttallProviderFnr1 : (Int) -> Int = { arrayOf(3, 7, 6, 1, 8, 9, 4, 5, 2).reversedArray()[it] }
 internal val vekttallProviderFnr2 : (Int) -> Int = { arrayOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2).reversedArray()[it] }
@@ -13,17 +15,28 @@ fun String.fromResources() : URL = Thread.currentThread().contextClassLoader.get
 
 fun String.erKunSiffer() = matches(KUN_SIFFER)
 
+private fun String.førsteSiffer() = substring(0, 1).toInt()
+private fun String.tredjeSiffer() = substring(2, 3).toInt()
+
+private fun String.erTestNorgeNummer() = tredjeSiffer() >= TEST_NORGE_GRENSEVERDI
+private fun String.erDNummer() = førsteSiffer() >= D_NUMMER_GRENSEVERDI
+private fun String.erTestNorgeOgDNummer() = erTestNorgeNummer() && erDNummer()
+
+private fun String.tilVanligFraDNummer() = replaceRange(0, 1, "${førsteSiffer()-D_NUMMER_GRENSEVERDI}")
+private fun String.tilVanligFraTestNorgeNummer() = replaceRange(2,3, "${tredjeSiffer()-TEST_NORGE_GRENSEVERDI}")
+
 private fun String.starterMedFodselsdato() : Boolean {
     // Sjekker ikke hvilket århundre vi skal tolket yy som, kun at det er en gyldig dato.
     // F.eks blir 290990 parset til 2090-09-29, selv om 1990-09-29 var ønskelig.
     // Kunne sett på individsifre (Tre første av personnummer) for å tolke århundre,
     // men virker unødvendig komplekst og sårbart for ev. endringer i fødselsnummeret.
     return try {
-        val siffer3 = substring(2,3).toInt()
-        if (siffer3 >= 8) { //Syntetisk bruker fra TestNorge som har tredje siffer + 8
-            val fnr = this.replaceRange(2,3, "${siffer3-8}")
-            fnrDateFormat.parse(fnr.substring(0, 6))
-        } else fnrDateFormat.parse(substring(0, 6))
+        when {
+            erTestNorgeOgDNummer() -> fnrDateFormat.parse(tilVanligFraDNummer().tilVanligFraTestNorgeNummer().substring(0, 6))
+            erTestNorgeNummer() -> fnrDateFormat.parse(tilVanligFraTestNorgeNummer().substring(0, 6))
+            erDNummer() -> fnrDateFormat.parse(tilVanligFraDNummer().substring(0, 6))
+            else -> fnrDateFormat.parse(substring(0, 6))
+        }
         true
     } catch (cause: Throwable) {
         false
