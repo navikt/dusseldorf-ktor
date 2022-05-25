@@ -48,7 +48,7 @@ class Personidentifikator(private val ident: String) {
     }
 
     private fun erGyldigKontrollsifferTo() {
-        val forventetKontrollsifferTo = ident[10] // siffer nr. 10
+        val forventetKontrollsifferTo = ident[10] // siffer nr. 11
 
         val kalkulertKontrollsifferTo = Mod11.kontrollsiffer(
             number = ident.take(10),
@@ -64,7 +64,7 @@ class Personidentifikator(private val ident: String) {
     }
 
     private fun erGyldigKontrollsiffeEn() {
-        val forventetKontrollsifferEn = ident[9] // siffer nr. 9
+        val forventetKontrollsifferEn = ident[9] // siffer nr. 10
 
         val kalkulertKontrollsifferEn = Mod11.kontrollsiffer(
             number = ident.take(9),
@@ -89,7 +89,7 @@ class Personidentifikator(private val ident: String) {
 
     private fun erElleveSiffer() {
         require(ident.matches(identRegex)) {
-            val grunn = "Forventet at personidentifikator kun var siffer, men var $ident (${ident.length})"
+            val grunn = "Forventet at personidentifikator kun var siffer, men var ${maskIdent()} (${ident.length})"
             logger.warn(grunn)
             grunn
         }
@@ -128,6 +128,14 @@ class Personidentifikator(private val ident: String) {
             logger.warn("Feilet med å parse fødselsdato for type: $type. Grunn:", cause)
             false
         }
+    }
+
+    override fun toString(): String {
+        return maskIdent()
+    }
+
+    private fun maskIdent(): String {
+       return ident.take(6) + "******"
     }
 
     private fun førsteSiffer(): Int = ident.substring(0, 1).toInt()
