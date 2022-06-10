@@ -1,7 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.streams
 
-import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.server.config.ApplicationConfig
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
 import no.nav.helse.dusseldorf.ktor.core.id

@@ -1,6 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.unleash
 
-import io.ktor.config.*
+import io.ktor.server.config.ApplicationConfig
 import io.getunleash.UnleashContext
 import io.getunleash.util.UnleashConfig
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString

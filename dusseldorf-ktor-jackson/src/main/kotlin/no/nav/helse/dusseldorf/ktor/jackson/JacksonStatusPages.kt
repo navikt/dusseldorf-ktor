@@ -2,18 +2,16 @@ package no.nav.helse.dusseldorf.ktor.jackson
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonMappingException
-import io.ktor.application.call
-import io.ktor.features.StatusPages
-import io.ktor.response.header
+import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import no.nav.helse.dusseldorf.ktor.core.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages")
 
-fun StatusPages.Configuration.JacksonStatusPages() {
+fun StatusPagesConfig.JacksonStatusPages() {
 
-    exception<JsonMappingException> { cause ->
+    exception<JsonMappingException> { call, cause ->
         if (cause.cause is IllegalArgumentException) {
             call.respondProblemDetails(
                 DefaultProblemDetails(
@@ -44,7 +42,7 @@ fun StatusPages.Configuration.JacksonStatusPages() {
         }
     }
 
-    exception<JsonProcessingException> { cause ->
+    exception<JsonProcessingException> { call, cause ->
 
         val problemDetails = DefaultProblemDetails(
                 title = "invalid-json-entity",

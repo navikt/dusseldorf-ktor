@@ -1,9 +1,9 @@
 package no.nav.helse.dusseldorf.ktor.core
 
-import io.ktor.application.call
-import io.ktor.response.respondText
-import io.ktor.routing.Route
-import io.ktor.routing.get
+import io.ktor.server.application.call
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

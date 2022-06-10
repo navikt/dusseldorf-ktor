@@ -1,13 +1,13 @@
 package no.nav.helse.dusseldorf.ktor.core
 
-import io.ktor.application.ApplicationCall
-import io.ktor.application.ApplicationCallPipeline
-import io.ktor.application.ApplicationFeature
-import io.ktor.features.CallId
-import io.ktor.features.callId
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.ApplicationCallPipeline
+import io.ktor.server.application.BaseApplicationPlugin
+import io.ktor.server.plugins.callid.callId
+import io.ktor.server.plugins.callid.CallIdConfig
 import io.ktor.http.HttpHeaders
 import io.ktor.http.encodeURLParameter
-import io.ktor.request.header
+import io.ktor.server.request.header
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
 import org.slf4j.Logger
@@ -27,7 +27,7 @@ internal object IdVerifier {
     internal fun String.trimId() = removePrefix(GeneratedIdPrefix)
 }
 
-fun CallId.Configuration.fromFirstNonNullHeader(headers: List<String>, generateOnInvalid: Boolean = false, generateOnNotSet: Boolean = false) {
+fun CallIdConfig.fromFirstNonNullHeader(headers: List<String>, generateOnInvalid: Boolean = false, generateOnNotSet: Boolean = false) {
     retrieve { call ->
         when (val fromHeaders = headers.mapNotNull { call.request.header(it) }.firstOrNull()) {
             null -> when (generateOnNotSet) {
@@ -48,12 +48,12 @@ fun CallId.Configuration.fromFirstNonNullHeader(headers: List<String>, generateO
 }
 
 // Henter fra CorrelationID (backend tjenester)
-fun CallId.Configuration.fromXCorrelationIdHeader(generateOnInvalid: Boolean = false, generateOnNotSet: Boolean = false) = fromFirstNonNullHeader(
+fun CallIdConfig.fromXCorrelationIdHeader(generateOnInvalid: Boolean = false, generateOnNotSet: Boolean = false) = fromFirstNonNullHeader(
     headers = listOf(HttpHeaders.XCorrelationId), generateOnInvalid = generateOnInvalid, generateOnNotSet = false
 )
 
 // Genererer CorrelationID (frontend tjeneste)
-fun CallId.Configuration.generated() {
+fun CallIdConfig.generated() {
     generate { IdVerifier.generate() }
 }
 
@@ -88,7 +88,7 @@ class CallIdRequired(private val configure: Configuration) {
     }
 
     companion object Feature :
-            ApplicationFeature<ApplicationCallPipeline, Configuration, CallIdRequired> {
+        BaseApplicationPlugin<ApplicationCallPipeline, Configuration, CallIdRequired> {
 
         override fun install(pipeline: ApplicationCallPipeline, configure: Configuration.() -> Unit): CallIdRequired {
             return CallIdRequired(Configuration().apply(configure))

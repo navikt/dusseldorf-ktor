@@ -2,13 +2,13 @@ package no.nav.helse.dusseldorf.ktor.auth
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
-import io.ktor.application.ApplicationCall
-import io.ktor.auth.Authentication
-import io.ktor.auth.jwt.JWTPrincipal
-import io.ktor.auth.jwt.jwt
-import io.ktor.auth.parseAuthorizationHeader
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
 import io.ktor.http.auth.HttpAuthHeader
-import io.ktor.request.ApplicationRequest
+import io.ktor.server.request.ApplicationRequest
+import io.ktor.server.auth.AuthenticationConfig
+import io.ktor.server.auth.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
@@ -17,7 +17,7 @@ private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.kt
 private const val AUTH_SCHEME = "Bearer "
 private const val FALLBACK_ALIAS = "fallback"
 
-fun Authentication.Configuration.multipleJwtIssuers(
+fun AuthenticationConfig.multipleJwtIssuers(
     issuers : Map<Issuer, Set<ClaimRule>>,
     logJwtPayloadOnUnsupportedIssuer: Boolean = false,
     extractHttpAuthHeader: (ApplicationCall) -> HttpAuthHeader? = { call ->

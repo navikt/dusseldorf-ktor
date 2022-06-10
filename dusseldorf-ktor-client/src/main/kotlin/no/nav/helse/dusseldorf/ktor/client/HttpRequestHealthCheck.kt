@@ -1,6 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.client
 
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -44,9 +44,9 @@ class HttpRequestHealthCheck(
     override suspend fun check(): Result {
         val triplets = coroutineScope {
             val futures = mutableListOf<Deferred<Pair<HttpRequestData, kotlin.Result<HttpResponse>>>>()
-            urlConfigMap.forEach { (url, config) ->
+            urlConfigMap.forEach { (url: URI, config) ->
                 futures.add(async {
-                    url.httpGet { builder ->
+                    url.toString().httpGet { builder ->
                         config.httpHeaders.forEach { (key, value) ->
                             builder.header(key, value)
                         }
@@ -78,7 +78,7 @@ class HttpRequestHealthCheck(
                 httpResponse == null -> httpResponseResult.exceptionOrNull()?.cause?.message ?: httpResponseResult.exceptionOrNull()?.message ?: "Ukjent feil.".also {
                     logger.error(it)
                 }
-                !isExpected || (isExpected && config.includeExpectedStatusEntity) -> httpResponse.readText().jsonOrString()
+                !isExpected || (isExpected && config.includeExpectedStatusEntity) -> httpResponse.bodyAsText().jsonOrString()
                 else -> "Healthy!"
             }
 

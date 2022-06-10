@@ -1,9 +1,9 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
 import com.auth0.jwt.JWT
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.http.auth.*
+import io.ktor.http.auth.HttpAuthHeader
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.auth.parseAuthorizationHeader
 
 data class IdToken(val value: String) {
     private val jwt = try {

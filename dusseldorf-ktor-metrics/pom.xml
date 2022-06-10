@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>
-            <artifactId>ktor-metrics-micrometer</artifactId>
+            <artifactId>ktor-server-metrics-micrometer-jvm</artifactId>
             <version>${ktor.version}</version>
         </dependency>
         <dependency>

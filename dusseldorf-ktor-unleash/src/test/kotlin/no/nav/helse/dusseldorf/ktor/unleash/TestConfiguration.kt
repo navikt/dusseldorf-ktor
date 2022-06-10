@@ -1,7 +1,8 @@
 package no.nav.helse.dusseldorf.ktor.unleash
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.config.*
+import io.ktor.server.config.ApplicationConfig
+import io.ktor.server.config.*
 
 internal object TestConfiguration {
 

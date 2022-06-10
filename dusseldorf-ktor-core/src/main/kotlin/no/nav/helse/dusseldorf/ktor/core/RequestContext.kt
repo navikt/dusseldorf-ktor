@@ -1,9 +1,9 @@
 package no.nav.helse.dusseldorf.ktor.core
 
-import io.ktor.application.*
-import io.ktor.features.*
+import io.ktor.server.application.*
 import io.ktor.http.*
-import io.ktor.request.*
+import io.ktor.server.plugins.callid.*
+import io.ktor.server.request.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.AbstractCoroutineContextElement
