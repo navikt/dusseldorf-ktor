@@ -26,6 +26,10 @@ dependencies {
     implementation("no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfKtorVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+
+    // TODO: fjerner etter publisering av pakke.
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:2.0.2")
+    implementation("io.ktor:ktor-serialization-jackson-jvm:2.0.2")
 }
 
 repositories {

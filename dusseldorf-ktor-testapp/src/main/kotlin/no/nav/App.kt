@@ -1,13 +1,13 @@
 package no.nav
 
-import io.ktor.application.*
+import io.ktor.server.application.*
+import io.ktor.server.netty.EngineMain
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.serialization.jackson.*
 import io.ktor.client.statement.*
-import io.ktor.features.*
 import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.util.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.delay
 import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthCheck
@@ -25,7 +25,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.App")
 
@@ -81,7 +81,7 @@ fun Application.app() {
             require(metrics.contains("# HELP"))
             val health = "http://localhost:1337/health".httpGet().second.getOrThrow()
             require(health.status == HttpStatusCode.OK)
-            health.readText().also { require(it.contains("ALIVE") && it.contains("READY")) }
+            health.bodyAsText().also { require(it.contains("ALIVE") && it.contains("READY")) }
             call.respond(metrics)
         }
     }
