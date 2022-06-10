@@ -1,9 +1,9 @@
 package no.nav.helse.dusseldorf.ktor.core
 
-import io.ktor.features.CallLogging
-import io.ktor.features.callIdMdc
 import io.ktor.http.*
-import io.ktor.request.*
+import io.ktor.server.plugins.callloging.CallLoggingConfig
+import io.ktor.server.plugins.callid.*
+import io.ktor.server.request.*
 import no.nav.helse.dusseldorf.ktor.core.IdVerifier.trimId
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,7 +11,7 @@ import org.slf4j.event.Level
 
 private val LOG: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.CallLoggingExt")
 
-fun CallLogging.Configuration.correlationIdAndRequestIdInMdc() {
+fun CallLoggingConfig.correlationIdAndRequestIdInMdc() {
     callIdMdc("correlation_id")
     mdc("request_id") { call ->
         val requestId = when (val fraHeader = call.request.header(HttpHeaders.XRequestId)?.trimId()) {
@@ -25,7 +25,7 @@ fun CallLogging.Configuration.correlationIdAndRequestIdInMdc() {
     }
 }
 
-fun CallLogging.Configuration.logRequests(
+fun CallLoggingConfig.logRequests(
     excludePaths : Set<String> = Paths.DEFAULT_EXCLUDED_PATHS,
     templateQueryParameters: Boolean = false
 ) {

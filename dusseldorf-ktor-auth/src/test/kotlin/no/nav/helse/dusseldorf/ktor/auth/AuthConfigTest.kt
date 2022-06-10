@@ -1,8 +1,7 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.config.HoconApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.server.config.HoconApplicationConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

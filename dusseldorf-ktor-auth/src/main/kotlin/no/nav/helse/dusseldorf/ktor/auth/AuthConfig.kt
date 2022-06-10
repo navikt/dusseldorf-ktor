@@ -1,7 +1,7 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
-import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.server.config.ApplicationConfig
+import io.ktor.server.config.*
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString

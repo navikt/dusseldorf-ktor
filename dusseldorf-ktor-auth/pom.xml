@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>
-            <artifactId>ktor-auth-jwt</artifactId>
+            <artifactId>ktor-server-auth-jwt-jvm</artifactId>
             <version>${ktor.version}</version>
         </dependency>
         <dependency>

@@ -16,14 +16,16 @@ fun Url.Companion.buildURL(
     val withBasePath= mutableListOf(baseUrl.path)
     withBasePath.addAll(pathParts)
 
-    val parametersBuilder = ParametersBuilder()
-    queryParameters.forEach { queryParameter ->
-        queryParameter.value.forEach { it ->
-            parametersBuilder.append(queryParameter.key, it)
+    val parameters = Parameters.build {
+        val parametersBuilder = ParametersBuilder()
+        queryParameters.forEach { queryParameter ->
+            queryParameter.value.forEach {
+                parametersBuilder.append(queryParameter.key, it)
+            }
         }
     }
 
-    val urlBuilder = URLBuilder(parameters = parametersBuilder)
+    val urlBuilder = URLBuilder(parameters = parameters)
             .takeFrom(baseUrl.toString())
             .trimmedPath(withBasePath)
 
@@ -39,5 +41,5 @@ private fun URLBuilder.trimmedPath(pathParts : List<String>): URLBuilder  {
             trimmedPathParts.add(part.trimStart('/').trimEnd('/'))
         }
     }
-    return path(trimmedPathParts)
+    return appendPathSegments(trimmedPathParts)
 }

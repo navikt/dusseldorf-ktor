@@ -21,5 +21,5 @@ interface LoginRequest {
     fun fnr() : String?
     fun redirect() : URI
     fun cookieName(): String?
-    fun cookieSecure(): Boolean = redirect().toString().toLowerCase().startsWith("https")
+    fun cookieSecure(): Boolean = redirect().toString().lowercase().startsWith("https")
 }

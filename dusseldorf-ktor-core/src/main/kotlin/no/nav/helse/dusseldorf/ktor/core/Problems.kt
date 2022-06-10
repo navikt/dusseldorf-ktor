@@ -1,8 +1,8 @@
 package no.nav.helse.dusseldorf.ktor.core
 
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.response.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 import io.ktor.util.*
 import org.json.JSONObject
 import org.slf4j.Logger
@@ -129,7 +129,7 @@ data class ValidationProblemDetails(
         val invalidParametersList : MutableList<Map<String, Any?>> = mutableListOf()
         violations.forEach{
             invalidParametersList.add(mapOf(
-                    Pair("type", it.parameterType.name.toLowerCase()),
+                    Pair("type", it.parameterType.name.lowercase()),
                     Pair("name", it.parameterName),
                     Pair("reason", it.reason),
                     Pair("invalid_value", it.invalidValue)

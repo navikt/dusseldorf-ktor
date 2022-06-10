@@ -1,6 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.core
 
-import io.ktor.application.Application
+import io.ktor.server.application.Application
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

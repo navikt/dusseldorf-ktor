@@ -1,10 +1,10 @@
 package no.nav.helse.dusseldorf.ktor.metrics
 
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.http.*
-import io.ktor.response.*
-import io.ktor.routing.Route
-import io.ktor.routing.get
+import io.ktor.server.response.*
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import no.nav.helse.dusseldorf.ktor.core.Paths

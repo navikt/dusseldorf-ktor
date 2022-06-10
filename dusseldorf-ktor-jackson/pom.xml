@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>
-            <artifactId>ktor-jackson</artifactId>
+            <artifactId>ktor-serialization-jackson</artifactId>
             <version>${ktor.version}</version>
         </dependency>
         <dependency>

@@ -1,12 +1,8 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
-import io.ktor.application.*
-import io.ktor.features.*
+import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.http.*
-import io.ktor.response.*
-import no.nav.helse.dusseldorf.ktor.auth.ClaimEnforcementFailed
-import no.nav.helse.dusseldorf.ktor.auth.CookieNotSetException
-import no.nav.helse.dusseldorf.ktor.auth.IdTokenInvalidFormatException
+import io.ktor.server.response.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -18,26 +14,26 @@ import org.slf4j.LoggerFactory
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.auth.AuthorizationStatusPagesKt.IdTokenStatusPages")
 
-fun StatusPages.Configuration.IdTokenStatusPages() {
+fun StatusPagesConfig.IdTokenStatusPages() {
 
-    exception<ClaimEnforcementFailed> { cause ->
+    exception<ClaimEnforcementFailed> { call, cause ->
         call.respond(HttpStatusCode.Forbidden)
         // Kan ha vært logget inn på en annen NAV-tjeneste som ikke krever nivå 4 i forkant
         // og må nå logge inn på nytt. Trenger ikke å logge noe error på dette
         logger.trace(cause.message)
     }
 
-    exception<CookieNotSetException> { cause ->
+    exception<CookieNotSetException> { call, cause ->
         call.respond(HttpStatusCode.Unauthorized)
         logger.trace(cause.message)
     }
 
-    exception<UnAuthorizedException> { cause ->
+    exception<UnAuthorizedException> { call, cause ->
         call.respond(HttpStatusCode.Unauthorized)
         logger.trace(cause.message)
     }
 
-    exception<IdTokenInvalidFormatException> { cause ->
+    exception<IdTokenInvalidFormatException> { call, cause ->
         call.respond(HttpStatusCode.Unauthorized)
         logger.error(cause.message)
     }
