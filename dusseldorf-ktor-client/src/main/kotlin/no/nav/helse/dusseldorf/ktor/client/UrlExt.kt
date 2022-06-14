@@ -41,5 +41,6 @@ private fun URLBuilder.trimmedPath(pathParts : List<String>): URLBuilder  {
             trimmedPathParts.add(part.trimStart('/').trimEnd('/'))
         }
     }
-    return appendPathSegments(trimmedPathParts)
+    path(*trimmedPathParts.toTypedArray())
+    return this
 }
