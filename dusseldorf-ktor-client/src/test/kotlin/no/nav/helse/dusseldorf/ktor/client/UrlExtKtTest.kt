@@ -14,8 +14,6 @@ class UrlExtKtTest {
             pathParts = listOf("v1", "dokument")
         )
 
-        println(completeUrl)
-
         val urlMedDokumentId = Url.buildURL(
             baseUrl = completeUrl,
             pathParts = listOf("123")
