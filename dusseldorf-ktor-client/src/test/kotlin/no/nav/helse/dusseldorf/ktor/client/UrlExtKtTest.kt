@@ -21,4 +21,19 @@ class UrlExtKtTest {
 
         assertEquals("http://localhost:8080/v1/dokument/123", urlMedDokumentId)
     }
+    
+    @Test
+    fun `lag forventet url med queryparameters`(){
+        val baseUrl = Url.buildURL(
+            baseUrl = URI("http://k9-joark")
+        )
+
+        val url = Url.buildURL(
+            baseUrl = baseUrl,
+            pathParts = listOf("v1", "omsorgspengeutbetaling", "journalforing"),
+            queryParameters = mapOf("parameter" to listOf("query1", "query2"))
+        ).toString()
+
+        assertEquals("http://k9-joark/v1/omsorgspengeutbetaling/journalforing?parameter=query1&parameter=query2", url)
+    }
 }
