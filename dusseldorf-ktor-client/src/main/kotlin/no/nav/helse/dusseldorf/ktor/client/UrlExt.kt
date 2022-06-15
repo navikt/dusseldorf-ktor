@@ -16,14 +16,13 @@ fun Url.Companion.buildURL(
     val withBasePath= mutableListOf(baseUrl.path)
     withBasePath.addAll(pathParts)
 
-    val parameters = Parameters.build {
-        val parametersBuilder = ParametersBuilder()
+    val parameters = ParametersBuilder().apply {
         queryParameters.forEach { queryParameter ->
             queryParameter.value.forEach {
-                parametersBuilder.append(queryParameter.key, it)
+                append(queryParameter.key, it)
             }
         }
-    }
+    }.build()
 
     val urlBuilder = URLBuilder(parameters = parameters)
             .takeFrom(baseUrl.toString())
