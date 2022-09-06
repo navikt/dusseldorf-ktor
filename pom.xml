@@ -37,9 +37,9 @@
         <kotlin.version>1.7.10</kotlin.version>
         <kotlinx.coroutines.version>1.6.4</kotlinx.coroutines.version>
         <micrometer.version>1.9.3</micrometer.version>
-        <jackson.version>2.13.3</jackson.version>
-        <logback.version>1.2.11</logback.version>
-        <slf4j.version>1.7.36</slf4j.version>
+        <jackson.version>2.13.4</jackson.version>
+        <logback.version>1.4.0</logback.version>
+        <slf4j.version>2.0.0</slf4j.version>
         <logstash.logback.version>7.2</logstash.logback.version>
         <prometheus.version>0.16.0</prometheus.version>
         <caffeine.version>3.1.1</caffeine.version>
@@ -51,8 +51,9 @@
 
         <!-- Interne versjoner -->
         <unleash.version>6.0.1</unleash.version>
-        <oauth2-oidc-sdk.version>9.41</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>9.43</oauth2-oidc-sdk.version>
         <wiremock.version>2.33.2</wiremock.version>
+        <wiremock-jetty.version>9.4.48.v20220622</wiremock-jetty.version>
     </properties>
 
     <repositories>
