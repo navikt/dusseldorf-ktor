@@ -53,7 +53,6 @@
         <unleash.version>6.0.1</unleash.version>
         <oauth2-oidc-sdk.version>9.43</oauth2-oidc-sdk.version>
         <wiremock.version>2.33.2</wiremock.version>
-        <wiremock-jetty.version>9.4.48.v20220622</wiremock-jetty.version>
     </properties>
 
     <repositories>
