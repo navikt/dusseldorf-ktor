@@ -33,10 +33,10 @@
         <maven.compiler.target>16</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
-        <ktor.version>2.1.0</ktor.version>
+        <ktor.version>2.1.1</ktor.version>
         <kotlin.version>1.7.10</kotlin.version>
         <kotlinx.coroutines.version>1.6.4</kotlinx.coroutines.version>
-        <micrometer.version>1.9.3</micrometer.version>
+        <micrometer.version>1.9.4</micrometer.version>
         <jackson.version>2.13.4</jackson.version>
         <logback.version>1.4.0</logback.version>
         <slf4j.version>2.0.0</slf4j.version>
@@ -51,7 +51,7 @@
 
         <!-- Interne versjoner -->
         <unleash.version>6.0.1</unleash.version>
-        <oauth2-oidc-sdk.version>9.43</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>9.43.1</oauth2-oidc-sdk.version>
         <wiremock.version>2.33.2</wiremock.version>
     </properties>
 
