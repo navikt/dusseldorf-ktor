@@ -44,7 +44,7 @@
         <prometheus.version>0.16.0</prometheus.version>
         <caffeine.version>3.1.1</caffeine.version>
         <!-- må være samme som kafkaVersjon som i embedded -->
-        <kafka.version>3.2.1</kafka.version>
+        <kafka.version>3.2.2</kafka.version>
         <kafka.embedded.env.version>3.2.1</kafka.embedded.env.version>
         <orgjson.version>20220320</orgjson.version>
         <junit.version>5.9.0</junit.version>
