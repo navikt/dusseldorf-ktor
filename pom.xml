@@ -46,7 +46,7 @@
         <!-- må være samme som kafkaVersjon som i embedded -->
         <kafka.version>3.2.3</kafka.version>
         <kafka.embedded.env.version>3.2.1</kafka.embedded.env.version>
-        <orgjson.version>20220320</orgjson.version>
+        <orgjson.version>20220924</orgjson.version>
         <junit.version>5.9.1</junit.version>
 
         <!-- Interne versjoner -->
