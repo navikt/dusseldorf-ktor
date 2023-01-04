@@ -1,9 +1,10 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.server.config.HoconApplicationConfig
+import io.ktor.server.config.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 
@@ -107,6 +108,31 @@ class AuthConfigTest {
         assertEquals(2, client.size)
         assertEquals("jeg-er-konfigurert-eksplisitt", (client["azure-v1"] as PrivateKeyClient).certificateHexThumbprint)
         assertEquals("jeg-er-hentet-fra-kid", (client["azure-v2"] as PrivateKeyClient).certificateHexThumbprint)
+    }
+
+    @Test
+    fun `Skal hente verdi fra prioritert konfigurasjon ved MergedApplicationConfig`() {
+        val applicationConfig = MapApplicationConfig(
+            "$CLIENT_PREFIX.size" to "1",
+
+            "$CLIENT_PREFIX.0.alias" to "azure-v2",
+            "$CLIENT_PREFIX.0.client_id" to "",
+            "$CLIENT_PREFIX.0.private_key_jwk" to "",
+            "$CLIENT_PREFIX.0.discovery_endpoint" to ""
+        )
+
+        val testConfig = MapApplicationConfig(
+            "$CLIENT_PREFIX.size" to "1",
+
+            "$CLIENT_PREFIX.0.alias" to "azure-v2",
+            "$CLIENT_PREFIX.0.client_id" to "azure-client-id",
+            "$CLIENT_PREFIX.0.private_key_jwk" to """{"kid" : "jeg-er-hentet-fra-kid"}""".trimIndent(),
+            "$CLIENT_PREFIX.0.discovery_endpoint" to mock.getValidDiscoveryEndpoint()
+        )
+
+        val config = testConfig.withFallback(applicationConfig)
+        val klienter = config.clients()
+        assertNotNull(klienter["azure-v2"]?.tokenEndpoint())
     }
 
 
