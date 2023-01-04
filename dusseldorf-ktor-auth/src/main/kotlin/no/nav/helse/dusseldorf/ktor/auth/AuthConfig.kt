@@ -23,11 +23,9 @@ private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.kt
 
 fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, Issuer> {
     val issuersConfigList = configList(path)
-    if (issuersConfigList.isNullOrEmpty()) return emptyMap()
+        .asReversed().associateBy { it.getRequiredString("alias", false) }
     val issuers = mutableMapOf<String, Issuer>()
-    for (issuerConfig in issuersConfigList) {
-        // Required
-        val alias = issuerConfig.getRequiredString("alias", false)
+    for ((alias, issuerConfig) in issuersConfigList) {
         logger.info("Issuer[$alias]")
         // Enten issuer+jwks_uri eller discovery_endpoint
         val discoveryJson = runBlocking { issuerConfig.getOptionalString("discovery_endpoint", false)?.discover(listOf(ISSUER, JWKS_URI)) }
@@ -79,10 +77,10 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
 
 fun ApplicationConfig.clients(path: String = "nav.auth.clients") : Map<String, Client> {
     val clientsConfigList = configList(path)
-    if (clientsConfigList.isNullOrEmpty()) return emptyMap()
+        .asReversed().associateBy { it.getRequiredString("alias", false) }
+
     val clients = mutableMapOf<String, Client>()
-    for (clientConfig in clientsConfigList) {
-        val alias = clientConfig.getRequiredString("alias", false)
+    for ((alias, clientConfig) in clientsConfigList) {
         logger.info("Client[$alias]")
         val clientId = clientConfig.getOptionalString("client_id", false)
         if (clientId == null) {
