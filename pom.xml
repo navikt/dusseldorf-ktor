@@ -46,7 +46,7 @@
         <kafka.version>3.3.1</kafka.version>
         <kafka.embedded.env.version>3.2.1</kafka.embedded.env.version>
         <orgjson.version>20220924</orgjson.version>
-        <junit.version>5.9.1</junit.version>
+        <junit.version>5.9.2</junit.version>
         <gson.version>2.10</gson.version>
 
         <!-- Interne versjoner -->
