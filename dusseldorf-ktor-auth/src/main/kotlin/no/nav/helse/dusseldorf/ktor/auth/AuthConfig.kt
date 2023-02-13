@@ -1,13 +1,13 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
-import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.config.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
-import org.json.simple.JSONObject
-import org.json.simple.parser.JSONParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -18,7 +18,6 @@ private const val ISSUER = "issuer"
 private const val JWKS_URI = "jwks_uri"
 private const val TOKEN_ENDPOINT = "token_endpoint"
 
-private val jsonParser = JSONParser()
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.auth.AuthConfig")
 
 fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, Issuer> {
@@ -116,16 +115,16 @@ fun ApplicationConfig.clients(path: String = "nav.auth.clients") : Map<String, C
     return clients.toMap()
 }
 
-private fun String.discover(requiredAttributes : List<String>) : JSONObject? {
+private fun String.discover(requiredAttributes : List<String>) : JsonObject? {
     val asText = URL(this).readText()
-    val asJson = jsonParser.parse(asText) as JSONObject
+    val asJson = Json.parseToJsonElement(asText).jsonObject
     return if (asJson.containsKeys(requiredAttributes)) asJson else {
         logger.warn("Response fra Discovery Endpoint inneholdt ikke attributtene '[${requiredAttributes.joinToString()}]'. Response='$asText'")
         null
     }
 }
 
-private fun JSONObject.containsKeys(requiredAttributes: List<String>): Boolean {
+private fun JsonObject.containsKeys(requiredAttributes: List<String>): Boolean {
     requiredAttributes.forEach {
         if (!containsKey(it)) return false
     }
