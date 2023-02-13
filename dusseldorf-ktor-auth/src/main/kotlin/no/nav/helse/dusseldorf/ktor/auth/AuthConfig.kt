@@ -4,6 +4,7 @@ import io.ktor.server.config.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
@@ -28,8 +29,8 @@ fun ApplicationConfig.issuers(path: String = "nav.auth.issuers") : Map<String, I
         logger.info("Issuer[$alias]")
         // Enten issuer+jwks_uri eller discovery_endpoint
         val discoveryJson = runBlocking { issuerConfig.getOptionalString("discovery_endpoint", false)?.discover(listOf(ISSUER, JWKS_URI)) }
-        val issuer = if (discoveryJson != null) discoveryJson[ISSUER] as String else issuerConfig.getOptionalString(ISSUER, false)
-        val jwksUrl = if (discoveryJson != null) discoveryJson[JWKS_URI] as String else issuerConfig.getOptionalString(JWKS_URI, false)
+        val issuer = if (discoveryJson != null) (discoveryJson[ISSUER] as JsonPrimitive).content else issuerConfig.getOptionalString(ISSUER, false)
+        val jwksUrl = if (discoveryJson != null) (discoveryJson[JWKS_URI] as JsonPrimitive).content else issuerConfig.getOptionalString(JWKS_URI, false)
         logger.info("Issuer[$alias].issuer = '$issuer'")
         logger.info("Issuer[$alias].jwks_uri = '$jwksUrl'")
         if (issuer == null || jwksUrl == null) {
@@ -90,7 +91,7 @@ fun ApplicationConfig.clients(path: String = "nav.auth.clients") : Map<String, C
         }
 
         val discoveryJson = runBlocking { clientConfig.getOptionalString("discovery_endpoint", false)?.discover(listOf(TOKEN_ENDPOINT)) }
-        val tokenEndpoint = URI(if (discoveryJson != null) discoveryJson[TOKEN_ENDPOINT] as String else clientConfig.getRequiredString(TOKEN_ENDPOINT, false))
+        val tokenEndpoint = URI(if (discoveryJson != null) (discoveryJson[TOKEN_ENDPOINT] as JsonPrimitive).content else clientConfig.getRequiredString(TOKEN_ENDPOINT, false))
         logger.info("Client[$alias].token_endpoint = '$tokenEndpoint'")
 
         val clientSecret = clientConfig.getOptionalString("client_secret", true)

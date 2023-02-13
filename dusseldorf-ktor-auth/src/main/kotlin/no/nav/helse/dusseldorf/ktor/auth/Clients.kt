@@ -1,6 +1,7 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import java.net.URI
 
@@ -19,6 +20,6 @@ data class PrivateKeyClient(
         private val tokenEndpoint: URI,
         val privateKeyJwk: String,
         val certificateHexThumbprint : String = requireNotNull(
-                (Json.parseToJsonElement(privateKeyJwk).jsonObject)["kid"].toString()
+                (Json.parseToJsonElement(privateKeyJwk).jsonObject["kid"] as JsonPrimitive).content
         )
 ) : Client(clientId, tokenEndpoint)
