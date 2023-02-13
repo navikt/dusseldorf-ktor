@@ -1,7 +1,7 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
-import org.json.simple.JSONObject
-import org.json.simple.parser.JSONParser
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import java.net.URI
 
 abstract class Client(private val clientId : String, private val tokenEndpoint: URI) {
@@ -19,6 +19,6 @@ data class PrivateKeyClient(
         private val tokenEndpoint: URI,
         val privateKeyJwk: String,
         val certificateHexThumbprint : String = requireNotNull(
-                (JSONParser().parse(privateKeyJwk) as JSONObject)["kid"].toString()
+                (Json.parseToJsonElement(privateKeyJwk).jsonObject)["kid"].toString()
         )
 ) : Client(clientId, tokenEndpoint)
