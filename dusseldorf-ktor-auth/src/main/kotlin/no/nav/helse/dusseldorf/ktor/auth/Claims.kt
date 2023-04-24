@@ -1,6 +1,5 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
-import com.auth0.jwt.impl.NullClaim
 import com.auth0.jwt.interfaces.Claim
 
 interface EnforcementOutcome
@@ -21,7 +20,7 @@ open class EnforceEqualsOrContains(
     override fun enforce(claims: Map<String, Claim>): EnforcementOutcome {
         val resolvedClaimName = resolveClaimName(claims)
         val claimValue = claims[resolvedClaimName]
-        if (claimValue == null || claimValue is NullClaim) return Failure(resolvedClaimName, expected, null)
+        if (claimValue == null || claimValue.isNull) return Failure(resolvedClaimName, expected, null)
 
         val stringValue = claimValue.asString()
         val listValue = claimValue.asList(String::class.java)
