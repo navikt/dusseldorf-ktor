@@ -1,6 +1,5 @@
 package no.nav.helse.dusseldorf.ktor.auth
 
-import com.auth0.jwt.impl.NullClaim
 import com.auth0.jwt.interfaces.Claim
 
 // https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens#payload-claims
@@ -64,7 +63,7 @@ class AzureClaimRules {
             }
             override fun enforce(claims: Map<String, Claim>): EnforcementOutcome {
                 val claimValue = claims[CLAIM]
-                if (claimValue == null || claimValue is NullClaim) return Failure(CLAIM, scopes.joinToString(DELIMITER), null)
+                if (claimValue == null || claimValue.isNull) return Failure(CLAIM, scopes.joinToString(DELIMITER), null)
                 val accessTokenScopes = claimValue.asString().split(DELIMITER).toSet()
                 return if (accessTokenScopes.containsAll(scopes)) Successful(CLAIM, claimValue.asString())
                 else Failure(CLAIM, scopes.joinToString(DELIMITER), accessTokenScopes.joinToString(DELIMITER))
