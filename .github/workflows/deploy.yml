@@ -8,6 +8,7 @@ on:
       - 'LICENCE'
       - 'CODEOWNERS'
       - '.github/workflows/dependabot.yml'
+      - ".github/workflows/dependency-submission.yml"
     branches:
       - master
   workflow_dispatch:
