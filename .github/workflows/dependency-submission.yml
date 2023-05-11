@@ -1,0 +1,15 @@
+name: Monitor dependencies with Dependabot
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "pom.xml"
+      - "**/pom.xml"
+  workflow_dispatch:
+
+jobs:
+  deps:
+    name: Dusseldorf-ktor mvn dependency scan
+    uses: navikt/sif-gha-workflows/.github/workflows/maven-dependency-submission.yml@main
+    secrets: inherit
