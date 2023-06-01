@@ -33,11 +33,11 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
-        <ktor.version>2.3.0</ktor.version>
+        <ktor.version>2.3.1</ktor.version>
         <kotlin.version>1.8.21</kotlin.version>
-        <kotlinx.coroutines.version>1.7.0</kotlinx.coroutines.version>
+        <kotlinx.coroutines.version>1.7.1</kotlinx.coroutines.version>
         <micrometer.version>1.11.0</micrometer.version>
-        <jackson.version>2.15.0</jackson.version>
+        <jackson.version>2.15.2</jackson.version>
         <logback.version>1.4.7</logback.version>
         <slf4j.version>2.0.7</slf4j.version>
         <logstash.logback.version>7.3</logstash.logback.version>
@@ -157,7 +157,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>include-sources</id>
