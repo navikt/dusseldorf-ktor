@@ -5,7 +5,7 @@ on:
     paths-ignore:
       - '**.md'
       - '.gitignore'
-      - 'LICENCE'
+      - 'LICENSE'
       - 'CODEOWNERS'
       - '.github/workflows/dependabot.yml'
       - ".github/workflows/dependency-submission.yml"
@@ -15,6 +15,9 @@ on:
 
 jobs:
   build-and-deploy:
+    permissions:
+      packages: write
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,12 +25,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          cache: gradle
       - name: Kjøre tester i testapp
         run: |
           ./mvnw install
@@ -41,3 +39,10 @@ jobs:
         env:
           GITHUB_USERNAME: x-access-token
           GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get version
+        run: echo "RELEASE_TAG=$(./scripts/get-version.sh)" >> $GITHUB_ENV
+      - name: Publish github release
+        uses: ncipollo/release-action@a2e71bdd4e7dab70ca26a852f29600c98b33153e
+        with:
+          tag: ${{ env.RELEASE_TAG }}
+          generateReleaseNotes: true
