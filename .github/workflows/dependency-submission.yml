@@ -14,3 +14,5 @@ jobs:
     name: Dusseldorf-ktor mvn dependency scan
     uses: navikt/sif-gha-workflows/.github/workflows/maven-dependency-submission.yml@main
     secrets: inherit
+    permissions:
+      contents: write
