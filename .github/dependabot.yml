@@ -4,9 +4,15 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-    open-pull-requests-limit: 20
+    groups:
+      maven:
+        patterns:
+          - "*"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: daily
-    open-pull-requests-limit: 10
+    groups:
+      github:
+        patterns:
+          - "*"
