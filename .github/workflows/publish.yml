@@ -1,0 +1,30 @@
+name: Publish release
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write
+    steps:
+      - name: Checkout latest code
+        uses: actions/checkout@v3
+        with:
+          ref: master
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: maven
+      - name: Publish artifact
+        env:
+          NEW_VERSION: ${{ github.event.release.tag_name }}
+          GITHUB_USERNAME: x-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mvn -B versions:set -DnewVersion=${NEW_VERSION}
+          mvn -B clean deploy --batch-mode --settings ./.github/settings.xml -Dmaven.wagon.http.pool=false --file pom.xml
