@@ -1,6 +1,9 @@
 # Düsseldorf ktor
 Boilerplate for ktor-applikasjoner
 
+## Releasing new versions
+https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+
 ## Moduler
 
 ### dusseldorf-ktor-core
