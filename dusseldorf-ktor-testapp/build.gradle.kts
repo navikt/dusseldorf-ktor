@@ -3,13 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfKtorVersion = "PLACEHOLDER"
 val ktorVersion = ext.get("ktorVersion").toString()
-val junitJupiterVersion = "5.8.2"
+val junitJupiterVersion = "5.10.0"
 
 val mainClass = "no.nav.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.7.0"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    kotlin("jvm") version "1.9.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 buildscript {
@@ -61,6 +61,6 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "7.5.1"
+        gradleVersion = "8.2.1"
     }
 }

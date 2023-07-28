@@ -8,6 +8,14 @@ updates:
       maven:
         patterns:
           - "*"
+  - package-ecosystem: gradle
+    directory: "dusseldorf-ktor-testapp/"
+    schedule:
+      interval: daily
+    groups:
+      gradle-test-app:
+        patterns:
+          - "*"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
