@@ -16,6 +16,8 @@ updates:
       gradle-test-app:
         patterns:
           - "*"
+        exclude-patterns:
+          - "no.nav*"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
