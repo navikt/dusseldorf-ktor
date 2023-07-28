@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "PLACEHOLDER"
+val dusseldorfKtorVersion = "1.2.4.ea423d4"
 val ktorVersion = ext.get("ktorVersion").toString()
 val junitJupiterVersion = "5.10.0"
 
