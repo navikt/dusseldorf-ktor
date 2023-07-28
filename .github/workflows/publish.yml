@@ -24,7 +24,7 @@ jobs:
         env:
           NEW_VERSION: ${{ github.event.release.tag_name }}
           GITHUB_USERNAME: x-access-token
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn -B versions:set -DnewVersion=${NEW_VERSION}
           mvn -B clean deploy --batch-mode --settings ./.github/settings.xml -Dmaven.wagon.http.pool=false --file pom.xml
