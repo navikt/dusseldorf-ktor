@@ -51,7 +51,7 @@
 
         <!-- Interne versjoner -->
         <unleash.version>8.2.0</unleash.version>
-        <oauth2-oidc-sdk.version>10.11</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>10.12</oauth2-oidc-sdk.version>
         <wiremock.version>2.35.0</wiremock.version>
     </properties>
 
