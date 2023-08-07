@@ -50,7 +50,7 @@
         <gson.version>2.10.1</gson.version>
 
         <!-- Interne versjoner -->
-        <unleash.version>8.2.0</unleash.version>
+        <unleash.version>8.2.1</unleash.version>
         <oauth2-oidc-sdk.version>10.13</oauth2-oidc-sdk.version>
         <wiremock.version>2.35.0</wiremock.version>
     </properties>
