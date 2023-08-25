@@ -36,7 +36,7 @@
         <ktor.version>2.3.3</ktor.version>
         <kotlin.version>1.9.10</kotlin.version>
         <kotlinx.coroutines.version>1.7.3</kotlinx.coroutines.version>
-        <micrometer.version>1.11.2</micrometer.version>
+        <micrometer.version>1.11.3</micrometer.version>
         <jackson.version>2.15.2</jackson.version>
         <logback.version>1.4.9</logback.version>
         <slf4j.version>2.0.7</slf4j.version>
