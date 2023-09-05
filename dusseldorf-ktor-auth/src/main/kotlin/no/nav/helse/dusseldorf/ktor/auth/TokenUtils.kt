@@ -16,7 +16,7 @@ data class IdToken(val value: String) {
         return when {
             issuerIsLoginservice() -> jwt.claims["pid"]?.asString() ?: jwt.claims["sub"]?.asString()  ?: throw IllegalStateException("Loginservice token mangler 'pid/sub' claim.")
             issuerIsIDPorten() -> jwt.claims["pid"]?.asString() ?: throw IllegalStateException("IDPorten token mangler 'pid' claim.")
-            issuerIsTokendings() -> jwt.claims["pid"]?.asString() ?: jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Tokendings token mangler 'pid/sub' claim.")
+            issuerIsTokenx() -> jwt.claims["pid"]?.asString() ?: jwt.claims["sub"]?.asString() ?: throw IllegalStateException("Tokenx token mangler 'pid/sub' claim.")
             else -> throw IllegalStateException("${jwt.issuer} er ukjent.")
         }
     }
@@ -25,7 +25,7 @@ data class IdToken(val value: String) {
     fun issuer() = jwt.issuer.lowercase()
     fun issuerIsLoginservice() = issuer().contains("b2clogin") || issuer().contains("login-service")
     fun issuerIsIDPorten() = issuer().contains("idporten")
-    fun issuerIsTokendings() = issuer().contains("tokendings")
+    fun issuerIsTokenx() = issuer().contains("tokenx") || issuer().contains("tokendings")
     fun issuerIsAzure() = issuer().contains("microsoftonline") || issuer().contains("azure")
     fun somHttpAuthHeader(): HttpAuthHeader = HttpAuthHeader.Single("Bearer", value)
 }
