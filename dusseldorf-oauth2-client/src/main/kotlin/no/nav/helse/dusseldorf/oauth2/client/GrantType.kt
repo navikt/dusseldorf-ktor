@@ -7,9 +7,12 @@ enum class GrantType {
     TokenExchange;
 
     internal companion object {
-        internal fun URI.grantType() = when ("$this".contains("tokendings")) {
-            true -> TokenExchange
-            false -> JwtBearer
+        internal fun URI.grantType(): GrantType {
+            val erTokenX = "$this".contains("tokenx") || "$this".contains("tokendings")
+            return when (erTokenX) {
+                true -> TokenExchange
+                false -> JwtBearer
+            }
         }
     }
 }

@@ -51,7 +51,7 @@ internal object Paths {
     internal const val NAIS_STS_WELL_KNOWN_PATH = "$NAIS_STS_PATH/.well-known"
     internal const val NAIS_STS_JWKS_PATH = "$NAIS_STS_PATH/jwks"
 
-    private const val TOKENDINGS_PATH = "/tokendings"
+    private const val TOKENDINGS_PATH = "/tokenx"
     internal const val TOKENDINGS_TOKEN_PATH = "$TOKENDINGS_PATH/token"
     internal const val TOKENDINGS_WELL_KNOWN_PATH = "$TOKENDINGS_PATH/.well-known"
     internal const val TOKENDINGS_JWKS_PATH = "$TOKENDINGS_PATH/jwks"
