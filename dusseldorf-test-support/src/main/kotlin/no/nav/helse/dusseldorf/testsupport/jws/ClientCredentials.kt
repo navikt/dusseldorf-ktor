@@ -1,6 +1,6 @@
 package no.nav.helse.dusseldorf.testsupport.jws
 
-import org.apache.commons.codec.binary.Hex
+import org.apache.hc.client5.http.utils.Hex
 import java.security.MessageDigest
 import java.security.cert.CertificateFactory
 
