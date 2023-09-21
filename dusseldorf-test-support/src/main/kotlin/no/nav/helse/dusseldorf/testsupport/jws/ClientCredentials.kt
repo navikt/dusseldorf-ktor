@@ -1,10 +1,10 @@
 package no.nav.helse.dusseldorf.testsupport.jws
 
-import org.apache.hc.client5.http.utils.Hex
 import java.security.MessageDigest
 import java.security.cert.CertificateFactory
 
 object ClientCredentials {
+    private val HEX_FORMAT: java.util.HexFormat = java.util.HexFormat.of()
     private fun asHexThumbprint(certificatePem : String) : String {
         val certificateFactory = CertificateFactory.getInstance("X.509")
         val certificate = certificatePem.byteInputStream().use {
@@ -12,7 +12,7 @@ object ClientCredentials {
         }
         val messageDigest = MessageDigest.getInstance("SHA-1")
         messageDigest.update(certificate.encoded)
-        return Hex.encodeHexString(messageDigest.digest())
+        return HEX_FORMAT.formatHex(messageDigest.digest())
     }
 
     object ClientA {
