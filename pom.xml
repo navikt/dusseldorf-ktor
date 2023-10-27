@@ -44,7 +44,7 @@
         <prometheus.version>0.16.0</prometheus.version>
         <caffeine.version>3.1.8</caffeine.version>
         <kafka.version>3.5.1</kafka.version>
-        <orgjson.version>20230618</orgjson.version>
+        <orgjson.version>20231013</orgjson.version>
         <junit.version>5.10.0</junit.version>
         <gson.version>2.10.1</gson.version>
 
