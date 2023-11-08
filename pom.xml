@@ -32,8 +32,8 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
-        <ktor.version>2.3.5</ktor.version>
-        <kotlin.version>1.9.10</kotlin.version>
+        <ktor.version>2.3.6</ktor.version>
+        <kotlin.version>1.9.20</kotlin.version>
         <kotlinx.coroutines.version>1.7.3</kotlinx.coroutines.version>
         <micrometer.version>1.11.5</micrometer.version>
         <jackson.version>2.15.3</jackson.version>
@@ -44,11 +44,11 @@
         <caffeine.version>3.1.8</caffeine.version>
         <kafka.version>3.6.0</kafka.version>
         <orgjson.version>20231013</orgjson.version>
-        <junit.version>5.10.0</junit.version>
 
         <!-- Interne versjoner -->
-        <oauth2-oidc-sdk.version>11.5</oauth2-oidc-sdk.version>
-        <wiremock.version>3.2.0</wiremock.version>
+        <oauth2-oidc-sdk.version>11.6</oauth2-oidc-sdk.version>
+        <wiremock.version>3.3.1</wiremock.version>
+        <junit.version>5.10.1</junit.version>
     </properties>
 
     <dependencyManagement>
