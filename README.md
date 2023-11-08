@@ -42,10 +42,6 @@ Ikke KTOR-spesifikk.
 
 Se egen README.md i denne modulen.
 
-### dusseldorf-ktor-unleash
-Modul for konfigurasjon av Unleash klient for feature toggeling.
-Se egen README.md i denne modulen.
-
 ## Fødselsnummer
 I Testklassen `StringExtTest` finnes funksjonen `genererFodselsnummer` for å generere matematisk korrekte fødselsnummer for bruk i enhetstester hvor det er nødvendig.
 
