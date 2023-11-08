@@ -21,6 +21,7 @@
         <module>dusseldorf-ktor-auth</module>
         <module>dusseldorf-ktor-streams</module>
         <!-- ikke ktor spesefikke moduler -->
+        <module>dusseldorf-common</module>
         <module>dusseldorf-oauth2-client</module>
         <module>dusseldorf-test-support</module>
     </modules>
