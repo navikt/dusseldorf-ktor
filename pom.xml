@@ -36,7 +36,7 @@
         <kotlin.version>1.9.20</kotlin.version>
         <kotlinx.coroutines.version>1.7.3</kotlinx.coroutines.version>
         <micrometer.version>1.11.5</micrometer.version>
-        <jackson.version>2.15.3</jackson.version>
+        <jackson.version>2.16.0</jackson.version>
         <logback.version>1.4.11</logback.version>
         <slf4j.version>2.0.9</slf4j.version>
         <logstash.logback.version>7.4</logstash.logback.version>
