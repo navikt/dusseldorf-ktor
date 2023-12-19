@@ -49,6 +49,7 @@
         <oauth2-oidc-sdk.version>11.8</oauth2-oidc-sdk.version>
         <wiremock.version>3.3.1</wiremock.version>
         <junit.version>5.10.1</junit.version>
+        <netty-codec-http2.version>4.1.100.Final</netty-codec-http2.version>
     </properties>
 
     <dependencyManagement>
@@ -72,6 +73,11 @@
                 <groupId>io.ktor</groupId>
                 <artifactId>ktor-server-core</artifactId>
                 <version>${ktor.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http2</artifactId>
+                <version>${netty-codec-http2.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.ktor</groupId>
