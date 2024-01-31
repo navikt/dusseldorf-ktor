@@ -42,6 +42,13 @@ internal class PersonidentifikatorTest {
             // TEST_NORGE_DNR
             "42921275204", // D-nummer fra TestNorge med +4 på første siffer og +8 på tredje
 
+            // DOLLY_FNR (+40 i måned)
+            "17912099997", "12429400544", "12505209719", // Mann
+            "29822099635", "05440355678", "21483609245", // Kvinne
+
+            // DOLLY_DNR (+4 på første siffer og +40 i måned)
+            "55507608360", "52429405181", "52505209540", // Mann
+            "69422056629", "45440356293", "61483601467" // Kvinne
         ]
     )
     internal fun `gitt gyldige identer, forvent ingen feil`(ident: String) {

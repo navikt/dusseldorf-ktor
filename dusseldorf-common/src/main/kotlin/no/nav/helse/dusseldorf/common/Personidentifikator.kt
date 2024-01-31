@@ -20,6 +20,7 @@ class Personidentifikator(private val ident: String) {
 
         val TEST_NORGE_GRENSEVERDI = 8 //Syntetisk bruker fra TestNorge som har tredje siffer + 8
         val D_NUMMER_GRENSEVERDI = 4 //D-nummer har første siffer + 4
+        val DOLLY_FNR_GRENSEVERDI = 40 //FNR fra Dolly har + 40 på måned
 
         val vekttallProviderFnr1: (Int) -> Int = { arrayOf(3, 7, 6, 1, 8, 9, 4, 5, 2).reversedArray()[it] }
         val vekttallProviderFnr2: (Int) -> Int = { arrayOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2).reversedArray()[it] }
@@ -34,6 +35,8 @@ class Personidentifikator(private val ident: String) {
         type = when {
             erTestNorgeDNummer() -> Type.TEST_NORGE_DNR
             erTestNorgeFNummer() -> Type.TEST_NORGE_FNR
+            erDollyDnr() -> Type.DOLLY_DNR
+            erDollyFnr() -> Type.DOLLY_FNR
             erDNummer() -> Type.DNR
             else -> Type.FNR
         }
@@ -123,6 +126,18 @@ class Personidentifikator(private val ident: String) {
                     fødselsdatoFormat.parse(ident.take(6))
                     true
                 }
+
+                Type.DOLLY_FNR -> {
+                    val tilVanligFraDollyFNR = ident.tilVanligFraDollyFNR()
+                    fødselsdatoFormat.parse(tilVanligFraDollyFNR.take(6))
+                    true
+                }
+
+                Type.DOLLY_DNR -> {
+                    val tilVanligFraDollyDNR = ident.tilVanligFraDollyDNR()
+                    fødselsdatoFormat.parse(tilVanligFraDollyDNR.take(6))
+                    true
+                }
             }
         } catch (cause: Throwable) {
             logger.warn("Feilet med å parse fødselsdato for type: $type. Grunn:", cause)
@@ -140,16 +155,43 @@ class Personidentifikator(private val ident: String) {
 
     private fun førsteSiffer(): Int = ident.substring(0, 1).toInt()
     private fun tredjeSiffer(): Int = ident.substring(2, 3).toInt()
+    private fun tredjeOgFjerdeSiffer(): Int = ident.substring(2, 4).toInt()
 
     private fun String.tilVanligFraDNummer(): String = replaceRange(0, 1, "${førsteSiffer() - D_NUMMER_GRENSEVERDI}")
     private fun String.tilVanligFraTestNorgeNummer(): String =
         replaceRange(2, 3, "${tredjeSiffer() - TEST_NORGE_GRENSEVERDI}")
 
+    private fun String.tilVanligFraDollyFNR(): String {
+        val dag = this.substring(0, 2)
+        var måned = this.substring(2, 4).toInt()
+        val år = this.substring(4, 6)
+        val personNummer = this.substring(6)
+
+        måned -= DOLLY_FNR_GRENSEVERDI
+        val nyMåned = if (måned < 10) "0$måned" else måned.toString()
+
+        return "$dag$nyMåned$år$personNummer"
+    }
+    private fun String.tilVanligFraDollyDNR(): String {
+        var dag = this.substring(0, 2)
+        var måned = this.substring(2, 4).toInt()
+        val år = this.substring(4, 6)
+        val personNummer = this.substring(6)
+
+        måned -= DOLLY_FNR_GRENSEVERDI
+        val nyDag = dag.replaceRange(0, 1, "${førsteSiffer() - D_NUMMER_GRENSEVERDI}")
+        val nyMåned = if (måned < 10) "0$måned" else måned.toString()
+
+        return "$nyDag$nyMåned$år$personNummer"
+    }
+
     private fun erTestNorgeFNummer(): Boolean = tredjeSiffer() >= TEST_NORGE_GRENSEVERDI
+    private fun erDollyFnr(): Boolean = tredjeOgFjerdeSiffer() >= DOLLY_FNR_GRENSEVERDI
+    private fun erDollyDnr(): Boolean = erDollyFnr() && erDNummer()
     private fun erDNummer(): Boolean = førsteSiffer() >= D_NUMMER_GRENSEVERDI
     private fun erTestNorgeDNummer(): Boolean = erTestNorgeFNummer() && erDNummer()
 
     enum class Type {
-        FNR, DNR, TEST_NORGE_FNR, TEST_NORGE_DNR
+        FNR, DNR, TEST_NORGE_FNR, TEST_NORGE_DNR, DOLLY_FNR, DOLLY_DNR
     }
 }
