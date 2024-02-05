@@ -16,7 +16,6 @@ internal class PersonidentifikatorTest {
             "917755736",
             "29099012345",
             "011261702690",
-            "22448370767", // Riktig modulus sjekk, men ikke dato i starten,
             "89108773345", // D-nummer der første siffer er større enn 7
         ]
     )
