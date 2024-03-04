@@ -37,7 +37,7 @@
         <kotlinx.coroutines.version>1.7.3</kotlinx.coroutines.version>
         <micrometer.version>1.12.2</micrometer.version>
         <jackson.version>2.16.1</jackson.version>
-        <logback.version>1.4.14</logback.version>
+        <logback.version>1.5.3</logback.version>
         <slf4j.version>2.0.11</slf4j.version>
         <logstash.logback.version>7.4</logstash.logback.version>
         <prometheus.version>0.16.0</prometheus.version>
