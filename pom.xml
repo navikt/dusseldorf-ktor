@@ -46,9 +46,10 @@
         <kafka.version>3.7.0</kafka.version>
         <orgjson.version>20231013</orgjson.version>
 
+        <!-- Interne versjoner -->
+        <junit.version>5.10.2</junit.version>
         <oauth2-oidc-sdk.version>11.10.1</oauth2-oidc-sdk.version>
         <wiremock.version>3.5.2</wiremock.version>
-        <junit.version>5.10.1</junit.version>
         <netty-codec-http2.version>4.1.109.Final</netty-codec-http2.version>
     </properties>
 
