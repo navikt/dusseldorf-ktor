@@ -32,24 +32,25 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
-        <ktor.version>2.3.8</ktor.version>
-        <kotlin.version>1.9.22</kotlin.version>
-        <kotlinx.coroutines.version>1.7.3</kotlinx.coroutines.version>
-        <micrometer.version>1.12.2</micrometer.version>
+        <kotlinx.coroutines.version>1.8.0</kotlinx.coroutines.version>
+        <kotlin.version>1.9.23</kotlin.version>
+        <ktor.version>2.3.10</ktor.version>
+        <jackson.version>2.17.0</jackson.version>
+        <micrometer.version>1.12.5</micrometer.version>
         <jackson.version>2.16.1</jackson.version>
-        <logback.version>1.4.14</logback.version>
-        <slf4j.version>2.0.11</slf4j.version>
+        <logback.version>1.5.5</logback.version>
+        <slf4j.version>2.0.13</slf4j.version>
         <logstash.logback.version>7.4</logstash.logback.version>
         <prometheus.version>0.16.0</prometheus.version>
         <caffeine.version>3.1.8</caffeine.version>
-        <kafka.version>3.6.1</kafka.version>
+        <kafka.version>3.7.0</kafka.version>
         <orgjson.version>20231013</orgjson.version>
 
         <!-- Interne versjoner -->
-        <oauth2-oidc-sdk.version>11.9.1</oauth2-oidc-sdk.version>
-        <wiremock.version>3.3.1</wiremock.version>
         <junit.version>5.10.2</junit.version>
-        <netty-codec-http2.version>4.1.106.Final</netty-codec-http2.version>
+        <oauth2-oidc-sdk.version>11.10.1</oauth2-oidc-sdk.version>
+        <wiremock.version>3.5.2</wiremock.version>
+        <netty-codec-http2.version>4.1.109.Final</netty-codec-http2.version>
     </properties>
 
     <dependencyManagement>
@@ -147,7 +148,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>include-sources</id>
