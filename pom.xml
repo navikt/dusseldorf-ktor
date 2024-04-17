@@ -42,8 +42,8 @@
         <logstash.logback.version>7.4</logstash.logback.version>
         <prometheus.version>0.16.0</prometheus.version>
         <caffeine.version>3.1.8</caffeine.version>
-        <kafka.version>3.6.1</kafka.version>
-        <orgjson.version>20240303</orgjson.version>
+        <kafka.version>3.7.0</kafka.version>
+        <orgjson.version>20231013</orgjson.version>
 
         <!-- Interne versjoner -->
         <oauth2-oidc-sdk.version>11.9.1</oauth2-oidc-sdk.version>
