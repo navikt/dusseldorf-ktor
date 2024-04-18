@@ -37,7 +37,7 @@
         <ktor.version>2.3.10</ktor.version>
         <jackson.version>2.17.0</jackson.version>
         <micrometer.version>1.12.5</micrometer.version>
-        <jackson.version>2.16.1</jackson.version>
+        <jackson.version>2.17.0</jackson.version>
         <logback.version>1.5.5</logback.version>
         <slf4j.version>2.0.13</slf4j.version>
         <logstash.logback.version>7.4</logstash.logback.version>
