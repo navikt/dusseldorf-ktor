@@ -1,6 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.streams
 
-import io.prometheus.client.Gauge
+import io.prometheus.metrics.core.metrics.Gauge
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Result
 import no.nav.helse.dusseldorf.ktor.health.Healthy
@@ -22,9 +22,9 @@ class ManagedStream(
         private val unreadyAfterStreamStoppedIn: Duration) {
 
     private companion object {
-        private val streamStatus = Gauge
-                .build("stream_status",
-                        "Indikerer streamens status. 0 er Running, 1 er stopped.")
+        private val streamStatus = Gauge.builder()
+                .name("stream_status")
+                .help("Indikerer streamens status. 0 er Running, 1 er stopped.")
                 .labelNames("stream")
                 .register()
     }
@@ -119,8 +119,8 @@ class ManagedStream(
         return streams
     }
 
-    private fun Gauge.running() = labels(name).set(0.0)
-    private fun Gauge.stopped() = labels(name).set(1.0)
+    private fun Gauge.running() = labelValues(name).set(0.0)
+    private fun Gauge.stopped() = labelValues(name).set(1.0)
 }
 
 class ManagedStreamHealthy(private val managedStream: ManagedStream) : HealthCheck {

@@ -1,6 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.health
 
-import io.prometheus.client.Gauge
+import io.prometheus.metrics.core.metrics.Gauge
 import kotlinx.coroutines.runBlocking
 import java.time.Duration
 import java.util.*
@@ -16,9 +16,9 @@ class HealthReporter(
         private const val HEALTHY = 0.0
         private const val UNHEALTHY = 1.0
 
-        private val gauge = Gauge
-                .build("health_check_status",
-                        "Indikerer applikasjonens helse status. 0 er OK, 1 indikerer feil.")
+        private val gauge = Gauge.builder()
+                .name("health_check_status")
+                .help("Indikerer applikasjonens helse status. 0 er OK, 1 indikerer feil.")
                 .labelNames("app")
                 .register()
     }
@@ -41,9 +41,9 @@ class HealthReporter(
 
     private fun Gauge.setFromResults(results: List<Result>) {
         if (results.any { it is UnHealthy }) {
-            labels(app).set(UNHEALTHY)
+            labelValues(app).set(UNHEALTHY)
         } else {
-            labels(app).set(HEALTHY)
+            labelValues(app).set(HEALTHY)
         }
     }
 }

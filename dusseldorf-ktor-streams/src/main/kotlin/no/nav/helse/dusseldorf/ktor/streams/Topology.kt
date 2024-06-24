@@ -1,6 +1,6 @@
 package no.nav.helse.dusseldorf.ktor.streams
 
-import io.prometheus.client.Counter
+import io.prometheus.metrics.core.metrics.Counter
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.slf4j.MDCContext
 import no.nav.helse.dusseldorf.ktor.core.Retry
@@ -11,13 +11,13 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 private object StreamCounter {
-    private val counter = Counter.build()
+    private val counter = Counter.builder()
             .name("stream_processing_status_counter")
             .help("Teller for status av prosessering av meldinger på streams.")
             .labelNames("stream", "status")
             .register()
-    internal fun ok(stream: String) = counter.labels(stream, "OK").inc()
-    internal fun feil(stream: String) = counter.labels(stream, "FEIL").inc()
+    internal fun ok(stream: String) = counter.labelValues(stream, "OK").inc()
+    internal fun feil(stream: String) = counter.labelValues(stream, "FEIL").inc()
 }
 
 fun process(

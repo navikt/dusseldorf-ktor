@@ -1,20 +1,18 @@
 package no.nav.helse.dusseldorf.ktor.metrics
 
-import io.prometheus.client.Counter
-import io.prometheus.client.Histogram
+import io.prometheus.metrics.core.metrics.Counter
+import io.prometheus.metrics.core.metrics.Histogram
+
 
 class Operation {
     companion object {
-        private val histogram = Histogram
-                .build("monitored_operation_histogram",
-                        "Histogram som måler operasjoner.")
+        private val histogram = Histogram.builder()
+                .name ("monitored_operation_histogram")
                 .labelNames("app", "operation")
                 .register()
 
-        private val counter = Counter
-                .build(
-                        "monitored_operation_counter",
-                        "Teller for alle målte operasjoenr.")
+        private val counter = Counter.builder()
+                .name("monitored_operation_counter")
                 .labelNames("app", "operation", "result")
                 .register()
 
@@ -24,13 +22,13 @@ class Operation {
                 resultResolver: (T) -> Boolean = { true },
                 block: suspend () -> T
         ) : T {
-            val timer = histogram.labels(app, operation).startTimer()
+            val timer = histogram.labelValues(app, operation).startTimer()
             return try {
                 val result = block()
-                counter.labels(app, operation, resultResolver(result).toResult())
+                counter.labelValues(app, operation, resultResolver(result).toResult())
                 result
             } catch (cause: Throwable) {
-                counter.labels(app, operation, false.toResult()).inc()
+                counter.labelValues(app, operation, false.toResult()).inc()
                 throw cause
             } finally {
                 timer.observeDuration()

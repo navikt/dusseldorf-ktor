@@ -1,12 +1,12 @@
 package no.nav.helse.dusseldorf.ktor.metrics
 
 import io.ktor.server.application.*
-import io.ktor.http.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
-import io.prometheus.client.CollectorRegistry
-import io.prometheus.client.exporter.common.TextFormat
+import io.ktor.server.routing.*
+import io.micrometer.core.instrument.Clock
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import io.prometheus.metrics.model.registry.PrometheusRegistry
 import no.nav.helse.dusseldorf.ktor.core.Paths
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,20 +14,12 @@ import org.slf4j.LoggerFactory
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute")
 
 fun Route.MetricsRoute(
-        collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry,
-        path: String = Paths.DEFAULT_METRICS_PATH) {
-
-    fun ApplicationCall.names() =
-        request.queryParameters.getAll("name[]")?.toSet() ?: emptySet()
-
+    registry : PrometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT, PrometheusRegistry.defaultRegistry, Clock.SYSTEM),
+    path: String = Paths.DEFAULT_METRICS_PATH
+) {
 
     get(path) {
         logger.debug("Metrics hentes")
-        val names = call.names()
-        val metrics = collectorRegistry.filteredMetricFamilySamples(names)
-
-        call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
-            TextFormat.write004(this, metrics)
-        }
+        call.respondText { registry.scrape() }
     }
 }
