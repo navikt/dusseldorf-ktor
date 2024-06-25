@@ -8,7 +8,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.delay
 import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthCheck
 import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthConfig
@@ -30,18 +29,22 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 private val logger: Logger = LoggerFactory.getLogger("no.nav.App")
 
 fun Application.app() {
-    DefaultExports.initialize()
 
     val preStopActions = listOf(FullførAktiveRequester(application = this))
     preStopOnApplicationStopPreparing(preStopActions)
 
+    var prometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT, PrometheusRegistry.defaultRegistry, Clock.SYSTEM)
+
     install(ContentNegotiation) {
         jackson {}
+    }
+    install(MicrometerMetrics) {
+        init("testapp", registry = prometheusMeterRegistry)
     }
 
     routing {
         DefaultProbeRoutes()
-        MetricsRoute()
+        MetricsRoute(registry = prometheusMeterRegistry)
         PreStopRoute(preStopActions)
         HealthRoute(
             healthService = HealthService(setOf(
