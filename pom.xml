@@ -47,7 +47,7 @@
         <orgjson.version>20240303</orgjson.version>
 
         <!-- Interne versjoner -->
-        <junit.version>5.10.2</junit.version>
+        <junit.version>5.10.3</junit.version>
         <oauth2-oidc-sdk.version>11.13</oauth2-oidc-sdk.version>
         <wiremock.version>3.7.0</wiremock.version>
         <netty-codec-http2.version>4.1.111.Final</netty-codec-http2.version>
