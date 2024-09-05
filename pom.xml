@@ -50,7 +50,7 @@
         <junit.version>5.11.0</junit.version>
         <oauth2-oidc-sdk.version>11.19</oauth2-oidc-sdk.version>
         <wiremock.version>3.9.1</wiremock.version>
-        <netty-codec-http2.version>4.1.112.Final</netty-codec-http2.version>
+        <netty-codec-http2.version>4.1.113.Final</netty-codec-http2.version>
     </properties>
 
     <dependencyManagement>
