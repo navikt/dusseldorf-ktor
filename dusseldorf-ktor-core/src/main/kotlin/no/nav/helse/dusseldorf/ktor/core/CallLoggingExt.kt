@@ -1,7 +1,7 @@
 package no.nav.helse.dusseldorf.ktor.core
 
 import io.ktor.http.*
-import io.ktor.server.plugins.callloging.CallLoggingConfig
+import io.ktor.server.plugins.calllogging.CallLoggingConfig
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.request.*
 import no.nav.helse.dusseldorf.ktor.core.IdVerifier.trimId
