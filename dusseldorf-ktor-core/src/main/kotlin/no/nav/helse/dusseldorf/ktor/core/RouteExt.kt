@@ -6,14 +6,14 @@ import io.ktor.server.routing.*
 fun Route.requiresCallId(
         build: Route.() -> Unit
 ): Route {
-    val requiresCallIdRoutes: Route = createChild(RequiresCallIdRouteSelector())
+    val requiresCallIdRoutes = createChild(RequiresCallIdRouteSelector())
     application.plugin(CallIdRequired).interceptPipeline(requiresCallIdRoutes)
     requiresCallIdRoutes.build()
     return requiresCallIdRoutes
 }
 
 private class RequiresCallIdRouteSelector : RouteSelector() {
-    override suspend fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
+    override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
         return RouteSelectorEvaluation.Constant
     }
 

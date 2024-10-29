@@ -1,15 +1,13 @@
 package no.nav.helse.dusseldorf.ktor.core
 
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.ApplicationCallPipeline
 import io.ktor.server.application.BaseApplicationPlugin
 import io.ktor.server.plugins.callid.callId
 import io.ktor.server.plugins.callid.CallIdConfig
 import io.ktor.http.HttpHeaders
 import io.ktor.http.encodeURLParameter
-import io.ktor.server.application.PipelineCall
 import io.ktor.server.request.header
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.application
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
 import org.slf4j.Logger
@@ -73,13 +71,13 @@ class CallIdRequired(private val configure: Configuration) {
             ))
     )
 
-    fun interceptPipeline(route: Route) {
-        route.application.intercept(ApplicationCallPipeline.Monitoring) {
+    fun interceptPipeline(pipeline: ApplicationCallPipeline) {
+        pipeline.intercept(ApplicationCallPipeline.Monitoring) {
             require(this)
         }
     }
 
-    private suspend fun require(context: PipelineContext<Unit, PipelineCall>) {
+    private suspend fun require(context: PipelineContext<Unit, ApplicationCall>) {
         val callId = context.context.callId
         if (callId == null) {
             context.context.respondProblemDetails(problemDetails, logger)
