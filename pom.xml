@@ -32,7 +32,7 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
-        <kotlinx.coroutines.version>1.9.0</kotlinx.coroutines.version>
+        <kotlinx.coroutines.version>1.10.0</kotlinx.coroutines.version>
 
         <!-- kan ikke gå for 2.1 fordi ktor.versjon 2.3 importerer kotlin-stdlib-common, og den er ikke tilgjengelig i nyere kotlin-stdlib-versjoner -->
         <kotlin.version>2.0.21</kotlin.version>
