@@ -1,9 +1,15 @@
 package no.nav.helse.dusseldorf.ktor.core
 
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationStopPreparing
+import io.ktor.server.request.ApplicationRequest
+import io.ktor.server.request.path
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.RoutingRoot.Plugin.RoutingCallFinished
+import io.ktor.server.routing.RoutingRoot.Plugin.RoutingCallStarted
+import io.ktor.server.routing.get
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -58,12 +64,12 @@ class FullførAktiveRequester(
     }
 
     private fun Application.tellAntallAktiveRequester() {
-        environment.monitor.subscribe(Routing.RoutingCallStarted) {
+        monitor.subscribe(RoutingCallStarted) {
             if (it.request.skalTelles()) {
                 antallAktiveRequester.incrementAndGet()
             }
         }
-        environment.monitor.subscribe(Routing.RoutingCallFinished) {
+        monitor.subscribe(RoutingCallFinished) {
             if (it.request.skalTelles()) {
                 antallAktiveRequester.decrementAndGet()
             }

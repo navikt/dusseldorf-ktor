@@ -35,10 +35,16 @@ internal class AppTest {
     }
 
     private fun withNettyEngine(appPort: Int, block: suspend () -> Unit) {
-        val server = embeddedServer(Netty, applicationEngineEnvironment {
-            module { app() }
-            connector { port = appPort }
-        })
+        val server = embeddedServer(
+            factory = Netty,
+            environment = applicationEnvironment {},
+            configure = {
+                connector { port = appPort }
+            },
+            module = {
+                app()
+            }
+        )
         val job = GlobalScope.launch {
             server.start(wait = true)
         }
