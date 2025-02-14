@@ -7,9 +7,13 @@ import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.request.path
-import io.ktor.util.InternalAPI
 import io.ktor.util.rootCause
-import no.nav.helse.dusseldorf.ktor.core.*
+import io.ktor.utils.io.InternalAPI
+import no.nav.helse.dusseldorf.ktor.core.DefaultProblemDetails
+import no.nav.helse.dusseldorf.ktor.core.ParameterType
+import no.nav.helse.dusseldorf.ktor.core.ValidationProblemDetails
+import no.nav.helse.dusseldorf.ktor.core.Violation
+import no.nav.helse.dusseldorf.ktor.core.respondProblemDetails
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -53,9 +57,9 @@ fun StatusPagesConfig.JacksonStatusPages() {
     exception<JsonProcessingException> { call, cause ->
 
         val problemDetails = DefaultProblemDetails(
-                title = "invalid-json-entity",
-                status = 400,
-                detail = "Request entityen inneholder ugyldig JSON."
+            title = "invalid-json-entity",
+            status = 400,
+            detail = "Request entityen inneholder ugyldig JSON."
         )
         logger.debug("Feil ved prosessering av JSON", cause)
         call.respondProblemDetails(problemDetails, logger)
@@ -76,6 +80,7 @@ fun StatusPagesConfig.JacksonStatusPages() {
                     )
                 )
             }
+
             else -> {
                 DefaultProblemDetails(
                     title = "invalid-request-parameters",
