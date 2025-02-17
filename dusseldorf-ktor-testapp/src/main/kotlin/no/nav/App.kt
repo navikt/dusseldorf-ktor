@@ -5,6 +5,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.metrics.micrometer.MicrometerMetrics
 import io.ktor.server.netty.EngineMain
 import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -27,6 +28,7 @@ import no.nav.helse.dusseldorf.ktor.core.requiresCallId
 import no.nav.helse.dusseldorf.ktor.health.HealthRoute
 import no.nav.helse.dusseldorf.ktor.health.HealthService
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
+import no.nav.helse.dusseldorf.ktor.metrics.init
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -47,6 +49,10 @@ fun Application.app() {
 
     install(CallId) {
         fromXCorrelationIdHeader()
+    }
+
+    install(MicrometerMetrics) {
+        init("ktor-test-app")
     }
 
     routing {

@@ -14,7 +14,7 @@ import io.prometheus.client.CollectorRegistry
 
 fun MicrometerMetricsConfig.init(
         app: String,
-        collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
+        collectorRegistry: CollectorRegistry = CollectorRegistry(false)
 ) {
     registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT, collectorRegistry, Clock.SYSTEM)
     timers { call, throwable ->
