@@ -1,23 +1,30 @@
 package no.nav
 
-import io.ktor.server.application.*
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.jackson.jackson
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import io.ktor.server.netty.EngineMain
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.serialization.jackson.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.server.plugins.callid.CallId
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.delay
 import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthCheck
 import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthConfig
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.readTextOrThrow
+import no.nav.helse.dusseldorf.ktor.core.CallIdRequired
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.FullførAktiveRequester
 import no.nav.helse.dusseldorf.ktor.core.PreStopRoute
+import no.nav.helse.dusseldorf.ktor.core.fromXCorrelationIdHeader
 import no.nav.helse.dusseldorf.ktor.core.preStopOnApplicationStopPreparing
+import no.nav.helse.dusseldorf.ktor.core.requiresCallId
 import no.nav.helse.dusseldorf.ktor.health.HealthRoute
 import no.nav.helse.dusseldorf.ktor.health.HealthService
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
@@ -39,27 +46,36 @@ fun Application.app() {
         jackson {}
     }
 
+    install(CallIdRequired)
+    install(CallId) {
+        fromXCorrelationIdHeader()
+    }
+
     routing {
         DefaultProbeRoutes()
         MetricsRoute()
         PreStopRoute(preStopActions)
         HealthRoute(
-            healthService = HealthService(setOf(
-                HttpRequestHealthCheck(mapOf(
-                    URI("http://localhost:1337/isalive") to HttpRequestHealthConfig(
-                        expectedStatus = HttpStatusCode.OK,
-                        includeExpectedStatusEntity = true
-                    ),
-                    URI("http://localhost:1337/isready") to HttpRequestHealthConfig(
-                        expectedStatus = HttpStatusCode.OK,
-                        includeExpectedStatusEntity = true
-                    ),
-                    URI("http://localhost:1337/not-found") to HttpRequestHealthConfig(
-                        expectedStatus = HttpStatusCode.NotFound,
-                        includeExpectedStatusEntity = true
+            healthService = HealthService(
+                setOf(
+                    HttpRequestHealthCheck(
+                        mapOf(
+                            URI("http://localhost:1337/isalive") to HttpRequestHealthConfig(
+                                expectedStatus = HttpStatusCode.OK,
+                                includeExpectedStatusEntity = true
+                            ),
+                            URI("http://localhost:1337/isready") to HttpRequestHealthConfig(
+                                expectedStatus = HttpStatusCode.OK,
+                                includeExpectedStatusEntity = true
+                            ),
+                            URI("http://localhost:1337/not-found") to HttpRequestHealthConfig(
+                                expectedStatus = HttpStatusCode.NotFound,
+                                includeExpectedStatusEntity = true
+                            )
+                        )
                     )
-                ))
-            ))
+                )
+            )
         )
 
         get("/treg-request") {
@@ -83,6 +99,12 @@ fun Application.app() {
             require(health.status == HttpStatusCode.OK)
             health.bodyAsText().also { require(it.contains("ALIVE") && it.contains("READY")) }
             call.respond(metrics)
+        }
+
+        requiresCallId {
+            get("/requires-call-id") {
+                call.respondText("Hello, world!")
+            }
         }
     }
 }
