@@ -18,7 +18,6 @@ import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthCheck
 import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthConfig
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.readTextOrThrow
-import no.nav.helse.dusseldorf.ktor.core.CallIdRequired
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.FullførAktiveRequester
 import no.nav.helse.dusseldorf.ktor.core.PreStopRoute
@@ -46,7 +45,6 @@ fun Application.app() {
         jackson {}
     }
 
-    install(CallIdRequired)
     install(CallId) {
         fromXCorrelationIdHeader()
     }

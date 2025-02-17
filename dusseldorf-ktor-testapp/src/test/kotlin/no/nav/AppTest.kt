@@ -48,6 +48,18 @@ internal class AppTest {
         }
     }
 
+    @Test
+    fun `Tester health og metrics endepunkter ikke trenger callId`() {
+        withNettyEngine(appPort = 1337) {
+            listOf("/isready", "/isalive", "/metrics", "/health").forEach {
+                val getResponse: Pair<HttpRequestData, Result<HttpResponse>> = "http://localhost:1337$it".httpGet()
+
+                val responseText = getResponse.readTextOrThrow()
+                assertEquals(HttpStatusCode.OK, responseText.first, responseText.second)
+            }
+        }
+    }
+
     private suspend fun doNTimes(n: Int = 20, block: suspend () -> Any) {
         for (i in 1..n) { block() }
     }
