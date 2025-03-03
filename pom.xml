@@ -51,7 +51,7 @@
         <!-- Interne versjoner -->
         <junit.version>5.12.0</junit.version>
         <oauth2-oidc-sdk.version>11.23</oauth2-oidc-sdk.version>
-        <wiremock.version>3.12.0</wiremock.version>
+        <wiremock.version>3.12.1</wiremock.version>
         <netty.version>4.1.118.Final</netty.version>
     </properties>
 
