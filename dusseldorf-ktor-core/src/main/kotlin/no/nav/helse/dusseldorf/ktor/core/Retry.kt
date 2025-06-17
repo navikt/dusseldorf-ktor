@@ -31,7 +31,7 @@ class Retry {
                     //https://medium.com/better-programming/the-silent-killer-thats-crashing-your-coroutines-9171d1e8f79b
                     coroutineContext.ensureActive() //kaster CancellationException videre dersom kansellert ordentlig
 
-                    logger.warn("Feil ved '$operation'. ${cause.javaClass.simpleName} med melding '${cause.message}'")
+                    logger.warn("Feil ved '$operation'. ${cause.javaClass.simpleName} med melding '${cause.message}'", cause)
                     exceptionHandler(cause)
                 }
                 logger.warn("Venter $currentDelayInMillis millisekunder før neste forsøk.")
