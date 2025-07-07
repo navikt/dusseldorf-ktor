@@ -35,7 +35,7 @@
         <kotlinx.coroutines.version>1.10.2</kotlinx.coroutines.version>
 
         <!-- kan ikke gå for 2.1 fordi ktor.versjon 2.3 importerer kotlin-stdlib-common, og den er ikke tilgjengelig i nyere kotlin-stdlib-versjoner -->
-        <kotlin.version>2.1.21</kotlin.version>
+        <kotlin.version>2.2.0</kotlin.version>
 
         <ktor.version>3.2.1</ktor.version>
         <jackson.version>2.19.1</jackson.version>
