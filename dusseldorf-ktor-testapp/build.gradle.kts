@@ -38,11 +38,15 @@ repositories {
 
 tasks {
     withType<KotlinCompile> {
-        compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
     }
 
     named<KotlinCompile>("compileTestKotlin") {
-        kotlinOptions.jvmTarget = "21"
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
     }
     withType<ShadowJar> {
         archiveBaseName.set("app")
