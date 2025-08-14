@@ -10,7 +10,7 @@ val junitPlatformVersion = "1.13.4"
 val mainClass = "no.nav.AppKt"
 
 plugins {
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.2.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
