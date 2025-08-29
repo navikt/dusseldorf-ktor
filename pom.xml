@@ -38,7 +38,7 @@
         <kotlin.version>2.2.0</kotlin.version>
 
         <ktor.version>3.2.3</ktor.version>
-        <jackson.version>2.19.2</jackson.version>
+        <jackson.version>2.20.0</jackson.version>
         <micrometer.version>1.12.5</micrometer.version>
         <logback.version>1.5.18</logback.version>
         <slf4j.version>2.0.17</slf4j.version>
