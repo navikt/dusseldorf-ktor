@@ -52,7 +52,7 @@
         <junit.version>5.13.4</junit.version>
         <oauth2-oidc-sdk.version>11.28</oauth2-oidc-sdk.version>
         <wiremock.version>3.13.1</wiremock.version>
-        <netty.version>4.2.4.Final</netty.version>
+        <netty.version>4.2.6.Final</netty.version>
     </properties>
 
     <dependencyManagement>
