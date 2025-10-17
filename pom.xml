@@ -35,12 +35,12 @@
         <kotlinx.coroutines.version>1.10.2</kotlinx.coroutines.version>
 
         <!-- kan ikke gå for 2.1 fordi ktor.versjon 2.3 importerer kotlin-stdlib-common, og den er ikke tilgjengelig i nyere kotlin-stdlib-versjoner -->
-        <kotlin.version>2.2.0</kotlin.version>
+        <kotlin.version>2.2.20</kotlin.version>
 
-        <ktor.version>3.2.3</ktor.version>
         <jackson.version>2.20</jackson.version>
+        <ktor.version>3.3.1</ktor.version>
         <micrometer.version>1.12.5</micrometer.version>
-        <logback.version>1.5.18</logback.version>
+        <logback.version>1.5.19</logback.version>
         <slf4j.version>2.0.17</slf4j.version>
         <logstash.logback.version>8.1</logstash.logback.version>
         <prometheus.version>0.16.0</prometheus.version>
@@ -50,9 +50,9 @@
 
         <!-- Interne versjoner -->
         <junit.version>5.13.4</junit.version>
-        <oauth2-oidc-sdk.version>11.27.1</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>11.30</oauth2-oidc-sdk.version>
         <wiremock.version>3.13.1</wiremock.version>
-        <netty.version>4.2.4.Final</netty.version>
+        <netty.version>4.2.7.Final</netty.version>
     </properties>
 
     <dependencyManagement>
