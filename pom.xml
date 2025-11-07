@@ -42,7 +42,7 @@
         <micrometer.version>1.12.5</micrometer.version>
         <logback.version>1.5.19</logback.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <logstash.logback.version>8.1</logstash.logback.version>
+        <logstash.logback.version>9.0</logstash.logback.version>
         <prometheus.version>0.16.0</prometheus.version>
         <caffeine.version>3.2.3</caffeine.version>
         <kafka.version>3.9.1</kafka.version>
