@@ -4,13 +4,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfKtorVersion = "PLACEHOLDER"
 val ktorVersion = ext.get("ktorVersion").toString()
-val junitJupiterVersion = "6.0.0"
-val junitPlatformVersion = "6.0.0"
+val junitJupiterVersion = "6.0.1"
+val junitPlatformVersion = "6.0.1"
 
 val mainClass = "no.nav.AppKt"
 
 plugins {
-    kotlin("jvm") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
