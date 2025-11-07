@@ -39,7 +39,7 @@ import java.net.URI
 
 
 interface Problem {
-    fun getProblemDetails() : ProblemDetails
+    fun getProblemDetails(): ProblemDetails
 }
 
 class Throwblem : Throwable, Problem {
@@ -49,7 +49,10 @@ class Throwblem : Throwable, Problem {
         this.occurredProblemDetails = problemDetails
     }
 
-    constructor(problemDetails: ProblemDetails, throwable: Throwable) : super(problemDetails.asMap().toString(), throwable) {
+    constructor(problemDetails: ProblemDetails, throwable: Throwable) : super(
+        problemDetails.asMap().toString(),
+        throwable
+    ) {
         this.occurredProblemDetails = problemDetails
     }
 
@@ -57,20 +60,26 @@ class Throwblem : Throwable, Problem {
 }
 
 interface ProblemDetails {
-    val title : String
-    val type : URI
-    val status : Int
-    val detail : String
-    val instance : URI
-    fun asMap() : Map<String, Any>
+    val title: String
+    val type: URI
+    val status: Int
+    val detail: String
+    val instance: URI
+    fun asMap(): Map<String, Any>
 }
 
 suspend fun ApplicationCall.respondProblemDetails(
-        problemDetails: ProblemDetails,
-        logger: Logger? = null
+    problemDetails: ProblemDetails,
+    logger: Logger,
+    cause: Throwable?
 ) {
     val json = JSONObject(problemDetails.asMap()).toString()
-    logger?.error("ProblemDetails='$json'")
+    if (cause == null) {
+        logger.info("ProblemDetails='$json'")
+    } else {
+        logger.warn("ProblemDetails='$json'", cause)
+    }
+
     attributes.put(AttributeKey("problem-details"), json)
 
     val serializeProblemDetailsWithContentNegotiation =
@@ -81,6 +90,7 @@ suspend fun ApplicationCall.respondProblemDetails(
             message = problemDetails.asMap(),
             status = HttpStatusCode.fromValue(problemDetails.status)
         )
+
         false -> respondText(
             text = json,
             contentType = ContentType.Application.ProblemJson,
@@ -90,19 +100,19 @@ suspend fun ApplicationCall.respondProblemDetails(
 }
 
 open class DefaultProblemDetails(
-        override val title : String,
-        override val type : URI = URI("/problem-details/$title"),
-        override val status : Int,
-        override val detail : String,
-        override val instance : URI = URI("about:blank")
+    override val title: String,
+    override val type: URI = URI("/problem-details/$title"),
+    override val status: Int,
+    override val detail: String,
+    override val instance: URI = URI("about:blank")
 ) : ProblemDetails {
-    override fun asMap() : Map<String, Any> {
+    override fun asMap(): Map<String, Any> {
         return mapOf(
-                Pair("type", type.toString()),
-                Pair("title", title),
-                Pair("status", status),
-                Pair("detail", detail),
-                Pair("instance", instance.toString())
+            Pair("type", type.toString()),
+            Pair("title", title),
+            Pair("status", status),
+            Pair("detail", detail),
+            Pair("instance", instance.toString())
         )
     }
 }
@@ -115,25 +125,32 @@ enum class ParameterType {
     FORM
 }
 
-data class Violation(val parameterName : String, val parameterType: ParameterType, val reason: String, val invalidValue : Any? = null)
+data class Violation(
+    val parameterName: String,
+    val parameterType: ParameterType,
+    val reason: String,
+    val invalidValue: Any? = null
+)
 
 data class ValidationProblemDetails(
-        val violations : Set<Violation>
+    val violations: Set<Violation>
 
 ) : DefaultProblemDetails(
-        title = "invalid-request-parameters",
-        status = 400,
-        detail = "Requesten inneholder ugyldige paramtere."
+    title = "invalid-request-parameters",
+    status = 400,
+    detail = "Requesten inneholder ugyldige paramtere."
 ) {
-    override fun asMap() : Map<String, Any> {
-        val invalidParametersList : MutableList<Map<String, Any?>> = mutableListOf()
-        violations.forEach{
-            invalidParametersList.add(mapOf(
+    override fun asMap(): Map<String, Any> {
+        val invalidParametersList: MutableList<Map<String, Any?>> = mutableListOf()
+        violations.forEach {
+            invalidParametersList.add(
+                mapOf(
                     Pair("type", it.parameterType.name.lowercase()),
                     Pair("name", it.parameterName),
                     Pair("reason", it.reason),
                     Pair("invalid_value", it.invalidValue)
-            ))
+                )
+            )
         }
         return super.asMap().toMutableMap().apply {
             put("invalid_parameters", invalidParametersList)
