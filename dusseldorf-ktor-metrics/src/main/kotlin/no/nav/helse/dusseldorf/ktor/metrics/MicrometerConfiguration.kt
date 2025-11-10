@@ -1,20 +1,20 @@
 package no.nav.helse.dusseldorf.ktor.metrics
 
-import io.ktor.server.application.ApplicationCall
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.Forbidden
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
-import io.ktor.server.metrics.micrometer.MicrometerMetricsConfig
-import io.ktor.util.AttributeKey
+import io.ktor.server.application.*
+import io.ktor.server.metrics.micrometer.*
+import io.ktor.util.*
 import io.micrometer.core.instrument.Clock
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.prometheus.client.CollectorRegistry
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import io.prometheus.metrics.model.registry.PrometheusRegistry
 
 fun MicrometerMetricsConfig.init(
         app: String,
-        collectorRegistry: CollectorRegistry = CollectorRegistry(false)
+        collectorRegistry: PrometheusRegistry = PrometheusRegistry()
 ) {
     registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT, collectorRegistry, Clock.SYSTEM)
     timers { call, throwable ->
