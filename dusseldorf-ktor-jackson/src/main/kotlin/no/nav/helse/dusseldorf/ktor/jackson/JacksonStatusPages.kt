@@ -2,7 +2,7 @@ package no.nav.helse.dusseldorf.ktor.jackson
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.fasterxml.jackson.module.kotlin.KotlinInvalidNullException
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
@@ -67,12 +67,11 @@ fun StatusPagesConfig.JacksonStatusPages() {
 
     exception { call: ApplicationCall, cause: BadRequestException ->
         val problemDetails = when (val rootCause = cause.rootCause) {
-            is MissingKotlinParameterException -> {
-                val parameter = rootCause.parameter
+            is KotlinInvalidNullException -> {
                 ValidationProblemDetails(
                     setOf(
                         Violation(
-                            parameterName = parameter.name ?: "ukjent",
+                            parameterName = rootCause.kotlinPropertyName ?: "ukjent",
                             parameterType = ParameterType.ENTITY,
                             reason = "Må være satt.",
                             invalidValue = null
