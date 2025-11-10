@@ -2,7 +2,7 @@ package no.nav.helse.dusseldorf.ktor.jackson
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.fasterxml.jackson.module.kotlin.KotlinInvalidNullException
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
@@ -31,7 +31,8 @@ fun StatusPagesConfig.JacksonStatusPages() {
                     status = 400,
                     detail = "${cause.cause as IllegalArgumentException} -> ${cause.path}"
                 ),
-                logger
+                logger,
+                cause
             )
         } else {
             val violations = mutableSetOf<Violation>()
@@ -48,9 +49,7 @@ fun StatusPagesConfig.JacksonStatusPages() {
             }
 
             val problemDetails = ValidationProblemDetails(violations)
-
-            logger.debug("Feil ved mapping av JSON", cause)
-            call.respondProblemDetails(problemDetails, logger)
+            call.respondProblemDetails(problemDetails, logger, cause)
         }
     }
 
@@ -61,18 +60,16 @@ fun StatusPagesConfig.JacksonStatusPages() {
             status = 400,
             detail = "Request entityen inneholder ugyldig JSON."
         )
-        logger.debug("Feil ved prosessering av JSON", cause)
-        call.respondProblemDetails(problemDetails, logger)
+        call.respondProblemDetails(problemDetails, logger, cause)
     }
 
     exception { call: ApplicationCall, cause: BadRequestException ->
         val problemDetails = when (val rootCause = cause.rootCause) {
-            is MissingKotlinParameterException -> {
-                val parameter = rootCause.parameter
+            is KotlinInvalidNullException -> {
                 ValidationProblemDetails(
                     setOf(
                         Violation(
-                            parameterName = parameter.name ?: "ukjent",
+                            parameterName = rootCause.kotlinPropertyName ?: "ukjent",
                             parameterType = ParameterType.ENTITY,
                             reason = "Må være satt.",
                             invalidValue = null
@@ -91,6 +88,6 @@ fun StatusPagesConfig.JacksonStatusPages() {
             }
         }
 
-        call.respondProblemDetails(problemDetails, logger)
+        call.respondProblemDetails(problemDetails, logger, cause)
     }
 }
