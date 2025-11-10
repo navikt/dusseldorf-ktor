@@ -3,6 +3,7 @@ package no.nav.helse.dusseldorf.ktor.core
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.math.log
 
 private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.DefaultStatusPages")
 
@@ -15,15 +16,15 @@ private val UNHANDLED_PROBLEM_MESSAGE = DefaultProblemDetails(
 fun StatusPagesConfig.DefaultStatusPages() {
 
     exception<Throwblem> { call, cause ->
-        call.respondProblemDetails(cause.getProblemDetails(), logger)
+        call.respondProblemDetails(cause.getProblemDetails(), logger, cause)
     }
 
     exception<Throwable> { call, cause ->
         if (cause is Problem) {
-            call.respondProblemDetails(cause.getProblemDetails(), logger)
+            call.respondProblemDetails(cause.getProblemDetails(), logger, cause)
         } else {
             logger.error("Uhåndtert feil", cause)
-            call.respondProblemDetails(UNHANDLED_PROBLEM_MESSAGE, logger)
+            call.respondProblemDetails(UNHANDLED_PROBLEM_MESSAGE, logger, cause)
         }
     }
 }

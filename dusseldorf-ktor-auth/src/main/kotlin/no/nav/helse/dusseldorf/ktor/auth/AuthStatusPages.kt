@@ -16,6 +16,6 @@ private val problemDetails = DefaultProblemDetails(
 fun StatusPagesConfig.AuthStatusPages() {
     exception<ClaimEnforcementFailed> { call, cause ->
         logger.error("Request uten tilstrekkelig tilganger stoppet. Håndheving av regler resulterte i '${cause.outcomes}'")
-        call.respondProblemDetails(problemDetails, logger)
+        call.respondProblemDetails(problemDetails, logger, null)
     }
 }

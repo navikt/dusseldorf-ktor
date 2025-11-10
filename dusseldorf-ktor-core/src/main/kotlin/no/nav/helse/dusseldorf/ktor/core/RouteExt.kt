@@ -8,6 +8,10 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.RouteSelector
 import io.ktor.server.routing.RouteSelectorEvaluation
 import io.ktor.server.routing.RoutingResolveContext
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.dusseldorf.ktor.core.RouteExt")
 
 fun Route.requiresCallId(build: Route.() -> Unit): Route {
     return createChild(object : RouteSelector() {
@@ -34,7 +38,7 @@ val CallIdRequiredPlugin = createRouteScopedPlugin("CallIdRequiredPlugin") {
 
     onCall { call: PipelineCall ->
         if (call.callId == null) {
-            call.respondProblemDetails(problemDetails)
+            call.respondProblemDetails(problemDetails, logger, null)
             return@onCall
         }
     }

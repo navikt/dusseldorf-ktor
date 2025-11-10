@@ -31,7 +31,8 @@ fun StatusPagesConfig.JacksonStatusPages() {
                     status = 400,
                     detail = "${cause.cause as IllegalArgumentException} -> ${cause.path}"
                 ),
-                logger
+                logger,
+                cause
             )
         } else {
             val violations = mutableSetOf<Violation>()
@@ -48,9 +49,7 @@ fun StatusPagesConfig.JacksonStatusPages() {
             }
 
             val problemDetails = ValidationProblemDetails(violations)
-
-            logger.debug("Feil ved mapping av JSON", cause)
-            call.respondProblemDetails(problemDetails, logger)
+            call.respondProblemDetails(problemDetails, logger, cause)
         }
     }
 
@@ -61,8 +60,7 @@ fun StatusPagesConfig.JacksonStatusPages() {
             status = 400,
             detail = "Request entityen inneholder ugyldig JSON."
         )
-        logger.debug("Feil ved prosessering av JSON", cause)
-        call.respondProblemDetails(problemDetails, logger)
+        call.respondProblemDetails(problemDetails, logger, cause)
     }
 
     exception { call: ApplicationCall, cause: BadRequestException ->
@@ -91,6 +89,6 @@ fun StatusPagesConfig.JacksonStatusPages() {
             }
         }
 
-        call.respondProblemDetails(problemDetails, logger)
+        call.respondProblemDetails(problemDetails, logger, cause)
     }
 }
