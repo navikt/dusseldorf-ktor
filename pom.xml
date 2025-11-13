@@ -45,7 +45,7 @@
         <logstash.logback.version>9.0</logstash.logback.version>
         <prometheus.version>0.16.0</prometheus.version>
         <caffeine.version>3.2.3</caffeine.version>
-        <kafka.version>3.9.1</kafka.version>
+        <kafka.version>4.1.1</kafka.version>
         <orgjson.version>20250517</orgjson.version>
 
         <!-- Interne versjoner -->
