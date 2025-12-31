@@ -46,7 +46,7 @@
         <prometheus.version>0.16.0</prometheus.version>
         <caffeine.version>3.2.3</caffeine.version>
         <kafka.version>3.9.1</kafka.version>
-        <orgjson.version>20250517</orgjson.version>
+        <orgjson.version>20251224</orgjson.version>
 
         <!-- Interne versjoner -->
         <junit.version>6.0.1</junit.version>
