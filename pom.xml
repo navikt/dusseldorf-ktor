@@ -49,7 +49,7 @@
         <orgjson.version>20251224</orgjson.version>
 
         <!-- Interne versjoner -->
-        <junit.version>6.0.1</junit.version>
+        <junit.version>6.0.2</junit.version>
         <oauth2-oidc-sdk.version>11.31</oauth2-oidc-sdk.version>
         <wiremock.version>3.13.2</wiremock.version>
         <netty.version>4.2.9.Final</netty.version>
