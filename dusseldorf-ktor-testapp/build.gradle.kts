@@ -4,8 +4,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfKtorVersion = "PLACEHOLDER"
 val ktorVersion = ext.get("ktorVersion").toString()
-val junitJupiterVersion = "6.0.1"
-val junitPlatformVersion = "6.0.1"
+val junitJupiterVersion = "6.0.2"
+val junitPlatformVersion = "6.0.2"
 
 val mainClass = "no.nav.AppKt"
 
