@@ -24,3 +24,10 @@ jobs:
           ./mvnw install
           cd dusseldorf-ktor-testapp
           ./gradlew test
+
+  sif-code-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: navikt/sif-gha-workflows/.github/actions/sif-code-scan@v1
+

@@ -34,13 +34,13 @@ class StringExtTest {
     @Test
     fun `validering av fodselsnummer fungerer`() {
         val fodselsnummer = mapOf(
-                "01126170269" to true,
-                "13085973295" to true,
-                "25107774818" to true,
-                "19108773351" to true,
+                "18410162721" to true,
+                "17420373147" to true,
+                "24420167209" to true,
+                "18410162721" to true,
                 "10915596784" to true, //TestNorge bruker med +8 på tredje siffer
                 "42921275204" to true, // D-nummer fra TestNorge med +4 på første siffer og +8 på tredje
-                "59108773345" to true, // D-nummer med +4 på første siffer
+                "53488838241" to true, // D-nummer med +4 på første siffer
                 "917755736" to false,
                 "29099012345" to false,
                 "011261702690" to false,

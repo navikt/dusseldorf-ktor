@@ -22,5 +22,5 @@ object LoginServiceLogin {
 }
 
 private fun LoginRequest.levelOrFallback() : Int = if (level() != null) level()!! else 4
-private fun LoginRequest.fnrOrFallback() : String = if (fnr() != null) fnr()!! else "22046474256"
+private fun LoginRequest.fnrOrFallback() : String = if (fnr() != null) fnr()!! else "17420373147"
 private fun LoginRequest.cookieNameOrFallback() : String = if (cookieName() != null) cookieName()!! else "localhost-idtoken"
