@@ -37,7 +37,7 @@
         <!-- kan ikke gå for 2.1 fordi ktor.versjon 2.3 importerer kotlin-stdlib-common, og den er ikke tilgjengelig i nyere kotlin-stdlib-versjoner -->
         <kotlin.version>2.3.20</kotlin.version>
 
-        <jackson.version>2.21.2</jackson.version>
+        <jackson.version>2.21.3</jackson.version>
         <ktor.version>3.4.2</ktor.version>
         <micrometer.version>1.16.5</micrometer.version>
         <logback.version>1.5.32</logback.version>
