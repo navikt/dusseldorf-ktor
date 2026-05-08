@@ -11,7 +11,7 @@ Disse instruksjonene gjelder for GitHub Copilot code review for alle filer i det
 
 ### Branch-navngivning
 Flag dersom source branch ikke følger navnekonvensjon. Forventede prefikser:
-- `feature/`, `fix/`, `chore/`, `docs/`, `refactor/`, `test/`, `ci/`, `dependabot/`, `renovate/`
+- `feature/`, `fix/`, `chore/`, `docs/`
 
 ### Relevans
 Verifiser at endringene er rimelige i omfang og relevante for oppgitt formål.
