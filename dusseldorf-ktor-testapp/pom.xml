@@ -21,6 +21,7 @@
     -->
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <kotlinx.coroutines.version>1.10.2</kotlinx.coroutines.version>
     </properties>
 
     <dependencies>
