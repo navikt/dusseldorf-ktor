@@ -28,8 +28,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
 
         <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
         <kotlinx.coroutines.version>1.10.2</kotlinx.coroutines.version>
@@ -197,7 +197,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jvmTarget>21</jvmTarget>
+                    <jvmTarget>25</jvmTarget>
                 </configuration>
             </plugin>
             <plugin>
