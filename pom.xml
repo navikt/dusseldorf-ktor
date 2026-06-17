@@ -28,10 +28,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
 
-        <!-- Versjoner også eksponert i gradle/dusseldorf-ktor.gradle.kts -->
         <kotlinx.coroutines.version>1.10.2</kotlinx.coroutines.version>
 
         <!-- kan ikke gå for 2.1 fordi ktor.versjon 2.3 importerer kotlin-stdlib-common, og den er ikke tilgjengelig i nyere kotlin-stdlib-versjoner -->
@@ -105,6 +104,11 @@
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-epoll</artifactId>
                 <version>${netty.version}</version>
             </dependency>
@@ -141,6 +145,26 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-reflect</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>26.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio-jvm</artifactId>
+                <version>3.17.0</version>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>${jackson2.version}</version>
@@ -161,7 +185,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -170,7 +193,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit</artifactId>
-            <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -202,7 +224,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jvmTarget>21</jvmTarget>
+                    <jvmTarget>25</jvmTarget>
                 </configuration>
             </plugin>
             <plugin>
@@ -217,6 +239,31 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>enforce-dependency-convergence</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence/>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.5</version>
             </plugin>
         </plugins>
     </build>

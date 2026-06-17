@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>dusseldorf-ktor</artifactId>
+        <groupId>no.nav.helse</groupId>
+        <version>PLACEHOLDER</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>dusseldorf-ktor-testapp</artifactId>
+    <name>dusseldorf-ktor-testapp</name>
+
+    <!--
+        Testapplikasjon som verifiserer at de publiserte modulene fungerer sammen.
+        Bygges separat fra reaktoren (er bevisst ikke med i parent sin <modules>) mot
+        artefaktene som er installert i det lokale Maven-repoet via `mvn install`,
+        på samme måte som det tidligere Gradle-bygget. Skal ikke deployes.
+    -->
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-metrics</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-health</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-auth</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-oauth2-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-jackson</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+    </build>
+</project>
+
