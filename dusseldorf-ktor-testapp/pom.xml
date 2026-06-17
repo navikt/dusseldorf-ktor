@@ -16,12 +16,10 @@
     <!--
         Testapplikasjon som verifiserer at de publiserte modulene fungerer sammen.
         Bygges separat fra reaktoren (er bevisst ikke med i parent sin <modules>) mot
-        artefaktene som er installert i det lokale Maven-repoet via `mvn install`,
-        på samme måte som det tidligere Gradle-bygget. Skal ikke deployes.
+        artefaktene som er installert i det lokale Maven-repoet via `mvn test`.
     -->
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <kotlinx.coroutines.version>1.10.2</kotlinx.coroutines.version>
     </properties>
 
     <dependencies>
