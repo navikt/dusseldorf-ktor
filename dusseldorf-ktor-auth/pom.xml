@@ -21,7 +21,6 @@
         <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-server-auth-jwt-jvm</artifactId>
-            <version>${ktor.version}</version>
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>
