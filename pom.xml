@@ -247,6 +247,7 @@
                 <executions>
                     <execution>
                         <id>enforce-dependency-convergence</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>enforce</goal>
                         </goals>
