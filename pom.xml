@@ -88,6 +88,16 @@
                 <version>${ktor.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.ktor</groupId>
+                <artifactId>ktor-server-test-host</artifactId>
+                <version>${ktor.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ktor</groupId>
+                <artifactId>ktor-server-metrics-micrometer-jvm</artifactId>
+                <version>${ktor.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http2</artifactId>
                 <version>${netty.version}</version>
@@ -128,14 +138,13 @@
                 <version>${kotlinx.coroutines.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.ktor</groupId>
-                <artifactId>ktor-server-test-host</artifactId>
-                <version>${ktor.version}</version>
-                <scope>test</scope>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_common</artifactId>
+                <version>${prometheus.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_common</artifactId>
+                <artifactId>simpleclient_hotspot</artifactId>
                 <version>${prometheus.version}</version>
             </dependency>
             <dependency>
@@ -172,7 +181,7 @@
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-bom</artifactId>
-                <version>1.17.0</version>
+                <version>${micrometer.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
