@@ -28,12 +28,12 @@ class ClientSecretAccessTokenClient(
         )
     }
 
-    override fun getAccessToken(
+    override fun getOnBehalfOfAccessToken(
             scopes: Set<String>,
             onBehalfOf: String
     ): AccessTokenResponse = getAccessToken(getOnBehalfOfTokenRequest(onBehalfOf, scopes))
 
-    override fun getAccessToken(
+    override fun getClientCredentialsAccessToken(
             scopes: Set<String>
     ): AccessTokenResponse = getAccessToken(getClientCredentialsTokenRequest(scopes))
 

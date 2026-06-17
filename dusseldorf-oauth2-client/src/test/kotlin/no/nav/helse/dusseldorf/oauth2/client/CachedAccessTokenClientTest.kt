@@ -28,16 +28,16 @@ class CachedAccessTokenClientTest {
         mock.stubGetTokenClientSecretClientCredentials(clientId, clientSecret, expiresIn = leewayInSeconds + 1, accessToken = "Token1")
 
         // Henter første token
-        assertEquals("Token1", cachedClient.getAccessToken(scopes).token)
+        assertEquals("Token1", cachedClient.getClientCredentialsAccessToken(scopes).token)
 
         // Venter slikat tokene fortsatt bør være cached
         Thread.sleep(500)
-        assertEquals(cachedClient.getAccessToken(scopes).token, "Token1")
+        assertEquals(cachedClient.getClientCredentialsAccessToken(scopes).token, "Token1")
 
         // Venter slik at tokenet bør være bort fra cache
         Thread.sleep(700)
         // Mocker ny response med nytt token
         mock.stubGetTokenClientSecretClientCredentials(clientId, clientSecret, expiresIn = leewayInSeconds + 1, accessToken = "Token2")
-        assertEquals("Token2",cachedClient.getAccessToken(scopes).token)
+        assertEquals("Token2",cachedClient.getClientCredentialsAccessToken(scopes).token)
     }
 }

@@ -22,18 +22,18 @@ class CachedAccessTokenClient(
             .maximumSize(maxCachedOnBehalfOfAccessTokens)
             .build()
 
-    fun getAccessToken(
+    fun getOnBehalfOfAccessToken(
             scopes: Set<String>,
             onBehalfOf: String): AccessToken {
         val response = onBehalfOfTokens.get(Key(scopes, onBehalfOf)) {
-            accessTokenClient.getAccessToken(scopes, onBehalfOf)
+            accessTokenClient.getOnBehalfOfAccessToken(scopes, onBehalfOf)
         }
         return AccessToken(token = response!!.accessToken, type = response.tokenType)
     }
-    fun getAccessToken(
+    fun getClientCredentialsAccessToken(
             scopes: Set<String>): AccessToken {
         val response = clientAccessTokens.get(Key(scopes)) {
-            accessTokenClient.getAccessToken(scopes)
+            accessTokenClient.getClientCredentialsAccessToken(scopes)
         }
         return AccessToken(token = response!!.accessToken, type = response.tokenType)
     }
