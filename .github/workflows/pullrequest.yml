@@ -6,9 +6,9 @@ on:
       - '**.md'
       - '**.MD'
       - '.gitignore'
-      - 'LICENCE'
+      - 'LICENSE'
       - 'CODEOWNERS'
-      - '.github/workflows/dependabot.yml'
+      - '.github/dependabot.yml'
 
 jobs:
   build:
