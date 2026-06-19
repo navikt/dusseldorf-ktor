@@ -23,7 +23,7 @@ class ClientSecretAccessTokenClientTest {
                 tokenEndpoint = TestData.AZURE_PREPROD_TOKEN_URL
         )
 
-        val accessToken = client.getAccessToken(scopes)
+        val accessToken = client.getClientCredentialsAccessToken(scopes)
 
         val jwt = SignedJWT.parse(accessToken.accessToken)
         println(jwt.parsedString)
@@ -47,7 +47,7 @@ class ClientSecretAccessTokenClientTest {
                 tokenEndpoint = tokenUrl
         )
 
-        val resp = client.getAccessToken(
+        val resp = client.getClientCredentialsAccessToken(
                 scopes = setOf("en-annen-client/.default")
         )
 
@@ -67,7 +67,7 @@ class ClientSecretAccessTokenClientTest {
                 tokenEndpoint = URI(wireMock.getAzureV2TokenUrl())
         )
 
-        val response = client.getAccessToken(setOf("fooscope/.default"))
+        val response = client.getClientCredentialsAccessToken(setOf("fooscope/.default"))
 
         assertNotNull(response)
         wireMock.stop()

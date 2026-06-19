@@ -31,7 +31,7 @@ class SignedJwtAccessTokenClientTest {
                 privateKeyProvider = FromJwk(privateKeyJwk)
         )
 
-        val accessToken = client.getAccessToken(scopes)
+        val accessToken = client.getClientCredentialsAccessToken(scopes)
 
         val jwt = SignedJWT.parse(accessToken.accessToken)
         println(jwt.parsedString)
@@ -54,7 +54,7 @@ class SignedJwtAccessTokenClientTest {
                 privateKeyProvider = FromJwk(TestData.PRIVATE_KEY_JWK)
         )
 
-        val resp = client.getAccessToken(
+        val resp = client.getClientCredentialsAccessToken(
                 scopes = setOf("en-annen-client/.default")
         )
 
@@ -75,7 +75,7 @@ class SignedJwtAccessTokenClientTest {
                 privateKeyProvider = FromJwk(TestData.PRIVATE_KEY_JWK)
         )
 
-        val response = client.getAccessToken(setOf("fooscope/.default"))
+        val response = client.getClientCredentialsAccessToken(setOf("fooscope/.default"))
 
         assertNotNull(response)
         wireMock.stop()
@@ -98,7 +98,7 @@ class SignedJwtAccessTokenClientTest {
             fnr = "12345566"
         )
 
-        val response = client.getAccessToken(setOf("min-test-app-b"), onBehalfOf)
+        val response = client.getOnBehalfOfAccessToken(setOf("min-test-app-b"), onBehalfOf)
 
         val claims = SignedJWT.parse(response.accessToken).jwtClaimsSet
 

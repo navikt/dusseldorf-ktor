@@ -42,11 +42,11 @@ class SignedJwtAccessTokenClient(
     }
 
 
-    override fun getAccessToken(scopes: Set<String>): AccessTokenResponse {
+    override fun getClientCredentialsAccessToken(scopes: Set<String>): AccessTokenResponse {
         return getAccessToken(getClientCredentialsTokenRequest(scopes))
     }
 
-    override fun getAccessToken(scopes: Set<String>, onBehalfOf: String): AccessTokenResponse {
+    override fun getOnBehalfOfAccessToken(scopes: Set<String>, onBehalfOf: String): AccessTokenResponse {
         return when (onBehalfOfGrantType) {
             GrantType.JwtBearer -> getAccessToken(getOnBehalfOfJwtBearerTokenRequest(onBehalfOf, scopes))
             GrantType.TokenExchange -> getAccessToken(getOnBehalfOfTokenExchangeTokenRequest(onBehalfOf, scopes))
