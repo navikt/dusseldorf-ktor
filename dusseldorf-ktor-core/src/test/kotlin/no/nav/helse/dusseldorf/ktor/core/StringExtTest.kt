@@ -13,15 +13,15 @@ class StringExtTest {
     @Test
     fun `validering av organisasjonsnummer fungerer`() {
         val organisasjonsNummer = mapOf(
-                "974652277" to true,
-                "999263550" to true,
-                "995199939" to true,
-                "921858361" to true,
-                "917755736" to true,
-                "874652202" to true,
-                "874652201" to false,
-                "87465220F" to false,
-                "974652277 " to false
+            "974652277" to true,
+            "999263550" to true,
+            "995199939" to true,
+            "921858361" to true,
+            "917755736" to true,
+            "874652202" to true,
+            "874652201" to false,
+            "87465220F" to false,
+            "974652277 " to false
         )
 
         organisasjonsNummer.forEach { orgnr, expectedResult ->
@@ -30,21 +30,20 @@ class StringExtTest {
         }
     }
 
-    // De gyldige fødselsnummerne er genrert fra funksjonen `genererFodselsnummer` nedenfor
+    // De gyldige fødselsnummerne fra https://github.com/navikt/sif-gha-workflows/blob/main/.github/actions/sif-code-scan/allowed-fnr/fnr.txt
     @Test
     fun `validering av fodselsnummer fungerer`() {
         val fodselsnummer = mapOf(
-                "01126170269" to true,
-                "13085973295" to true,
-                "25107774818" to true,
-                "19108773351" to true,
-                "10915596784" to true, //TestNorge bruker med +8 på tredje siffer
-                "42921275204" to true, // D-nummer fra TestNorge med +4 på første siffer og +8 på tredje
-                "59108773345" to true, // D-nummer med +4 på første siffer
-                "917755736" to false,
-                "29099012345" to false,
-                "011261702690" to false,
-                "22448370767" to false // Riktig modulus sjekk, men ikke dato i starten
+            "01015450572" to true,
+            "01010000382" to true,
+            "01017100552" to true,
+            "10915596784" to true, //TestNorge bruker med +8 på tredje siffer
+            "42921275204" to true, // D-nummer fra TestNorge med +4 på første siffer og +8 på tredje
+            "59108773345" to true, // D-nummer med +4 på første siffer
+            "917755736" to false,
+            "29099012345" to false,
+            "011261702690" to false,
+            "22448370767" to false // Riktig modulus sjekk, men ikke dato i starten
         )
         fodselsnummer.forEach { fnr, expectedResult ->
             LOG.info("Tester $fnr -> $expectedResult")
@@ -54,9 +53,9 @@ class StringExtTest {
 
     @Test
     @Ignore
-    fun `generer 4 tilfeldige fodselsnummer` () {
+    fun `generer 4 tilfeldige fodselsnummer`() {
         for (i in 1..4) {
-            var fnr : String? = null
+            var fnr: String? = null
             while (fnr == null) {
                 fnr = genererFodselsnummer()
                 if (fnr.contains("-")) fnr = null
@@ -66,13 +65,19 @@ class StringExtTest {
         }
     }
 
-    private fun genererFodselsnummer() : String{
-        val dag = Random.nextInt(1,29).toString().padStart(2,'0')
-        val maaned = Random.nextInt(1, 13).toString().padStart(2,'0')
+    private fun genererFodselsnummer(): String {
+        val dag = Random.nextInt(1, 29).toString().padStart(2, '0')
+        val maaned = Random.nextInt(1, 13).toString().padStart(2, '0')
         val aar = Random.nextInt(54, 100).toString()
         val individSiffer = Random.nextInt(700, 750).toString()
         val utenKontrollSiffer = "$dag$maaned$aar$individSiffer"
-        val medForsteKontrollsiffer = utenKontrollSiffer + Mod11.kontrollsiffer(number = utenKontrollSiffer, vekttallProvider = vekttallProviderFnr1)
-        return medForsteKontrollsiffer + Mod11.kontrollsiffer(number = medForsteKontrollsiffer, vekttallProvider = vekttallProviderFnr2)
+        val medForsteKontrollsiffer = utenKontrollSiffer + Mod11.kontrollsiffer(
+            number = utenKontrollSiffer,
+            vekttallProvider = vekttallProviderFnr1
+        )
+        return medForsteKontrollsiffer + Mod11.kontrollsiffer(
+            number = medForsteKontrollsiffer,
+            vekttallProvider = vekttallProviderFnr2
+        )
     }
 }
