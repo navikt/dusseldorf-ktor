@@ -31,7 +31,7 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
 
-        <kotlin.version>2.3.21</kotlin.version>
+        <kotlin.version>2.4.0</kotlin.version>
         <prometheus.version>0.16.0</prometheus.version>
         <oauth2-oidc-sdk.version>11.37.2</oauth2-oidc-sdk.version>
         <wiremock.version>3.13.2</wiremock.version>
