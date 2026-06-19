@@ -31,6 +31,8 @@ class StringExtTest {
     }
 
     // De gyldige fødselsnummerne fra https://github.com/navikt/sif-gha-workflows/blob/main/.github/actions/sif-code-scan/allowed-fnr/fnr.txt
+
+    // TODO legg til D-nr i test når vi får et som er klarert for test|
     @Test
     fun `validering av fodselsnummer fungerer`() {
         val fodselsnummer = mapOf(
@@ -38,8 +40,7 @@ class StringExtTest {
             "01010000382" to true,
             "01017100552" to true,
             "10915596784" to true, //TestNorge bruker med +8 på tredje siffer
-            "42921275204" to true, // D-nummer fra TestNorge med +4 på første siffer og +8 på tredje
-            "59108773345" to true, // D-nummer med +4 på første siffer
+            "42921275204" to true, // D-nummer fra TestNorge med +4 på første siffer og +8 på tredje.
             "917755736" to false,
             "29099012345" to false,
             "011261702690" to false,
