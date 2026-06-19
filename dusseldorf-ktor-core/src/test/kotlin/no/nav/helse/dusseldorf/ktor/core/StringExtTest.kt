@@ -2,8 +2,6 @@ package no.nav.helse.dusseldorf.ktor.core
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.random.Random
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -52,33 +50,4 @@ class StringExtTest {
         }
     }
 
-    @Test
-    @Ignore
-    fun `generer 4 tilfeldige fodselsnummer`() {
-        for (i in 1..4) {
-            var fnr: String? = null
-            while (fnr == null) {
-                fnr = genererFodselsnummer()
-                if (fnr.contains("-")) fnr = null
-            }
-            if (!fnr.erGyldigFodselsnummer()) throw IllegalStateException("$fnr er ikke et gyldig fødselsnummer...")
-            println(fnr)
-        }
-    }
-
-    private fun genererFodselsnummer(): String {
-        val dag = Random.nextInt(1, 29).toString().padStart(2, '0')
-        val maaned = Random.nextInt(1, 13).toString().padStart(2, '0')
-        val aar = Random.nextInt(54, 100).toString()
-        val individSiffer = Random.nextInt(700, 750).toString()
-        val utenKontrollSiffer = "$dag$maaned$aar$individSiffer"
-        val medForsteKontrollsiffer = utenKontrollSiffer + Mod11.kontrollsiffer(
-            number = utenKontrollSiffer,
-            vekttallProvider = vekttallProviderFnr1
-        )
-        return medForsteKontrollsiffer + Mod11.kontrollsiffer(
-            number = medForsteKontrollsiffer,
-            vekttallProvider = vekttallProviderFnr2
-        )
-    }
 }
