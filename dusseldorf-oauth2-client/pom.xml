@@ -16,21 +16,15 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>oauth2-oidc-sdk</artifactId>
-            <version>${oauth2-oidc-sdk.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
-            <version>${caffeine.version}</version>
         </dependency>
-
         <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-server-test-host</artifactId>
@@ -60,7 +54,6 @@
         <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-server-default-headers-jvm</artifactId>
-            <version>${ktor.version}</version>
             <scope>test</scope>
         </dependency>
 

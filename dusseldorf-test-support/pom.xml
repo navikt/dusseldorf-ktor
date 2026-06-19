@@ -15,7 +15,6 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>oauth2-oidc-sdk</artifactId>
-            <version>${oauth2-oidc-sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wiremock</groupId>
@@ -25,7 +24,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-test</artifactId>
-            <version>${kotlinx.coroutines.version}</version>
         </dependency>
     </dependencies>
 

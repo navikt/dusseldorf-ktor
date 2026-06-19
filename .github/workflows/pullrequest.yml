@@ -17,10 +17,9 @@ jobs:
       - uses: actions/setup-java@v5.2.0
         with:
           distribution: temurin
-          java-version: 21
-          cache: gradle
+          java-version: 25
+          cache: maven
+      - name: Bygge og installere moduler
+        run: ./mvnw install
       - name: Kjøre tester i testapp
-        run: |
-          ./mvnw install
-          cd dusseldorf-ktor-testapp
-          ./gradlew test
+        run: ./mvnw -f dusseldorf-ktor-testapp/pom.xml test

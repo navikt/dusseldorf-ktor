@@ -6,46 +6,63 @@
         <artifactId>dusseldorf-ktor</artifactId>
         <groupId>no.nav.helse</groupId>
         <version>PLACEHOLDER</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dusseldorf-ktor-streams</artifactId>
-    <name>dusseldorf-ktor-streams</name>
+    <artifactId>dusseldorf-ktor-testapp</artifactId>
+    <name>dusseldorf-ktor-testapp</name>
+
+    <!--
+        Testapplikasjon som verifiserer at de publiserte modulene fungerer sammen.
+        Bygges separat fra reaktoren (er bevisst ikke med i parent sin <modules>) mot
+        artefaktene som er installert i det lokale Maven-repoet via `mvn test`.
+    -->
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>no.nav.helse</groupId>
             <artifactId>dusseldorf-ktor-core</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>no.nav.helse</groupId>
             <artifactId>dusseldorf-ktor-metrics</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>no.nav.helse</groupId>
             <artifactId>dusseldorf-ktor-health</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-slf4j</artifactId>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-auth</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-client</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams</artifactId>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-oauth2-client</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
+            <groupId>no.nav.helse</groupId>
+            <artifactId>dusseldorf-ktor-jackson</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -53,5 +70,5 @@
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
     </build>
-
 </project>
+

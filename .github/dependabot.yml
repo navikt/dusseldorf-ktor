@@ -7,14 +7,14 @@ updates:
     cooldown:
       default-days: 7
     open-pull-requests-limit: 15
-  - package-ecosystem: gradle
+  - package-ecosystem: maven
     directory: "dusseldorf-ktor-testapp/"
     schedule:
       interval: daily
     cooldown:
       default-days: 7
     groups:
-      gradle-test-app:
+      maven-test-app:
         patterns:
           - "*"
         exclude-patterns:
