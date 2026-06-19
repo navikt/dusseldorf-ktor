@@ -8,7 +8,7 @@
     <artifactId>dusseldorf-ktor</artifactId>
     <packaging>pom</packaging>
     <name>dusseldorf-ktor</name>
-    <version>PLACEHOLDER</version>
+    <version>1.2.4.ea423d4</version>
     <description>Boilerplate for Düsseldorf ktor apps</description>
     <url>https://github.com/navikt/dusseldorf-ktor</url>
 
