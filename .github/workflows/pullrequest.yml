@@ -1,25 +1,39 @@
-name: Pull request
+name: Bygg pull request
 
 on:
   pull_request:
     paths-ignore:
       - '**.md'
+      - '**.MD'
       - '.gitignore'
       - 'LICENSE'
       - 'CODEOWNERS'
-      - '.github/workflows/dependabot.yml'
+      - '.github/dependabot.yml'
 
 jobs:
-  run-tests:
+  build:
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-java@v5.2.0
         with:
-          distribution: temurin
-          java-version: 25
-          cache: maven
-      - name: Bygge og installere moduler
-        run: ./mvnw install
-      - name: Kjøre tester i testapp
-        run: ./mvnw -f dusseldorf-ktor-testapp/pom.xml test
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+      - name: Versions
+        shell: bash
+        run: mvn -version
+      - name: Build
+        shell: bash
+        run: |
+          mvn install -e --batch-mode -DtrimStackTrace=false
+          mvn -f dusseldorf-ktor-testapp/pom.xml test
+
+
+  sif-code-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: navikt/sif-gha-workflows/.github/actions/sif-code-scan@v1
+

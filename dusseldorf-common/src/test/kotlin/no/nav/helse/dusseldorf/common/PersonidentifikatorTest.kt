@@ -1,6 +1,7 @@
 package no.nav.helse.dusseldorf.common
 
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -27,13 +28,10 @@ internal class PersonidentifikatorTest {
     @ValueSource(
         strings = [
             // FNR
-            "25052299988", "25052299716", "25052299554", "25052299392", "25052299120", "25052298922", "25052298760",
-            "25052298337", "25052298175", "25052297977", "25052297705", "25052297543", "25052297381", "25052296911",
-            "25052297896", "25052297624", "25052297462", "25052297039", "25052296830", "25052296679", "25052296407",
-            "25052296245", "25052296083", "25052295885", "25052295613", "25052295451", "25052295028", "25052294668",
+            "01015450572", "01010000382", "01017100552",
 
             // DNR
-            "59108773345", // D-nummer med +4 på første siffer
+            //har ingen DNR klarert for å bruke i test
 
             // TEST_NORGE_FNR
             "10915596784", //TestNorge bruker med +8 på tredje siffer
@@ -57,20 +55,18 @@ internal class PersonidentifikatorTest {
     @ParameterizedTest
     @ValueSource(
         strings = [
-            "25052299988", "25052299716", "25052299554", "25052299392", "25052299120", "25052298922", "25052298760",
-            "25052298337", "25052298175", "25052297977", "25052297705", "25052297543", "25052297381", "25052296911",
-            "25052297896", "25052297624", "25052297462", "25052297039", "25052296830", "25052296679", "25052296407",
-            "25052296245", "25052296083", "25052295885", "25052295613", "25052295451", "25052295028", "25052294668",
+            "01015450572", "01010000382", "01017100552"
         ]
     )
     internal fun `gitt identer, forvent at de er av typen FNR`(ident: String) {
         assertEquals(Personidentifikator.Type.FNR, Personidentifikator(ident).type)
     }
 
+    @Disabled("har ingen DNR klarert for test")
     @ParameterizedTest
     @ValueSource(
         strings = [
-            "59108773345"
+            "TODO"
         ]
     )
     internal fun `gitt identer, forvent at de er av typen DNR`(ident: String) {
