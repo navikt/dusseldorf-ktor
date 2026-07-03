@@ -36,7 +36,7 @@ abstract class NimbusAccessTokenClient {
         }
         else {
             val errorResponse = response.toErrorResponse().toJSONObject()
-            throw IllegalStateException("Feil ved henting av access token. Status kode: ${httpResponse.statusCode} Error response: $errorResponse")
+throw IllegalStateException("Feil ved henting av access token. Statuskode: ${httpResponse.statusCode}. Error response: $errorResponse")
         }
     }
 
