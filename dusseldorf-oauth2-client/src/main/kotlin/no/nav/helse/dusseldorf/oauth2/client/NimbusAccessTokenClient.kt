@@ -22,7 +22,8 @@ abstract class NimbusAccessTokenClient {
 
         logger.trace("Requester URL='${httpRequest.url}?${httpRequest.query}'")
 
-        val response = TokenResponse.parse(httpRequest.send())
+        val httpResponse = httpRequest.send();
+        val response = TokenResponse.parse(httpResponse)
 
         if (response.indicatesSuccess()) {
             val successResponse = response.toSuccessResponse()
@@ -35,7 +36,7 @@ abstract class NimbusAccessTokenClient {
         }
         else {
             val errorResponse = response.toErrorResponse().toJSONObject()
-            throw IllegalStateException("Feil ved henting av access token = '$errorResponse'")
+throw IllegalStateException("Feil ved henting av access token. Statuskode: ${httpResponse.statusCode}. Error response: $errorResponse")
         }
     }
 
