@@ -23,7 +23,7 @@ fun StatusPagesConfig.DefaultStatusPages() {
         if (cause is Problem) {
             call.respondProblemDetails(cause.getProblemDetails(), logger, cause)
         } else {
-            logger.error("Uhåndtert feil", cause)
+            logger.error("Uhåndtert feil: ${cause.message?.take(1000)}", cause)
             call.respondProblemDetails(UNHANDLED_PROBLEM_MESSAGE, logger, cause)
         }
     }
