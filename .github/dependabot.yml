@@ -14,11 +14,17 @@ updates:
     cooldown:
       default-days: 7
     groups:
+      kafka-major:
+        patterns:
+          - "org.apache.kafka:*"
+        update-types:
+          - "major"
       maven-test-app:
         patterns:
           - "*"
         exclude-patterns:
           - "no.nav*"
+          - "org.apache.kafka:*"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
