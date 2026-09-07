@@ -7,12 +7,20 @@ updates:
     cooldown:
       default-days: 7
     open-pull-requests-limit: 15
+    ignore:
+      - dependency-name: "org.apache.kafka:*"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: maven
     directory: "dusseldorf-ktor-testapp/"
     schedule:
       interval: daily
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: "org.apache.kafka:*"
+        update-types:
+          - "version-update:semver-major"
     groups:
       maven-test-app:
         patterns:
