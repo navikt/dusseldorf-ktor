@@ -31,7 +31,7 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
 
-        <kotlin.version>2.4.10</kotlin.version>
+        <kotlin.version>2.4.20</kotlin.version>
         <prometheus.version>0.16.0</prometheus.version>
         <oauth2-oidc-sdk.version>11.38.2</oauth2-oidc-sdk.version>
         <wiremock.version>3.13.2</wiremock.version>
@@ -84,7 +84,7 @@
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-bom</artifactId>
-                <version>1.17.0</version>
+                <version>1.17.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -108,7 +108,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>2.0.18</version>
+                <version>2.0.19</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -138,7 +138,7 @@
             <dependency>
                 <groupId>com.squareup.okio</groupId>
                 <artifactId>okio-jvm</artifactId>
-                <version>3.18.1</version>
+                <version>3.18.2</version>
             </dependency>
             <dependency>
                 <groupId>com.google.errorprone</groupId>
