@@ -56,9 +56,14 @@
             <dependency>
                 <groupId>io.ktor</groupId>
                 <artifactId>ktor-bom</artifactId>
-                <version>3.5.2</version>
+                <version>3.6.0</version>
                 <scope>import</scope>
                 <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kotlinx-serialization-core-jvm</artifactId>
+                <version>1.11.0</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
