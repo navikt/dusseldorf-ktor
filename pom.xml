@@ -31,7 +31,7 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
 
-        <kotlin.version>2.4.20</kotlin.version>
+        <kotlin.version>2.4.21</kotlin.version>
         <prometheus.version>0.16.0</prometheus.version>
         <oauth2-oidc-sdk.version>11.38.2</oauth2-oidc-sdk.version>
         <wiremock.version>3.13.2</wiremock.version>
@@ -68,7 +68,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.2.18.Final</version>
+                <version>4.2.19.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
